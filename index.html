@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -16,29 +17,21 @@
       --blue: #1769e0;
       --blue-dark: #0d4fb5;
       --blue-soft: #eef5ff;
-
       --green: #16845b;
       --green-soft: #eaf8f2;
-
       --red: #d12f3d;
       --red-dark: #b52230;
       --red-soft: #fff0f2;
-
       --orange: #b96b00;
       --orange-soft: #fff7e8;
-
       --white: #ffffff;
       --background: #f3f6fa;
-
       --text: #152033;
       --muted: #697689;
-
       --border: #dfe6ee;
-
       --shadow-sm: 0 2px 10px rgba(11, 31, 58, .06);
       --shadow-md: 0 12px 35px rgba(11, 31, 58, .10);
       --shadow-lg: 0 25px 70px rgba(0, 0, 0, .18);
-
       --radius: 16px;
     }
 
@@ -54,7 +47,6 @@
       margin: 0;
       background: var(--background);
       color: var(--text);
-
       font-family:
         Inter,
         -apple-system,
@@ -86,11 +78,9 @@
 
     .login-screen {
       min-height: 100vh;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       padding: 20px;
 
       background:
@@ -114,13 +104,9 @@
     .login-card {
       width: 100%;
       max-width: 460px;
-
       padding: 38px;
-
       background: rgba(255, 255, 255, .98);
-
       border-radius: 24px;
-
       box-shadow: var(--shadow-lg);
     }
 
@@ -128,74 +114,55 @@
       display: flex;
       align-items: center;
       gap: 14px;
-
       margin-bottom: 30px;
     }
 
     .brand-logo {
       width: 58px;
       height: 58px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       border-radius: 17px;
-
       background: var(--navy);
       color: white;
-
       font-weight: 900;
       font-size: 18px;
     }
 
     .brand-name {
       color: var(--navy);
-
       font-size: 27px;
       font-weight: 900;
-
       letter-spacing: -.7px;
     }
 
     .brand-subtitle {
       margin-top: 4px;
-
       color: var(--muted);
-
       font-size: 12px;
     }
 
     .login-title {
       margin: 0 0 8px;
-
       color: var(--navy);
-
       font-size: 30px;
     }
 
     .login-description {
       margin: 0 0 28px;
-
       color: var(--muted);
-
       font-size: 14px;
       line-height: 1.6;
     }
 
     .login-security {
       margin-top: 20px;
-
       padding: 13px;
-
       background: var(--blue-soft);
-
       border: 1px solid #d6e5ff;
-
       border-radius: 11px;
-
       color: #52657d;
-
       font-size: 11px;
       line-height: 1.5;
     }
@@ -210,11 +177,8 @@
 
     .field label {
       display: block;
-
       margin-bottom: 8px;
-
       color: #29364a;
-
       font-size: 13px;
       font-weight: 800;
     }
@@ -223,17 +187,12 @@
     .field textarea,
     .field select {
       width: 100%;
-
       padding: 13px 14px;
-
       border: 1px solid var(--border);
       border-radius: 11px;
-
       background: white;
       color: var(--text);
-
       outline: none;
-
       transition: .15s ease;
     }
 
@@ -241,24 +200,19 @@
     .field textarea:focus,
     .field select:focus {
       border-color: var(--blue);
-
       box-shadow:
         0 0 0 4px rgba(23, 105, 224, .10);
     }
 
     .field textarea {
       min-height: 170px;
-
       resize: vertical;
-
       line-height: 1.55;
     }
 
     .field-help {
       margin-top: 6px;
-
       color: var(--muted);
-
       font-size: 11px;
       line-height: 1.45;
     }
@@ -270,11 +224,8 @@
     .btn {
       border: 0;
       border-radius: 11px;
-
       padding: 13px 18px;
-
       font-weight: 800;
-
       transition: .12s ease;
     }
 
@@ -290,10 +241,8 @@
 
     .btn-primary {
       width: 100%;
-
       background: var(--blue);
       color: white;
-
       box-shadow:
         0 7px 18px rgba(23, 105, 224, .22);
     }
@@ -304,10 +253,8 @@
 
     .btn-danger {
       width: 100%;
-
       background: var(--red);
       color: white;
-
       box-shadow:
         0 7px 18px rgba(209, 47, 61, .16);
     }
@@ -326,19 +273,16 @@
     ===================================================== */
 
     .delete-button {
+      display: block;
+      width: auto;
       margin-top: 15px;
-
       padding: 9px 13px;
-
       border: 0;
       border-radius: 8px;
-
       background: var(--red);
       color: white;
-
       font-size: 11px;
       font-weight: 800;
-
       transition: .12s ease;
     }
 
@@ -361,19 +305,13 @@
       position: sticky;
       top: 0;
       z-index: 100;
-
       height: 70px;
-
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       padding: 0 28px;
-
       background: rgba(255, 255, 255, .96);
-
       backdrop-filter: blur(12px);
-
       border-bottom: 1px solid var(--border);
     }
 
@@ -386,23 +324,18 @@
     .topbar-logo {
       width: 39px;
       height: 39px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       border-radius: 11px;
-
       background: var(--navy);
       color: white;
-
       font-size: 12px;
       font-weight: 900;
     }
 
     .topbar-title {
       color: var(--navy);
-
       font-size: 15px;
       font-weight: 900;
     }
@@ -411,18 +344,14 @@
       display: flex;
       align-items: center;
       gap: 7px;
-
       color: var(--muted);
-
       font-size: 11px;
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
-
       border-radius: 50%;
-
       background: #aab4c0;
     }
 
@@ -443,16 +372,12 @@
     .avatar {
       width: 39px;
       height: 39px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       border-radius: 50%;
-
       background: var(--blue-soft);
       color: var(--blue);
-
       font-size: 13px;
       font-weight: 900;
     }
@@ -464,9 +389,7 @@
 
     .user-role {
       margin-top: 2px;
-
       color: var(--muted);
-
       font-size: 10px;
     }
 
@@ -476,9 +399,7 @@
 
     .layout {
       min-height: calc(100vh - 70px);
-
       display: grid;
-
       grid-template-columns: 245px 1fr;
     }
 
@@ -488,45 +409,31 @@
 
     .sidebar {
       padding: 25px 14px;
-
       background: var(--navy);
-
       color: white;
     }
 
     .sidebar-section {
       margin: 0 10px 10px;
-
       color: #8da1bc;
-
       font-size: 9px;
       font-weight: 900;
-
       text-transform: uppercase;
-
       letter-spacing: .10em;
     }
 
     .nav-button {
       width: 100%;
-
       display: flex;
       align-items: center;
-
       gap: 12px;
-
       padding: 12px 13px;
-
       margin-bottom: 4px;
-
       border: 0;
       border-radius: 10px;
-
       background: transparent;
       color: #c9d5e5;
-
       text-align: left;
-
       font-size: 13px;
       font-weight: 700;
     }
@@ -539,17 +446,13 @@
 
     .nav-icon {
       width: 20px;
-
       text-align: center;
-
       font-size: 15px;
     }
 
     .sidebar-bottom {
       margin-top: 35px;
-
       padding-top: 15px;
-
       border-top:
         1px solid rgba(255, 255, 255, .10);
     }
@@ -561,7 +464,6 @@
     .main {
       width: 100%;
       max-width: 1500px;
-
       padding: 35px;
     }
 
@@ -571,18 +473,14 @@
 
     .page-header h1 {
       margin: 0;
-
       color: var(--navy);
-
       font-size: 29px;
       letter-spacing: -.5px;
     }
 
     .page-header p {
       margin: 7px 0 0;
-
       color: var(--muted);
-
       font-size: 13px;
       line-height: 1.5;
     }
@@ -593,14 +491,10 @@
 
     .card {
       margin-bottom: 20px;
-
       padding: 24px;
-
       background: white;
-
       border: 1px solid var(--border);
       border-radius: var(--radius);
-
       box-shadow: var(--shadow-sm);
     }
 
@@ -608,25 +502,19 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-
       gap: 15px;
-
       margin-bottom: 20px;
     }
 
     .card-title {
       margin: 0;
-
       color: var(--navy);
-
       font-size: 18px;
     }
 
     .card-description {
       margin: 5px 0 0;
-
       color: var(--muted);
-
       font-size: 12px;
       line-height: 1.5;
     }
@@ -637,50 +525,38 @@
 
     .stats {
       display: grid;
-
       grid-template-columns:
         repeat(3, minmax(0, 1fr));
-
       gap: 15px;
-
       margin-bottom: 20px;
     }
 
     .stat-card {
       padding: 20px;
-
       background: white;
-
       border: 1px solid var(--border);
       border-radius: 14px;
-
       box-shadow: var(--shadow-sm);
     }
 
     .stat-label {
       color: var(--muted);
-
       font-size: 10px;
       font-weight: 900;
-
       text-transform: uppercase;
       letter-spacing: .07em;
     }
 
     .stat-value {
       margin-top: 7px;
-
       color: var(--navy);
-
       font-size: 27px;
       font-weight: 900;
     }
 
     .stat-small {
       margin-top: 5px;
-
       color: var(--muted);
-
       font-size: 11px;
     }
 
@@ -690,13 +566,9 @@
 
     .notice {
       display: flex;
-
       gap: 13px;
-
       padding: 17px;
-
       margin-bottom: 20px;
-
       border-radius: 13px;
     }
 
@@ -716,14 +588,12 @@
 
     .notice-title {
       margin-bottom: 3px;
-
       font-size: 13px;
       font-weight: 900;
     }
 
     .notice-text {
       color: #58697e;
-
       font-size: 12px;
       line-height: 1.55;
     }
@@ -734,42 +604,31 @@
 
     .report-layout {
       display: grid;
-
       grid-template-columns:
         minmax(0, 1fr)
         330px;
-
       gap: 20px;
     }
 
     .security-card {
       height: fit-content;
-
       padding: 20px;
-
       background: #f8fafc;
-
       border: 1px solid var(--border);
       border-radius: 14px;
     }
 
     .security-card h3 {
       margin: 0 0 15px;
-
       color: var(--navy);
-
       font-size: 15px;
     }
 
     .security-item {
       display: flex;
-
       gap: 10px;
-
       margin: 15px 0;
-
       color: #59697c;
-
       font-size: 12px;
       line-height: 1.5;
     }
@@ -781,11 +640,8 @@
 
     .report-status {
       margin-top: 15px;
-
       padding: 13px;
-
       border-radius: 10px;
-
       font-size: 12px;
       line-height: 1.45;
     }
@@ -798,53 +654,37 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       gap: 12px;
-
       margin-bottom: 18px;
     }
 
     .live-badge {
       display: inline-flex;
       align-items: center;
-
       gap: 6px;
-
       padding: 7px 10px;
-
       background: var(--green-soft);
-
       border-radius: 8px;
-
       color: var(--green);
-
       font-size: 10px;
       font-weight: 900;
-
       text-transform: uppercase;
     }
 
     .live-dot {
       width: 6px;
       height: 6px;
-
       border-radius: 50%;
-
       background: currentColor;
     }
 
     .report-item {
       margin-bottom: 12px;
-
       padding: 18px;
-
       background: white;
-
       border: 1px solid var(--border);
       border-left: 4px solid var(--red);
-
       border-radius: 12px;
-
       animation: reportAppear .25s ease;
     }
 
@@ -864,24 +704,19 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-
       gap: 15px;
-
       margin-bottom: 12px;
     }
 
     .report-type {
       color: var(--navy);
-
       font-size: 14px;
       font-weight: 900;
     }
 
     .report-person {
       margin-top: 4px;
-
       color: var(--muted);
-
       font-size: 11px;
     }
 
@@ -891,16 +726,11 @@
 
     .badge {
       display: inline-flex;
-
       padding: 5px 8px;
-
       border-radius: 6px;
-
       font-size: 9px;
       font-weight: 900;
-
       text-transform: uppercase;
-
       white-space: nowrap;
     }
 
@@ -911,10 +741,8 @@
 
     .report-description {
       color: #38475b;
-
       font-size: 13px;
       line-height: 1.65;
-
       white-space: pre-wrap;
       overflow-wrap: anywhere;
     }
@@ -922,43 +750,31 @@
     .report-meta {
       display: flex;
       flex-wrap: wrap;
-
       gap: 12px 18px;
-
       margin-top: 15px;
       padding-top: 13px;
-
       border-top: 1px solid #edf0f4;
-
       color: var(--muted);
-
       font-size: 10px;
       line-height: 1.4;
     }
 
     .empty-state {
       padding: 55px 20px;
-
       text-align: center;
-
       color: var(--muted);
     }
 
     .empty-icon {
       width: 52px;
       height: 52px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       margin: 0 auto 14px;
-
       border-radius: 50%;
-
       background: var(--green-soft);
       color: var(--green);
-
       font-size: 22px;
       font-weight: 900;
     }
@@ -969,35 +785,23 @@
 
     #toastContainer {
       position: fixed;
-
       right: 20px;
       bottom: 20px;
-
       z-index: 500;
-
       display: flex;
       flex-direction: column;
-
       gap: 10px;
-
       width: min(390px, calc(100vw - 30px));
     }
 
     .toast {
       display: flex;
-
       gap: 12px;
-
       padding: 15px 17px;
-
       background: white;
-
       border: 1px solid var(--border);
-
       border-radius: 13px;
-
       box-shadow: var(--shadow-md);
-
       animation: toastIn .2s ease;
     }
 
@@ -1019,16 +823,13 @@
 
     .toast-title {
       margin-bottom: 3px;
-
       color: var(--navy);
-
       font-size: 13px;
       font-weight: 900;
     }
 
     .toast-message {
       color: var(--muted);
-
       font-size: 11px;
       line-height: 1.45;
     }
@@ -1054,7 +855,6 @@
       .report-layout {
         grid-template-columns: 1fr;
       }
-
     }
 
     @media (max-width: 720px) {
@@ -1097,34 +897,24 @@
 
       .mobile-nav {
         position: fixed;
-
         left: 0;
         right: 0;
         bottom: 0;
-
         z-index: 200;
-
         display: grid;
-
         grid-template-columns:
           repeat(3, 1fr);
-
         height: 68px;
-
         background: white;
-
         border-top: 1px solid var(--border);
-
         box-shadow:
           0 -7px 25px rgba(0, 0, 0, .08);
       }
 
       .mobile-nav button {
         border: 0;
-
         background: white;
         color: var(--muted);
-
         font-size: 10px;
         font-weight: 800;
       }
@@ -1135,7 +925,6 @@
 
       .mobile-nav-icon {
         margin-bottom: 3px;
-
         font-size: 17px;
       }
 
@@ -1154,9 +943,9 @@
       .delete-button {
         width: 100%;
       }
-
     }
   </style>
+
 </head>
 
 <body>
@@ -1169,103 +958,98 @@
 
   <div class="login-card">
 
-    <div class="brand">
+```
+<div class="brand">
 
-      <div class="brand-logo">
-        PH
-      </div>
+  <div class="brand-logo">
+    PH
+  </div>
 
-      <div>
+  <div>
 
-        <div class="brand-name">
-          PHARE
-        </div>
-
-        <div class="brand-subtitle">
-          Plateforme de prévention et de signalement
-        </div>
-
-      </div>
-
+    <div class="brand-name">
+      PHARE
     </div>
 
-
-    <h1 class="login-title">
-      Connexion
-    </h1>
-
-    <p class="login-description">
-      Accédez à votre espace PHARE pour effectuer
-      un signalement.
-    </p>
-
-
-    <div class="field">
-
-      <label for="loginFirstName">
-        Prénom
-      </label>
-
-      <input
-        id="loginFirstName"
-        type="text"
-        autocomplete="given-name"
-        placeholder="Votre prénom"
-      >
-
-    </div>
-
-
-    <div class="field">
-
-      <label for="loginLastName">
-        Nom
-      </label>
-
-      <input
-        id="loginLastName"
-        type="text"
-        autocomplete="family-name"
-        placeholder="Votre nom"
-      >
-
-    </div>
-
-
-    <button
-      id="loginButton"
-      class="btn btn-primary"
-      type="button"
-      onclick="login()"
-    >
-      Se connecter
-    </button>
-
-
-    <div
-      id="loginError"
-      class="hidden"
-      style="
-        margin-top:15px;
-        padding:12px;
-        border-radius:10px;
-        background:#fff0f2;
-        color:#d12f3d;
-        font-size:12px;
-        line-height:1.5;
-      "
-    ></div>
-
-
-    <div class="login-security">
-      🔒 Les signalements sont transmis au serveur PHARE
-      afin de permettre leur traitement.
+    <div class="brand-subtitle">
+      Plateforme de prévention et de signalement
     </div>
 
   </div>
 
-</section>
+</div>
 
+<h1 class="login-title">
+  Connexion
+</h1>
+
+<p class="login-description">
+  Accédez à votre espace PHARE pour effectuer
+  un signalement.
+</p>
+
+<div class="field">
+
+  <label for="loginFirstName">
+    Prénom
+  </label>
+
+  <input
+    id="loginFirstName"
+    type="text"
+    autocomplete="given-name"
+    placeholder="Votre prénom"
+  >
+
+</div>
+
+<div class="field">
+
+  <label for="loginLastName">
+    Nom
+  </label>
+
+  <input
+    id="loginLastName"
+    type="text"
+    autocomplete="family-name"
+    placeholder="Votre nom"
+  >
+
+</div>
+
+<button
+  id="loginButton"
+  class="btn btn-primary"
+  type="button"
+  onclick="login()"
+>
+  Se connecter
+</button>
+
+<div
+  id="loginError"
+  class="hidden"
+  style="
+    margin-top:15px;
+    padding:12px;
+    border-radius:10px;
+    background:#fff0f2;
+    color:#d12f3d;
+    font-size:12px;
+    line-height:1.5;
+  "
+></div>
+
+<div class="login-security">
+  🔒 Les signalements sont transmis au serveur PHARE
+  afin de permettre leur traitement.
+</div>
+```
+
+  </div>
+
+</section>
 
 <!-- =====================================================
      APPLICATION
@@ -1275,713 +1059,710 @@
 
   <header class="topbar">
 
-    <div class="topbar-left">
+```
+<div class="topbar-left">
 
-      <div class="topbar-logo">
-        PH
-      </div>
+  <div class="topbar-logo">
+    PH
+  </div>
 
-      <div class="topbar-title">
-        PHARE
-      </div>
+  <div class="topbar-title">
+    PHARE
+  </div>
 
-      <div class="topbar-status">
+  <div class="topbar-status">
 
-        <span
-          id="statusDot"
-          class="status-dot"
-        ></span>
+    <span
+      id="statusDot"
+      class="status-dot"
+    ></span>
 
-        <span id="connectionStatus">
-          Connexion...
-        </span>
+    <span id="connectionStatus">
+      Connexion...
+    </span>
 
-      </div>
+  </div>
+
+</div>
+
+<div class="user-chip">
+
+  <div
+    id="avatar"
+    class="avatar"
+  >
+    ?
+  </div>
+
+  <div>
+
+    <div
+      id="headerUserName"
+      class="user-name"
+    >
+      Utilisateur
+    </div>
+
+    <div
+      id="headerUserRole"
+      class="user-role"
+    >
+      Utilisateur
+    </div>
+
+  </div>
+
+</div>
+```
+
+  </header>
+
+  <div class="layout">
+
+```
+<aside class="sidebar">
+
+  <div class="sidebar-section">
+    Navigation
+  </div>
+
+  <button
+    id="navHome"
+    class="nav-button active"
+    type="button"
+    onclick="showPage('home')"
+  >
+    <span class="nav-icon">⌂</span>
+    Accueil
+  </button>
+
+  <button
+    id="navReport"
+    class="nav-button"
+    type="button"
+    onclick="showPage('report')"
+  >
+    <span class="nav-icon">⚠</span>
+    Nouveau signalement
+  </button>
+
+  <button
+    id="navAdmin"
+    class="nav-button hidden"
+    type="button"
+    onclick="showPage('admin')"
+  >
+    <span class="nav-icon">▣</span>
+    Signalements reçus
+  </button>
+
+  <div class="sidebar-bottom">
+
+    <button
+      class="nav-button"
+      type="button"
+      onclick="logout()"
+    >
+      <span class="nav-icon">↪</span>
+      Déconnexion
+    </button>
+
+  </div>
+
+</aside>
+
+
+<main class="main">
+
+  <!-- =================================================
+       ACCUEIL
+  ================================================== -->
+
+  <section id="pageHome">
+
+    <div class="page-header">
+
+      <h1>
+        Tableau de bord
+      </h1>
+
+      <p>
+        Bienvenue dans votre espace PHARE.
+      </p>
 
     </div>
 
 
-    <div class="user-chip">
+    <div class="notice blue">
 
-      <div
-        id="avatar"
-        class="avatar"
-      >
-        ?
+      <div class="notice-icon">
+        ℹ️
       </div>
 
       <div>
 
-        <div
-          id="headerUserName"
-          class="user-name"
-        >
-          Utilisateur
+        <div class="notice-title">
+          Un problème ? Vous pouvez le signaler.
         </div>
 
-        <div
-          id="headerUserRole"
-          class="user-role"
-        >
-          Utilisateur
+        <div class="notice-text">
+          Si vous êtes victime ou témoin d'une situation
+          de harcèlement, de menace ou d'intimidation,
+          vous pouvez transmettre un signalement.
         </div>
 
       </div>
 
     </div>
 
-  </header>
+
+    <div class="stats">
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Plateforme
+        </div>
+
+        <div
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          PHARE
+        </div>
+
+        <div class="stat-small">
+          Prévention et signalement
+        </div>
+
+      </div>
 
 
-  <div class="layout">
+      <div class="stat-card">
 
-    <aside class="sidebar">
+        <div class="stat-label">
+          Serveur
+        </div>
 
-      <div class="sidebar-section">
-        Navigation
+        <div
+          id="dashboardConnection"
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          —
+        </div>
+
+        <div class="stat-small">
+          Connexion temps réel
+        </div>
+
+      </div>
+
+
+      <div
+        id="adminStat"
+        class="stat-card hidden"
+      >
+
+        <div class="stat-label">
+          Signalements
+        </div>
+
+        <div
+          id="reportCount"
+          class="stat-value"
+        >
+          0
+        </div>
+
+        <div class="stat-small">
+          Enregistrés
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2 class="card-title">
+            Comment utiliser PHARE ?
+          </h2>
+
+          <p class="card-description">
+            Quelques recommandations.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        style="
+          color:#526174;
+          font-size:13px;
+          line-height:1.75;
+        "
+      >
+
+        <p>
+          <strong>1.</strong>
+          Décrivez les faits précisément.
+        </p>
+
+        <p>
+          <strong>2.</strong>
+          Indiquez le contexte et les personnes présentes.
+        </p>
+
+        <p>
+          <strong>3.</strong>
+          Restez factuel.
+        </p>
+
+        <p>
+          <strong>4.</strong>
+          En cas d'urgence immédiate, utilisez les moyens
+          d'urgence appropriés.
+        </p>
+
       </div>
 
 
       <button
-        id="navHome"
-        class="nav-button active"
-        type="button"
-        onclick="showPage('home')"
-      >
-        <span class="nav-icon">⌂</span>
-        Accueil
-      </button>
-
-
-      <button
-        id="navReport"
-        class="nav-button"
+        class="btn btn-primary"
+        style="width:auto;margin-top:8px;"
         type="button"
         onclick="showPage('report')"
       >
-        <span class="nav-icon">⚠</span>
+        ⚠ Effectuer un signalement
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       SIGNALEMENT
+  ================================================== -->
+
+  <section
+    id="pageReport"
+    class="hidden"
+  >
+
+    <div class="page-header">
+
+      <h1>
         Nouveau signalement
-      </button>
+      </h1>
+
+      <p>
+        Transmettez les informations nécessaires.
+      </p>
+
+    </div>
 
 
-      <button
-        id="navAdmin"
-        class="nav-button hidden"
-        type="button"
-        onclick="showPage('admin')"
-      >
-        <span class="nav-icon">▣</span>
-        Signalements reçus
-      </button>
+    <div class="report-layout">
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h2 class="card-title">
+              Situation signalée
+            </h2>
+
+            <p class="card-description">
+              Décrivez les faits de manière précise.
+            </p>
+
+          </div>
+
+        </div>
 
 
-      <div class="sidebar-bottom">
+        <div class="field">
+
+          <label for="reportFirstName">
+            Prénom de la personne concernée
+          </label>
+
+          <input
+            id="reportFirstName"
+            type="text"
+            placeholder="Prénom"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="reportLastName">
+            Nom de la personne concernée
+          </label>
+
+          <input
+            id="reportLastName"
+            type="text"
+            placeholder="Nom"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="reportType">
+            Type de situation
+          </label>
+
+          <select id="reportType">
+
+            <option value="">
+              Sélectionner un type
+            </option>
+
+            <option value="Harcèlement physique">
+              Harcèlement physique
+            </option>
+
+            <option value="Harcèlement verbal">
+              Harcèlement verbal
+            </option>
+
+            <option value="Harcèlement en ligne">
+              Harcèlement en ligne
+            </option>
+
+            <option value="Menaces / intimidation">
+              Menaces / intimidation
+            </option>
+
+            <option value="Autre">
+              Autre
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="reportDuration">
+            Depuis combien de temps ?
+          </label>
+
+          <select id="reportDuration">
+
+            <option value="">
+              Sélectionner une durée
+            </option>
+
+            <option value="Aujourd'hui">
+              Aujourd'hui
+            </option>
+
+            <option value="Depuis quelques jours">
+              Depuis quelques jours
+            </option>
+
+            <option value="Depuis quelques semaines">
+              Depuis quelques semaines
+            </option>
+
+            <option value="Depuis plusieurs mois">
+              Depuis plusieurs mois
+            </option>
+
+            <option value="Depuis plus d'un an">
+              Depuis plus d'un an
+            </option>
+
+            <option value="Je ne sais pas">
+              Je ne sais pas
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="reportDescription">
+            Description des faits
+          </label>
+
+          <textarea
+            id="reportDescription"
+            placeholder="Décrivez ce qui s'est passé, quand, où et dans quel contexte..."
+          ></textarea>
+
+          <div class="field-help">
+            Décrivez uniquement les éléments dont vous avez
+            connaissance.
+          </div>
+
+        </div>
+
 
         <button
-          class="nav-button"
+          id="sendReportButton"
+          class="btn btn-danger"
           type="button"
-          onclick="logout()"
+          onclick="sendReport()"
         >
-          <span class="nav-icon">↪</span>
-          Déconnexion
+          🚨 Envoyer le signalement
         </button>
+
+
+        <div
+          id="reportStatus"
+          class="report-status hidden"
+        ></div>
 
       </div>
 
-    </aside>
+
+      <aside class="security-card">
+
+        <h3>
+          Avant l'envoi
+        </h3>
 
 
-    <main class="main">
+        <div class="security-item">
 
-      <!-- =================================================
-           ACCUEIL
-      ================================================== -->
+          <span class="security-check">
+            ✓
+          </span>
 
-      <section id="pageHome">
+          <span>
+            Vérifiez les informations saisies.
+          </span>
 
-        <div class="page-header">
+        </div>
 
-          <h1>
-            Tableau de bord
-          </h1>
 
-          <p>
-            Bienvenue dans votre espace PHARE.
+        <div class="security-item">
+
+          <span class="security-check">
+            ✓
+          </span>
+
+          <span>
+            Décrivez précisément les faits.
+          </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+          <span class="security-check">
+            ✓
+          </span>
+
+          <span>
+            Indiquez la durée approximative.
+          </span>
+
+        </div>
+
+
+        <div class="security-item">
+
+          <span class="security-check">
+            ✓
+          </span>
+
+          <span>
+            Le signalement sera transmis au serveur PHARE.
+          </span>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       ADMIN
+  ================================================== -->
+
+  <section
+    id="pageAdmin"
+    class="hidden"
+  >
+
+    <div class="page-header">
+
+      <h1>
+        Centre de signalements
+      </h1>
+
+      <p>
+        Les signalements apparaissent automatiquement.
+      </p>
+
+    </div>
+
+
+    <div class="notice orange">
+
+      <div class="notice-icon">
+        🔔
+      </div>
+
+      <div>
+
+        <div class="notice-title">
+          Réception en temps réel
+        </div>
+
+        <div class="notice-text">
+          Aucun rafraîchissement n'est nécessaire.
+          Les nouveaux signalements sont transmis
+          automatiquement.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="stats">
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Total
+        </div>
+
+        <div
+          id="adminTotal"
+          class="stat-value"
+        >
+          0
+        </div>
+
+        <div class="stat-small">
+          Signalements enregistrés
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Temps réel
+        </div>
+
+        <div
+          id="adminRealtime"
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          Actif
+        </div>
+
+        <div class="stat-small">
+          Socket.IO
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Serveur
+        </div>
+
+        <div
+          id="adminServerStatus"
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          —
+        </div>
+
+        <div class="stat-small">
+          État de connexion
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="admin-toolbar">
+
+        <div>
+
+          <h2 class="card-title">
+            Signalements reçus
+          </h2>
+
+          <p class="card-description">
+            Les plus récents sont affichés en premier.
           </p>
 
         </div>
 
 
-        <div class="notice blue">
+        <span class="live-badge">
 
-          <div class="notice-icon">
-            ℹ️
+          <span class="live-dot"></span>
+
+          Temps réel
+
+        </span>
+
+      </div>
+
+
+      <div id="reportsList">
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            ✓
           </div>
 
-          <div>
-
-            <div class="notice-title">
-              Un problème ? Vous pouvez le signaler.
-            </div>
-
-            <div class="notice-text">
-              Si vous êtes victime ou témoin d'une situation
-              de harcèlement, de menace ou d'intimidation,
-              vous pouvez transmettre un signalement.
-            </div>
-
-          </div>
+          Aucun signalement reçu.
 
         </div>
 
+      </div>
 
-        <div class="stats">
+    </div>
 
-          <div class="stat-card">
+  </section>
 
-            <div class="stat-label">
-              Plateforme
-            </div>
-
-            <div
-              class="stat-value"
-              style="font-size:22px;"
-            >
-              PHARE
-            </div>
-
-            <div class="stat-small">
-              Prévention et signalement
-            </div>
-
-          </div>
-
-
-          <div class="stat-card">
-
-            <div class="stat-label">
-              Serveur
-            </div>
-
-            <div
-              id="dashboardConnection"
-              class="stat-value"
-              style="font-size:22px;"
-            >
-              —
-            </div>
-
-            <div class="stat-small">
-              Connexion temps réel
-            </div>
-
-          </div>
-
-
-          <div
-            id="adminStat"
-            class="stat-card hidden"
-          >
-
-            <div class="stat-label">
-              Signalements
-            </div>
-
-            <div
-              id="reportCount"
-              class="stat-value"
-            >
-              0
-            </div>
-
-            <div class="stat-small">
-              Enregistrés
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="card-header">
-
-            <div>
-
-              <h2 class="card-title">
-                Comment utiliser PHARE ?
-              </h2>
-
-              <p class="card-description">
-                Quelques recommandations.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div
-            style="
-              color:#526174;
-              font-size:13px;
-              line-height:1.75;
-            "
-          >
-
-            <p>
-              <strong>1.</strong>
-              Décrivez les faits précisément.
-            </p>
-
-            <p>
-              <strong>2.</strong>
-              Indiquez le contexte et les personnes présentes.
-            </p>
-
-            <p>
-              <strong>3.</strong>
-              Restez factuel.
-            </p>
-
-            <p>
-              <strong>4.</strong>
-              En cas d'urgence immédiate, utilisez les moyens
-              d'urgence appropriés.
-            </p>
-
-          </div>
-
-
-          <button
-            class="btn btn-primary"
-            style="width:auto;margin-top:8px;"
-            type="button"
-            onclick="showPage('report')"
-          >
-            ⚠ Effectuer un signalement
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           SIGNALEMENT
-      ================================================== -->
-
-      <section
-        id="pageReport"
-        class="hidden"
-      >
-
-        <div class="page-header">
-
-          <h1>
-            Nouveau signalement
-          </h1>
-
-          <p>
-            Transmettez les informations nécessaires.
-          </p>
-
-        </div>
-
-
-        <div class="report-layout">
-
-          <div class="card">
-
-            <div class="card-header">
-
-              <div>
-
-                <h2 class="card-title">
-                  Situation signalée
-                </h2>
-
-                <p class="card-description">
-                  Décrivez les faits de manière précise.
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="reportFirstName">
-                Prénom de la personne concernée
-              </label>
-
-              <input
-                id="reportFirstName"
-                type="text"
-                placeholder="Prénom"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="reportLastName">
-                Nom de la personne concernée
-              </label>
-
-              <input
-                id="reportLastName"
-                type="text"
-                placeholder="Nom"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="reportType">
-                Type de situation
-              </label>
-
-              <select id="reportType">
-
-                <option value="">
-                  Sélectionner un type
-                </option>
-
-                <option value="Harcèlement physique">
-                  Harcèlement physique
-                </option>
-
-                <option value="Harcèlement verbal">
-                  Harcèlement verbal
-                </option>
-
-                <option value="Harcèlement en ligne">
-                  Harcèlement en ligne
-                </option>
-
-                <option value="Menaces / intimidation">
-                  Menaces / intimidation
-                </option>
-
-                <option value="Autre">
-                  Autre
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="reportDuration">
-                Depuis combien de temps ?
-              </label>
-
-              <select id="reportDuration">
-
-                <option value="">
-                  Sélectionner une durée
-                </option>
-
-                <option value="Aujourd'hui">
-                  Aujourd'hui
-                </option>
-
-                <option value="Depuis quelques jours">
-                  Depuis quelques jours
-                </option>
-
-                <option value="Depuis quelques semaines">
-                  Depuis quelques semaines
-                </option>
-
-                <option value="Depuis plusieurs mois">
-                  Depuis plusieurs mois
-                </option>
-
-                <option value="Depuis plus d'un an">
-                  Depuis plus d'un an
-                </option>
-
-                <option value="Je ne sais pas">
-                  Je ne sais pas
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="reportDescription">
-                Description des faits
-              </label>
-
-              <textarea
-                id="reportDescription"
-                placeholder="Décrivez ce qui s'est passé, quand, où et dans quel contexte..."
-              ></textarea>
-
-              <div class="field-help">
-                Décrivez uniquement les éléments dont vous avez
-                connaissance.
-              </div>
-
-            </div>
-
-
-            <button
-              id="sendReportButton"
-              class="btn btn-danger"
-              type="button"
-              onclick="sendReport()"
-            >
-              🚨 Envoyer le signalement
-            </button>
-
-
-            <div
-              id="reportStatus"
-              class="report-status hidden"
-            ></div>
-
-          </div>
-
-
-          <aside class="security-card">
-
-            <h3>
-              Avant l'envoi
-            </h3>
-
-
-            <div class="security-item">
-
-              <span class="security-check">
-                ✓
-              </span>
-
-              <span>
-                Vérifiez les informations saisies.
-              </span>
-
-            </div>
-
-
-            <div class="security-item">
-
-              <span class="security-check">
-                ✓
-              </span>
-
-              <span>
-                Décrivez précisément les faits.
-              </span>
-
-            </div>
-
-
-            <div class="security-item">
-
-              <span class="security-check">
-                ✓
-              </span>
-
-              <span>
-                Indiquez la durée approximative.
-              </span>
-
-            </div>
-
-
-            <div class="security-item">
-
-              <span class="security-check">
-                ✓
-              </span>
-
-              <span>
-                Le signalement sera transmis au serveur PHARE.
-              </span>
-
-            </div>
-
-          </aside>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           ADMIN
-      ================================================== -->
-
-      <section
-        id="pageAdmin"
-        class="hidden"
-      >
-
-        <div class="page-header">
-
-          <h1>
-            Centre de signalements
-          </h1>
-
-          <p>
-            Les signalements apparaissent automatiquement.
-          </p>
-
-        </div>
-
-
-        <div class="notice orange">
-
-          <div class="notice-icon">
-            🔔
-          </div>
-
-          <div>
-
-            <div class="notice-title">
-              Réception en temps réel
-            </div>
-
-            <div class="notice-text">
-              Aucun rafraîchissement n'est nécessaire.
-              Les nouveaux signalements sont transmis
-              automatiquement.
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="stats">
-
-          <div class="stat-card">
-
-            <div class="stat-label">
-              Total
-            </div>
-
-            <div
-              id="adminTotal"
-              class="stat-value"
-            >
-              0
-            </div>
-
-            <div class="stat-small">
-              Signalements enregistrés
-            </div>
-
-          </div>
-
-
-          <div class="stat-card">
-
-            <div class="stat-label">
-              Temps réel
-            </div>
-
-            <div
-              id="adminRealtime"
-              class="stat-value"
-              style="font-size:22px;"
-            >
-              Actif
-            </div>
-
-            <div class="stat-small">
-              Socket.IO
-            </div>
-
-          </div>
-
-
-          <div class="stat-card">
-
-            <div class="stat-label">
-              Serveur
-            </div>
-
-            <div
-              id="adminServerStatus"
-              class="stat-value"
-              style="font-size:22px;"
-            >
-              —
-            </div>
-
-            <div class="stat-small">
-              État de connexion
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="admin-toolbar">
-
-            <div>
-
-              <h2 class="card-title">
-                Signalements reçus
-              </h2>
-
-              <p class="card-description">
-                Les plus récents sont affichés en premier.
-              </p>
-
-            </div>
-
-
-            <span class="live-badge">
-
-              <span class="live-dot"></span>
-
-              Temps réel
-
-            </span>
-
-          </div>
-
-
-          <div id="reportsList">
-
-            <div class="empty-state">
-
-              <div class="empty-icon">
-                ✓
-              </div>
-
-              Aucun signalement reçu.
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
+</main>
+```
 
   </div>
-
 
   <!-- =====================================================
        MOBILE
@@ -1989,48 +1770,48 @@
 
   <nav class="mobile-nav">
 
-    <button
-      id="mobileHome"
-      class="active"
-      type="button"
-      onclick="showPage('home')"
-    >
-      <div class="mobile-nav-icon">⌂</div>
-      Accueil
-    </button>
+```
+<button
+  id="mobileHome"
+  class="active"
+  type="button"
+  onclick="showPage('home')"
+>
+  <div class="mobile-nav-icon">⌂</div>
+  Accueil
+</button>
 
 
-    <button
-      id="mobileReport"
-      type="button"
-      onclick="showPage('report')"
-    >
-      <div class="mobile-nav-icon">⚠</div>
-      Signaler
-    </button>
+<button
+  id="mobileReport"
+  type="button"
+  onclick="showPage('report')"
+>
+  <div class="mobile-nav-icon">⚠</div>
+  Signaler
+</button>
 
 
-    <button
-      id="mobileAdmin"
-      class="hidden"
-      type="button"
-      onclick="showPage('admin')"
-    >
-      <div class="mobile-nav-icon">▣</div>
-      Admin
-    </button>
+<button
+  id="mobileAdmin"
+  class="hidden"
+  type="button"
+  onclick="showPage('admin')"
+>
+  <div class="mobile-nav-icon">▣</div>
+  Admin
+</button>
+```
 
   </nav>
 
 </div>
-
 
 <!-- =====================================================
      TOAST
 ===================================================== -->
 
 <div id="toastContainer"></div>
-
 
 <script>
 
@@ -2041,40 +1822,28 @@
   const SERVER_URL =
     "https://phare-server.onrender.com";
 
-
-  /*
-   * Prototype uniquement.
-   *
-   * Cette identification sera remplacée par une vraie
-   * authentification côté serveur.
-   */
-
   const ADMIN_FIRST_NAME =
     "Ziyad";
 
   const ADMIN_LAST_NAME =
     "HAMIED";
 
-
   let currentUser = null;
-
   let reports = [];
-
   let pendingReport = null;
 
 
   /* =====================================================
-     SOCKET
+     SOCKET.IO
   ===================================================== */
 
-  const socket =
-    io(SERVER_URL, {
-      transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000
-    });
+  const socket = io(SERVER_URL, {
+    transports: ["websocket", "polling"],
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000
+  });
 
 
   /* =====================================================
@@ -2084,12 +1853,11 @@
   socket.on("connect", () => {
 
     console.log(
-      "🟢 Connecté au serveur PHARE"
+      "🟢 Connecté au serveur PHARE",
+      socket.id
     );
 
-
     setConnectionStatus(true);
-
 
     if (currentUser) {
 
@@ -2104,7 +1872,7 @@
 
 
   /* =====================================================
-     DECONNEXION
+     DÉCONNEXION
   ===================================================== */
 
   socket.on("disconnect", () => {
@@ -2112,7 +1880,6 @@
     console.log(
       "🔴 Déconnecté du serveur PHARE"
     );
-
 
     setConnectionStatus(false);
 
@@ -2122,10 +1889,9 @@
   socket.on("connect_error", error => {
 
     console.error(
-      "Erreur Socket.IO :",
+      "❌ Erreur Socket.IO :",
       error.message
     );
-
 
     setConnectionStatus(false);
 
@@ -2140,6 +1906,11 @@
     "historique_signalements",
     historique => {
 
+      console.log(
+        "📋 Historique reçu :",
+        historique
+      );
+
       if (
         !currentUser ||
         currentUser.role !== "admin"
@@ -2147,15 +1918,12 @@
         return;
       }
 
-
       reports =
         Array.isArray(historique)
           ? historique.map(normalizeReport)
           : [];
 
-
       renderReports();
-
       updateReportCounters();
 
     }
@@ -2175,7 +1943,6 @@
         signalement
       );
 
-
       if (
         !currentUser ||
         currentUser.role !== "admin"
@@ -2183,33 +1950,23 @@
         return;
       }
 
-
       const report =
-        normalizeReport(
-          signalement
-        );
-
+        normalizeReport(signalement);
 
       const exists =
         reports.some(
           item =>
-            item.id === report.id
+            String(item.id) === String(report.id)
         );
-
 
       if (!exists) {
 
-        reports.unshift(
-          report
-        );
+        reports.unshift(report);
 
       }
 
-
       renderReports();
-
       updateReportCounters();
-
 
       showToast(
         "Nouveau signalement",
@@ -2217,19 +1974,15 @@
         "danger"
       );
 
-
       playAlert();
-
-      requestNotification(
-        report
-      );
+      requestNotification(report);
 
     }
   );
 
 
   /* =====================================================
-     SIGNALEMENT SUPPRIMÉ
+     SUPPRESSION CONFIRMÉE PAR LE SERVEUR
   ===================================================== */
 
   socket.on(
@@ -2237,22 +1990,18 @@
     id => {
 
       console.log(
-        "🗑️ Signalement supprimé :",
+        "🗑️ Confirmation serveur : suppression de",
         id
       );
-
 
       reports =
         reports.filter(
           report =>
-            report.id !== id
+            String(report.id) !== String(id)
         );
 
-
       renderReports();
-
       updateReportCounters();
-
 
       showToast(
         "Signalement supprimé",
@@ -2272,10 +2021,14 @@
     "erreur_signalement",
     data => {
 
+      console.error(
+        "❌ Erreur serveur :",
+        data
+      );
+
       pendingReport = null;
 
       setSendButtonState(false);
-
 
       setReportStatus(
         data?.message ||
@@ -2291,14 +2044,11 @@
      NORMALISATION
   ===================================================== */
 
-  function normalizeReport(
-    report
-  ) {
+  function normalizeReport(report) {
 
     const result = {
       ...report
     };
-
 
     if (
       !result.date &&
@@ -2306,12 +2056,9 @@
     ) {
 
       result.date =
-        formatDate(
-          result.createdAt
-        );
+        formatDate(result.createdAt);
 
     }
-
 
     return result;
 
@@ -2326,24 +2073,17 @@
 
     const firstName =
       document
-        .getElementById(
-          "loginFirstName"
-        )
+        .getElementById("loginFirstName")
         .value
         .trim();
-
 
     const lastName =
       document
-        .getElementById(
-          "loginLastName"
-        )
+        .getElementById("loginLastName")
         .value
         .trim();
 
-
     hideLoginError();
-
 
     if (!firstName || !lastName) {
 
@@ -2355,7 +2095,6 @@
 
     }
 
-
     const isAdmin =
       firstName.toLowerCase() ===
         ADMIN_FIRST_NAME.toLowerCase()
@@ -2363,11 +2102,9 @@
       lastName.toLowerCase() ===
         ADMIN_LAST_NAME.toLowerCase();
 
-
     currentUser = {
 
       firstName,
-
       lastName,
 
       role:
@@ -2377,40 +2114,30 @@
 
     };
 
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
 
     document
-      .getElementById(
-        "loginScreen"
-      )
-      .classList.add(
-        "hidden"
-      );
-
-
-    document
-      .getElementById(
-        "app"
-      )
-      .classList.remove(
-        "hidden"
-      );
-
+      .getElementById("app")
+      .classList.remove("hidden");
 
     updateUserInterface();
 
+    if (socket.connected) {
 
-    socket.emit(
-      "role",
-      currentUser.role
-    );
+      socket.emit(
+        "role",
+        currentUser.role
+      );
 
+    }
 
     showPage(
       currentUser.role === "admin"
         ? "admin"
         : "home"
     );
-
 
     if (
       currentUser.role === "admin"
@@ -2423,19 +2150,15 @@
   }
 
 
-  function showLoginError(
-    message
-  ) {
+  function showLoginError(message) {
 
     const element =
       document.getElementById(
         "loginError"
       );
 
-
     element.textContent =
       message;
-
 
     element.classList.remove(
       "hidden"
@@ -2447,12 +2170,8 @@
   function hideLoginError() {
 
     document
-      .getElementById(
-        "loginError"
-      )
-      .classList.add(
-        "hidden"
-      );
+      .getElementById("loginError")
+      .classList.add("hidden");
 
   }
 
@@ -2467,16 +2186,13 @@
       return;
     }
 
-
     const fullName =
       `${currentUser.firstName} ${currentUser.lastName}`;
-
 
     document.getElementById(
       "headerUserName"
     ).textContent =
       fullName;
-
 
     document.getElementById(
       "headerUserRole"
@@ -2484,7 +2200,6 @@
       currentUser.role === "admin"
         ? "Administrateur"
         : "Utilisateur";
-
 
     document.getElementById(
       "avatar"
@@ -2494,10 +2209,8 @@
         currentUser.lastName.charAt(0)
       ).toUpperCase();
 
-
     const admin =
       currentUser.role === "admin";
-
 
     [
       "navAdmin",
@@ -2508,11 +2221,9 @@
       const element =
         document.getElementById(id);
 
-
       if (!element) {
         return;
       }
-
 
       element.classList.toggle(
         "hidden",
@@ -2528,9 +2239,7 @@
      NAVIGATION
   ===================================================== */
 
-  function showPage(
-    page
-  ) {
+  function showPage(page) {
 
     if (
       page === "admin" &&
@@ -2544,21 +2253,17 @@
 
     }
 
-
     document
       .getElementById("pageHome")
       .classList.add("hidden");
-
 
     document
       .getElementById("pageReport")
       .classList.add("hidden");
 
-
     document
       .getElementById("pageAdmin")
       .classList.add("hidden");
-
 
     [
       "navHome",
@@ -2572,7 +2277,6 @@
       const element =
         document.getElementById(id);
 
-
       if (element) {
 
         element.classList.remove(
@@ -2583,13 +2287,11 @@
 
     });
 
-
     if (page === "home") {
 
       document
         .getElementById("pageHome")
         .classList.remove("hidden");
-
 
       activateNav(
         "navHome",
@@ -2598,13 +2300,11 @@
 
     }
 
-
     if (page === "report") {
 
       document
         .getElementById("pageReport")
         .classList.remove("hidden");
-
 
       activateNav(
         "navReport",
@@ -2613,24 +2313,20 @@
 
     }
 
-
     if (page === "admin") {
 
       document
         .getElementById("pageAdmin")
         .classList.remove("hidden");
 
-
       activateNav(
         "navAdmin",
         "mobileAdmin"
       );
 
-
       renderReports();
 
     }
-
 
     window.scrollTo({
       top: 0,
@@ -2650,24 +2346,25 @@
         desktopId
       );
 
-
     const mobile =
       document.getElementById(
         mobileId
       );
 
-
     if (desktop) {
+
       desktop.classList.add(
         "active"
       );
+
     }
 
-
     if (mobile) {
+
       mobile.classList.add(
         "active"
       );
+
     }
 
   }
@@ -2683,7 +2380,6 @@
       return;
     }
 
-
     if (!currentUser) {
 
       setReportStatus(
@@ -2694,7 +2390,6 @@
       return;
 
     }
-
 
     if (!socket.connected) {
 
@@ -2707,49 +2402,33 @@
 
     }
 
-
     const firstName =
       document
-        .getElementById(
-          "reportFirstName"
-        )
+        .getElementById("reportFirstName")
         .value
         .trim();
-
 
     const lastName =
       document
-        .getElementById(
-          "reportLastName"
-        )
+        .getElementById("reportLastName")
         .value
         .trim();
-
 
     const type =
       document
-        .getElementById(
-          "reportType"
-        )
+        .getElementById("reportType")
         .value;
-
 
     const duration =
       document
-        .getElementById(
-          "reportDuration"
-        )
+        .getElementById("reportDuration")
         .value;
-
 
     const description =
       document
-        .getElementById(
-          "reportDescription"
-        )
+        .getElementById("reportDescription")
         .value
         .trim();
-
 
     if (!firstName) {
 
@@ -2762,7 +2441,6 @@
 
     }
 
-
     if (!lastName) {
 
       setReportStatus(
@@ -2773,7 +2451,6 @@
       return;
 
     }
-
 
     if (!type) {
 
@@ -2786,7 +2463,6 @@
 
     }
 
-
     if (!duration) {
 
       setReportStatus(
@@ -2797,7 +2473,6 @@
       return;
 
     }
-
 
     if (
       description.length < 10
@@ -2812,20 +2487,15 @@
 
     }
 
-
     const signalement = {
 
       id:
         generateId(),
 
       firstName,
-
       lastName,
-
       type,
-
       duration,
-
       description,
 
       authorFirstName:
@@ -2845,62 +2515,67 @@
 
     };
 
-
     pendingReport =
       signalement;
 
-
-    setSendButtonState(
-      true
-    );
-
+    setSendButtonState(true);
 
     setReportStatus(
       "⏳ Transmission au serveur PHARE...",
       true
     );
 
-
     socket.emit(
       "nouveau_signalement",
-      signalement
-    );
+      signalement,
+      response => {
 
+        console.log(
+          "📥 Réponse serveur pour le signalement :",
+          response
+        );
 
-    setTimeout(() => {
+        if (!response?.success) {
 
-      if (
-        pendingReport !== signalement
-      ) {
+          pendingReport = null;
 
-        return;
+          setSendButtonState(false);
+
+          setReportStatus(
+            response?.message ||
+            "Le signalement n'a pas pu être enregistré.",
+            false
+          );
+
+          return;
+
+        }
+
+        if (
+          pendingReport !== signalement
+        ) {
+          return;
+        }
+
+        pendingReport = null;
+
+        setSendButtonState(false);
+
+        setReportStatus(
+          "✓ Signalement transmis au serveur PHARE.",
+          true
+        );
+
+        clearReportForm();
+
+        showToast(
+          "Signalement transmis",
+          "Votre signalement a été enregistré.",
+          "success"
+        );
 
       }
-
-
-      pendingReport = null;
-
-      setSendButtonState(
-        false
-      );
-
-
-      setReportStatus(
-        "✓ Signalement transmis au serveur PHARE.",
-        true
-      );
-
-
-      clearReportForm();
-
-
-      showToast(
-        "Signalement transmis",
-        "Votre signalement a été envoyé au serveur.",
-        "success"
-      );
-
-    }, 1200);
+    );
 
   }
 
@@ -2909,14 +2584,21 @@
      SUPPRESSION SIGNALEMENT
   ===================================================== */
 
-  function supprimerSignalement(
-    id
-  ) {
+  function supprimerSignalement(id) {
+
+    console.log(
+      "🖱️ BOUTON SUPPRIMER",
+      id
+    );
 
     if (
       !currentUser ||
       currentUser.role !== "admin"
     ) {
+
+      console.error(
+        "❌ Utilisateur non administrateur"
+      );
 
       showToast(
         "Accès refusé",
@@ -2928,8 +2610,11 @@
 
     }
 
-
     if (!socket.connected) {
+
+      console.error(
+        "❌ Socket.IO non connecté"
+      );
 
       showToast(
         "Serveur indisponible",
@@ -2941,8 +2626,11 @@
 
     }
 
-
     if (!id) {
+
+      console.error(
+        "❌ ID manquant"
+      );
 
       showToast(
         "Erreur",
@@ -2954,21 +2642,54 @@
 
     }
 
-
     const confirmation =
       confirm(
         "Voulez-vous vraiment supprimer ce signalement ?\n\nCette action est définitive."
       );
 
-
     if (!confirmation) {
+
+      console.log(
+        "ℹ️ Suppression annulée"
+      );
+
       return;
+
     }
 
+    console.log(
+      "📤 ENVOI AU SERVEUR : supprimer_signalement",
+      String(id)
+    );
 
     socket.emit(
       "supprimer_signalement",
-      id
+      String(id),
+      response => {
+
+        console.log(
+          "📥 RÉPONSE DU SERVEUR :",
+          response
+        );
+
+        if (!response?.success) {
+
+          showToast(
+            "Erreur",
+            response?.message ||
+            "La suppression a échoué.",
+            "danger"
+          );
+
+          return;
+
+        }
+
+        console.log(
+          "✅ Suppression confirmée par le serveur"
+        );
+
+      }
     );
 
   }
@@ -2989,7 +2710,6 @@
       return window.crypto.randomUUID();
 
     }
-
 
     return (
       Date.now().toString(36) +
@@ -3015,10 +2735,12 @@
         "sendReportButton"
       );
 
+    if (!button) {
+      return;
+    }
 
     button.disabled =
       sending;
-
 
     button.textContent =
       sending
@@ -3038,21 +2760,17 @@
       "reportFirstName"
     ).value = "";
 
-
     document.getElementById(
       "reportLastName"
     ).value = "";
-
 
     document.getElementById(
       "reportType"
     ).value = "";
 
-
     document.getElementById(
       "reportDuration"
     ).value = "";
-
 
     document.getElementById(
       "reportDescription"
@@ -3075,21 +2793,17 @@
         "reportStatus"
       );
 
-
     element.classList.remove(
       "hidden"
     );
 
-
     element.textContent =
       message;
-
 
     element.style.background =
       success
         ? "var(--green-soft)"
         : "var(--red-soft)";
-
 
     element.style.color =
       success
@@ -3110,11 +2824,9 @@
         "reportsList"
       );
 
-
     if (!container) {
       return;
     }
-
 
     if (!reports.length) {
 
@@ -3134,9 +2846,7 @@
 
     }
 
-
     container.innerHTML = "";
-
 
     reports.forEach(report => {
 
@@ -3145,14 +2855,11 @@
           "article"
         );
 
-
       item.className =
         "report-item";
 
-
       item.dataset.signalementId =
-        report.id;
-
+        String(report.id);
 
       const date =
         report.date ||
@@ -3161,20 +2868,9 @@
         );
 
 
-      const deleteButton =
-        currentUser &&
-        currentUser.role === "admin"
-          ? `
-            <button
-              class="delete-button"
-              type="button"
-              onclick="supprimerSignalement(${JSON.stringify(report.id)})"
-            >
-              🗑️ Supprimer
-            </button>
-          `
-          : "";
-
+      /* =================================================
+         CONTENU DU SIGNALEMENT
+      ================================================= */
 
       item.innerHTML = `
 
@@ -3251,10 +2947,68 @@
 
         </div>
 
-
-        ${deleteButton}
-
       `;
+
+
+      /* =================================================
+         BOUTON SUPPRESSION
+         IMPORTANT :
+         PAS DE onclick DANS LE HTML
+      ================================================= */
+
+      if (
+        currentUser &&
+        currentUser.role === "admin"
+      ) {
+
+        const deleteButton =
+          document.createElement(
+            "button"
+          );
+
+        deleteButton.type =
+          "button";
+
+        deleteButton.className =
+          "delete-button";
+
+        deleteButton.textContent =
+          "🗑️ Supprimer";
+
+        deleteButton.dataset.id =
+          String(report.id);
+
+
+        deleteButton.addEventListener(
+          "click",
+          function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            console.log(
+              "🖱️ CLIC SUR SUPPRIMER"
+            );
+
+            console.log(
+              "ID du signalement :",
+              this.dataset.id
+            );
+
+            supprimerSignalement(
+              this.dataset.id
+            );
+
+          }
+        );
+
+
+        item.appendChild(
+          deleteButton
+        );
+
+      }
 
 
       container.appendChild(
@@ -3275,18 +3029,15 @@
     const count =
       reports.length;
 
-
     const reportCount =
       document.getElementById(
         "reportCount"
       );
 
-
     const adminTotal =
       document.getElementById(
         "adminTotal"
       );
-
 
     if (reportCount) {
 
@@ -3294,7 +3045,6 @@
         count;
 
     }
-
 
     if (adminTotal) {
 
@@ -3310,18 +3060,14 @@
      DATE
   ===================================================== */
 
-  function formatDate(
-    value
-  ) {
+  function formatDate(value) {
 
     if (!value) {
       return "";
     }
 
-
     const date =
       new Date(value);
-
 
     if (
       Number.isNaN(
@@ -3332,7 +3078,6 @@
       return String(value);
 
     }
-
 
     return date.toLocaleString(
       "fr-FR",
@@ -3358,24 +3103,20 @@
         "statusDot"
       );
 
-
     const text =
       document.getElementById(
         "connectionStatus"
       );
-
 
     const dashboard =
       document.getElementById(
         "dashboardConnection"
       );
 
-
     const adminServer =
       document.getElementById(
         "adminServerStatus"
       );
-
 
     if (online) {
 
@@ -3387,18 +3128,14 @@
         "offline"
       );
 
-
       text.textContent =
         "Serveur connecté";
-
 
       dashboard.textContent =
         "En ligne";
 
-
       dashboard.style.color =
         "var(--green)";
-
 
       if (adminServer) {
 
@@ -3420,18 +3157,14 @@
         "offline"
       );
 
-
       text.textContent =
         "Serveur indisponible";
-
 
       dashboard.textContent =
         "Hors ligne";
 
-
       dashboard.style.color =
         "var(--red)";
-
 
       if (adminServer) {
 
@@ -3464,7 +3197,6 @@
 
     }
 
-
     try {
 
       if (
@@ -3475,7 +3207,6 @@
         await Notification.requestPermission();
 
       }
-
 
       if (
         Notification.permission ===
@@ -3521,62 +3252,49 @@
         window.AudioContext ||
         window.webkitAudioContext;
 
-
       if (!AudioContext) {
         return;
       }
 
-
       const context =
         new AudioContext();
-
 
       const oscillator =
         context.createOscillator();
 
-
       const gain =
         context.createGain();
-
 
       oscillator.type =
         "sine";
 
-
       oscillator.frequency.value =
         880;
-
 
       gain.gain.setValueAtTime(
         0.001,
         context.currentTime
       );
 
-
       gain.gain.exponentialRampToValueAtTime(
         0.15,
         context.currentTime + .02
       );
-
 
       gain.gain.exponentialRampToValueAtTime(
         0.001,
         context.currentTime + .4
       );
 
-
       oscillator.connect(
         gain
       );
-
 
       gain.connect(
         context.destination
       );
 
-
       oscillator.start();
-
 
       oscillator.stop(
         context.currentTime + .4
@@ -3608,16 +3326,13 @@
         "toastContainer"
       );
 
-
     const toast =
       document.createElement(
         "div"
       );
 
-
     toast.className =
       "toast";
-
 
     const icon =
       type === "danger"
@@ -3625,7 +3340,6 @@
         : type === "success"
           ? "✓"
           : "ℹ";
-
 
     const iconElement =
       document.createElement(
@@ -3638,12 +3352,10 @@
     iconElement.textContent =
       icon;
 
-
     const content =
       document.createElement(
         "div"
       );
-
 
     const titleElement =
       document.createElement(
@@ -3656,7 +3368,6 @@
     titleElement.textContent =
       title;
 
-
     const messageElement =
       document.createElement(
         "div"
@@ -3668,7 +3379,6 @@
     messageElement.textContent =
       message;
 
-
     content.appendChild(
       titleElement
     );
@@ -3676,7 +3386,6 @@
     content.appendChild(
       messageElement
     );
-
 
     toast.appendChild(
       iconElement
@@ -3686,11 +3395,9 @@
       content
     );
 
-
     container.appendChild(
       toast
     );
-
 
     setTimeout(
       () => toast.remove(),
@@ -3704,21 +3411,17 @@
      SECURITE HTML
   ===================================================== */
 
-  function escapeHtml(
-    value
-  ) {
+  function escapeHtml(value) {
 
     const element =
       document.createElement(
         "div"
       );
 
-
     element.textContent =
       value == null
         ? ""
         : String(value);
-
 
     return element.innerHTML;
 
@@ -3726,7 +3429,7 @@
 
 
   /* =====================================================
-     DECONNEXION
+     DÉCONNEXION
   ===================================================== */
 
   function logout() {
@@ -3737,59 +3440,34 @@
 
     pendingReport = null;
 
+    document
+      .getElementById("app")
+      .classList.add("hidden");
 
     document
-      .getElementById(
-        "app"
-      )
-      .classList.add(
-        "hidden"
-      );
-
+      .getElementById("loginScreen")
+      .classList.remove("hidden");
 
     document
-      .getElementById(
-        "loginScreen"
-      )
-      .classList.remove(
-        "hidden"
-      );
-
-
-    document
-      .getElementById(
-        "loginFirstName"
-      )
+      .getElementById("loginFirstName")
       .value = "";
 
-
     document
-      .getElementById(
-        "loginLastName"
-      )
+      .getElementById("loginLastName")
       .value = "";
-
 
     hideLoginError();
 
-
     clearReportForm();
 
-
-    setSendButtonState(
-      false
-    );
-
+    setSendButtonState(false);
 
     socket.emit(
       "role",
       "user"
     );
 
-
-    showPage(
-      "home"
-    );
+    showPage("home");
 
   }
 
@@ -3799,9 +3477,7 @@
   ===================================================== */
 
   document
-    .getElementById(
-      "loginFirstName"
-    )
+    .getElementById("loginFirstName")
     .addEventListener(
       "keydown",
       event => {
@@ -3819,9 +3495,7 @@
 
 
   document
-    .getElementById(
-      "loginLastName"
-    )
+    .getElementById("loginLastName")
     .addEventListener(
       "keydown",
       event => {
@@ -3845,7 +3519,6 @@
   setConnectionStatus(
     socket.connected
   );
-
 
   updateReportCounters();
 
