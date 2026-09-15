@@ -1,26 +1,37 @@
-```html
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b1f3a">
-  <title>PHARE</title>
+
+  <title>PHARE — Plateforme de signalement</title>
 
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 
   <style>
     :root {
       --navy: #0b1f3a;
-      --blue: #1456a0;
-      --light-blue: #eaf2fb;
+      --navy-light: #12345b;
+      --blue: #1769e0;
+      --blue-dark: #0d4fb5;
+      --blue-soft: #eef5ff;
+      --green: #16845b;
+      --green-soft: #eaf8f2;
+      --red: #d12f3d;
+      --red-dark: #b52230;
+      --red-soft: #fff0f2;
+      --orange: #b96b00;
+      --orange-soft: #fff7e8;
       --white: #ffffff;
-      --gray: #6b7280;
-      --light-gray: #f4f6f8;
-      --border: #dfe4ea;
-      --green: #16a34a;
-      --red: #dc2626;
-      --shadow: 0 10px 30px rgba(11, 31, 58, 0.08);
+      --background: #f3f6fa;
+      --text: #152033;
+      --muted: #697689;
+      --border: #dfe6ee;
+      --shadow-sm: 0 2px 10px rgba(11, 31, 58, .06);
+      --shadow-md: 0 12px 35px rgba(11, 31, 58, .10);
+      --shadow-lg: 0 25px 70px rgba(0, 0, 0, .18);
       --radius: 16px;
     }
 
@@ -28,11 +39,22 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--light-gray);
-      color: var(--navy);
+      background: var(--background);
+      color: var(--text);
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
     }
 
     button,
@@ -46,9 +68,13 @@
       cursor: pointer;
     }
 
-    /* =========================
+    .hidden {
+      display: none !important;
+    }
+
+    /* =====================================================
        LOGIN
-    ========================= */
+    ===================================================== */
 
     .login-screen {
       min-height: 100vh;
@@ -56,122 +82,237 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: linear-gradient(135deg, #0b1f3a, #1456a0);
+
+      background:
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(23, 105, 224, .25),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 90% 90%,
+          rgba(22, 132, 91, .12),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          #07182c,
+          #12345b
+        );
     }
 
     .login-card {
       width: 100%;
-      max-width: 430px;
-      background: var(--white);
-      border-radius: 22px;
-      padding: 35px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      max-width: 460px;
+      padding: 38px;
+      background: rgba(255, 255, 255, .98);
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
     }
 
     .brand {
-      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 14px;
       margin-bottom: 30px;
     }
 
     .brand-logo {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 15px;
-      border-radius: 18px;
-      background: var(--navy);
-      color: white;
+      width: 58px;
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      font-weight: bold;
+      border-radius: 17px;
+      background: var(--navy);
+      color: white;
+      font-weight: 900;
+      font-size: 18px;
     }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 32px;
-      letter-spacing: 2px;
+    .brand-name {
+      color: var(--navy);
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -.7px;
     }
 
-    .brand p {
-      margin: 8px 0 0;
-      color: var(--gray);
+    .brand-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .login-title {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 30px;
+    }
+
+    .login-description {
+      margin: 0 0 28px;
+      color: var(--muted);
       font-size: 14px;
+      line-height: 1.6;
     }
 
-    .form-group {
+    .login-security {
+      margin-top: 20px;
+      padding: 13px;
+      background: var(--blue-soft);
+      border: 1px solid #d6e5ff;
+      border-radius: 11px;
+      color: #52657d;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* =====================================================
+       FORM
+    ===================================================== */
+
+    .field {
       margin-bottom: 18px;
     }
 
-    .form-group label {
+    .field label {
       display: block;
-      margin-bottom: 7px;
-      font-weight: 600;
-      font-size: 14px;
+      margin-bottom: 8px;
+      color: #29364a;
+      font-size: 13px;
+      font-weight: 800;
     }
 
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
+    .field input,
+    .field textarea,
+    .field select {
       width: 100%;
       padding: 13px 14px;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      outline: none;
+      border-radius: 11px;
       background: white;
+      color: var(--text);
+      outline: none;
+      transition: .15s ease;
     }
 
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(20, 86, 160, 0.1);
+      box-shadow:
+        0 0 0 4px rgba(23, 105, 224, .10);
     }
 
-    .primary-button {
-      width: 100%;
-      border: none;
-      border-radius: 10px;
-      padding: 14px;
-      background: var(--blue);
-      color: white;
-      font-weight: bold;
-      transition: 0.2s;
+    .field textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.55;
     }
 
-    .primary-button:hover {
-      opacity: 0.92;
+    .field-help {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    .btn {
+      border: 0;
+      border-radius: 11px;
+      padding: 13px 18px;
+      font-weight: 800;
+      transition: .12s ease;
+    }
+
+    .btn:hover {
       transform: translateY(-1px);
     }
 
-    .login-error {
-      color: var(--red);
-      font-size: 14px;
-      margin-top: 12px;
-      text-align: center;
-      min-height: 18px;
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    /* =========================
-       APP
-    ========================= */
-
-    .app {
-      display: none;
-      min-height: 100vh;
+    .btn-primary {
+      width: 100%;
+      background: var(--blue);
+      color: white;
+      box-shadow:
+        0 7px 18px rgba(23, 105, 224, .22);
     }
+
+    .btn-primary:hover {
+      background: var(--blue-dark);
+    }
+
+    .btn-danger {
+      width: 100%;
+      background: var(--red);
+      color: white;
+      box-shadow:
+        0 7px 18px rgba(209, 47, 61, .16);
+    }
+
+    .btn-danger:hover {
+      background: var(--red-dark);
+    }
+
+    .btn-secondary {
+      background: #eef2f6;
+      color: #263449;
+    }
+
+    /* =====================================================
+       DELETE BUTTON
+    ===================================================== */
+
+    .delete-button {
+      display: block;
+      width: auto;
+      margin-top: 15px;
+      padding: 9px 13px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--red);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      transition: .12s ease;
+    }
+
+    .delete-button:hover {
+      background: var(--red-dark);
+      transform: translateY(-1px);
+    }
+
+    .delete-button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* =====================================================
+       TOPBAR
+    ===================================================== */
 
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       height: 70px;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
+      padding: 0 28px;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
     }
 
     .topbar-left {
@@ -180,465 +321,558 @@
       gap: 12px;
     }
 
-    .topbar-brand {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .connection {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      color: var(--gray);
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--red);
-    }
-
-    .status-dot.connected {
-      background: var(--green);
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--navy);
-      color: white;
+    .topbar-logo {
+      width: 39px;
+      height: 39px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
+      border-radius: 11px;
+      background: var(--navy);
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
     }
 
-    .user-info {
-      text-align: right;
+    .topbar-title {
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #aab4c0;
+    }
+
+    .status-dot.online {
+      background: var(--green);
+    }
+
+    .status-dot.offline {
+      background: var(--red);
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 39px;
+      height: 39px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 900;
     }
 
     .user-name {
-      font-weight: bold;
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 800;
     }
 
     .user-role {
-      color: var(--gray);
-      font-size: 12px;
-      margin-top: 3px;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
     }
+
+    /* =====================================================
+       LAYOUT
+    ===================================================== */
 
     .layout {
-      display: flex;
       min-height: calc(100vh - 70px);
+      display: grid;
+      grid-template-columns: 245px 1fr;
     }
 
-    /* =========================
+    /* =====================================================
        SIDEBAR
-    ========================= */
+    ===================================================== */
 
     .sidebar {
-      width: 250px;
+      padding: 25px 14px;
       background: var(--navy);
       color: white;
-      padding: 22px 16px;
-      display: flex;
-      flex-direction: column;
     }
 
-    .sidebar-title {
-      font-size: 12px;
+    .sidebar-section {
+      margin: 0 10px 10px;
+      color: #8da1bc;
+      font-size: 9px;
+      font-weight: 900;
       text-transform: uppercase;
-      opacity: 0.55;
-      margin: 5px 12px 12px;
-      letter-spacing: 1px;
+      letter-spacing: .10em;
     }
 
     .nav-button {
       width: 100%;
-      border: none;
-      background: transparent;
-      color: white;
-      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 13px;
+      margin-bottom: 4px;
+      border: 0;
       border-radius: 10px;
+      background: transparent;
+      color: #c9d5e5;
       text-align: left;
-      margin-bottom: 5px;
-      opacity: 0.8;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     .nav-button:hover,
     .nav-button.active {
-      background: rgba(255, 255, 255, 0.1);
-      opacity: 1;
-    }
-
-    .logout-button {
-      margin-top: auto;
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: transparent;
+      background: rgba(255, 255, 255, .12);
       color: white;
-      padding: 12px;
-      border-radius: 10px;
     }
 
-    .logout-button:hover {
-      background: rgba(255,255,255,0.08);
+    .nav-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 15px;
     }
 
-    /* =========================
+    .sidebar-bottom {
+      margin-top: 35px;
+      padding-top: 15px;
+      border-top:
+        1px solid rgba(255, 255, 255, .10);
+    }
+
+    /* =====================================================
        MAIN
-    ========================= */
+    ===================================================== */
 
     .main {
-      flex: 1;
-      padding: 30px;
-      max-width: 1400px;
-      margin: 0 auto;
       width: 100%;
+      max-width: 1500px;
+      padding: 35px;
     }
 
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .page-title {
+    .page-header {
       margin-bottom: 25px;
     }
 
-    .page-title h2 {
-      margin: 0 0 7px;
-      font-size: 28px;
-    }
-
-    .page-title p {
+    .page-header h1 {
       margin: 0;
-      color: var(--gray);
+      color: var(--navy);
+      font-size: 29px;
+      letter-spacing: -.5px;
     }
 
-    /* =========================
+    .page-header p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =====================================================
+       CARDS
+    ===================================================== */
+
+    .card {
+      margin-bottom: 20px;
+      padding: 24px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      margin: 0;
+      color: var(--navy);
+      font-size: 18px;
+    }
+
+    .card-description {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* =====================================================
        STATS
-    ========================= */
+    ===================================================== */
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-bottom: 25px;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
     .stat-card {
+      padding: 20px;
       background: white;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px;
-      box-shadow: var(--shadow);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
     }
 
     .stat-label {
-      color: var(--gray);
-      font-size: 13px;
-      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .07em;
     }
 
     .stat-value {
-      font-size: 30px;
-      font-weight: bold;
+      margin-top: 7px;
+      color: var(--navy);
+      font-size: 27px;
+      font-weight: 900;
     }
 
-    /* =========================
-       HOME
-    ========================= */
+    .stat-small {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* =====================================================
+       NOTICE
+    ===================================================== */
 
     .notice {
-      background: var(--light-blue);
-      border: 1px solid #cfe0f5;
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-bottom: 25px;
+      display: flex;
+      gap: 13px;
+      padding: 17px;
+      margin-bottom: 20px;
+      border-radius: 13px;
     }
 
-    .notice h3 {
-      margin: 0 0 8px;
+    .notice.blue {
+      background: var(--blue-soft);
+      border: 1px solid #d4e3fc;
     }
 
-    .notice p {
-      margin: 0;
-      color: #40546c;
-      line-height: 1.6;
+    .notice.orange {
+      background: var(--orange-soft);
+      border: 1px solid #f1d59e;
     }
 
-    .security-card {
-      background: white;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 25px;
-      box-shadow: var(--shadow);
+    .notice-icon {
+      font-size: 20px;
     }
 
-    .security-card h3 {
-      margin-top: 0;
+    .notice-title {
+      margin-bottom: 3px;
+      font-size: 13px;
+      font-weight: 900;
     }
 
-    .security-card ul {
-      margin: 15px 0 0;
-      padding-left: 20px;
-      line-height: 1.8;
-      color: #4b5563;
+    .notice-text {
+      color: #58697e;
+      font-size: 12px;
+      line-height: 1.55;
     }
 
-    /* =========================
+    /* =====================================================
        REPORT
-    ========================= */
+    ===================================================== */
 
     .report-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 330px;
-      gap: 25px;
+      grid-template-columns:
+        minmax(0, 1fr)
+        330px;
+      gap: 20px;
     }
 
-    .form-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 25px;
-      box-shadow: var(--shadow);
-    }
-
-    .form-card h3 {
-      margin-top: 0;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-
-    .side-info {
-      background: var(--navy);
-      color: white;
-      border-radius: var(--radius);
-      padding: 25px;
+    .security-card {
       height: fit-content;
+      padding: 20px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
     }
 
-    .side-info h3 {
-      margin-top: 0;
+    .security-card h3 {
+      margin: 0 0 15px;
+      color: var(--navy);
+      font-size: 15px;
     }
 
-    .side-info p {
-      opacity: 0.8;
-      line-height: 1.6;
+    .security-item {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+      color: #59697c;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .security-check {
+      color: var(--green);
+      font-weight: 900;
     }
 
     .report-status {
       margin-top: 15px;
-      min-height: 20px;
-      font-size: 14px;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.45;
     }
 
-    /* =========================
+    /* =====================================================
        ADMIN
-    ========================= */
+    ===================================================== */
 
     .admin-toolbar {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      gap: 15px;
-      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .admin-status {
-      display: flex;
-      gap: 10px;
+    .live-badge {
+      display: inline-flex;
       align-items: center;
-      color: var(--gray);
-      font-size: 14px;
+      gap: 6px;
+      padding: 7px 10px;
+      background: var(--green-soft);
+      border-radius: 8px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
     }
 
-    .reports-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
     }
 
     .report-item {
+      margin-bottom: 12px;
+      padding: 18px;
       background: white;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
+      border-left: 4px solid var(--red);
+      border-radius: 12px;
+      animation: reportAppear .25s ease;
     }
 
-    .report-item-header {
+    @keyframes reportAppear {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .report-top {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 15px;
-      margin-bottom: 15px;
-    }
-
-    .report-person {
-      font-weight: bold;
-      font-size: 17px;
-    }
-
-    .report-type {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: var(--light-blue);
-      color: var(--blue);
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .report-description {
-      color: #4b5563;
-      line-height: 1.6;
-      white-space: pre-wrap;
       margin-bottom: 12px;
     }
 
-    .report-meta {
-      color: var(--gray);
-      font-size: 12px;
-      line-height: 1.7;
+    .report-type {
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 900;
     }
 
-    .delete-button {
-      border: none;
-      background: #fee2e2;
+    .report-person {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .report-person strong {
+      color: #263449;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge-danger {
+      background: var(--red-soft);
       color: var(--red);
-      padding: 9px 12px;
-      border-radius: 9px;
-      font-weight: bold;
-      flex-shrink: 0;
     }
 
-    .delete-button:hover {
-      background: #fecaca;
+    .report-description {
+      color: #38475b;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
-    .empty-reports {
-      background: white;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 45px 20px;
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      margin-top: 15px;
+      padding-top: 13px;
+      border-top: 1px solid #edf0f4;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      padding: 55px 20px;
       text-align: center;
-      color: var(--gray);
+      color: var(--muted);
     }
 
-    /* =========================
-       TOAST
-    ========================= */
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 22px;
+      font-weight: 900;
+    }
 
-    .toast {
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    #toastContainer {
       position: fixed;
       right: 20px;
       bottom: 20px;
-      background: var(--navy);
-      color: white;
-      padding: 14px 18px;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: 0.25s;
-      z-index: 100;
-      max-width: 350px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(390px, calc(100vw - 30px));
     }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
+    .toast {
+      display: flex;
+      gap: 12px;
+      padding: 15px 17px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: var(--shadow-md);
+      animation: toastIn .2s ease;
     }
 
-    /* =========================
-       MOBILE NAV
-    ========================= */
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toast-icon {
+      font-size: 20px;
+    }
+
+    .toast-title {
+      margin-bottom: 3px;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .toast-message {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
 
     .mobile-nav {
       display: none;
     }
 
-    /* =========================
-       ADMIN MODE
-       ON CACHE UNIQUEMENT LES
-       ÉLÉMENTS QUE TU AS DEMANDÉS
-    ========================= */
+    @media (max-width: 950px) {
 
-    body.admin-mode #pageHome,
-    body.admin-mode #pageReport,
-    body.admin-mode #navHome,
-    body.admin-mode #navReport,
-    body.admin-mode #mobileHome,
-    body.admin-mode #mobileReport,
-    body.admin-mode #adminStat {
-      display: none !important;
-    }
+      .layout {
+        grid-template-columns: 210px 1fr;
+      }
 
-    body.admin-mode #pageAdmin {
-      display: block !important;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 900px) {
-      .sidebar {
-        width: 210px;
+      .main {
+        padding: 25px;
       }
 
       .report-layout {
         grid-template-columns: 1fr;
       }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 720px) {
+
       .topbar {
         padding: 0 15px;
       }
 
-      .connection {
+      .topbar-title {
         display: none;
       }
 
-      .user-info {
+      .user-role {
         display: none;
       }
 
       .layout {
-        min-height: calc(100vh - 70px - 65px);
+        display: block;
       }
 
       .sidebar {
@@ -649,54 +883,60 @@
         padding: 20px 15px 90px;
       }
 
-      .form-row {
+      .stats {
         grid-template-columns: 1fr;
+      }
+
+      .page-header h1 {
+        font-size: 25px;
+      }
+
+      .card {
+        padding: 19px;
       }
 
       .mobile-nav {
         position: fixed;
-        bottom: 0;
         left: 0;
         right: 0;
-        height: 65px;
+        bottom: 0;
+        z-index: 200;
+        display: grid;
+        grid-template-columns:
+          repeat(3, 1fr);
+        height: 68px;
         background: white;
         border-top: 1px solid var(--border);
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        z-index: 50;
+        box-shadow:
+          0 -7px 25px rgba(0, 0, 0, .08);
       }
 
       .mobile-nav button {
-        border: none;
+        border: 0;
         background: white;
-        color: var(--gray);
-        font-size: 12px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
       }
 
       .mobile-nav button.active {
         color: var(--blue);
-        font-weight: bold;
       }
 
-      body.admin-mode .mobile-nav {
-        grid-template-columns: 1fr;
+      .mobile-nav-icon {
+        margin-bottom: 3px;
+        font-size: 17px;
       }
 
-      body.admin-mode #mobileAdmin {
-        display: block !important;
+      .login-screen {
+        padding: 15px;
       }
-    }
 
-    @media (max-width: 450px) {
       .login-card {
-        padding: 25px 20px;
+        padding: 28px 21px;
       }
 
-      .page-title h2 {
-        font-size: 24px;
-      }
-
-      .report-item-header {
+      .report-top {
         flex-direction: column;
       }
 
@@ -705,1092 +945,2038 @@
       }
     }
   </style>
+
 </head>
 
 <body>
 
-  <!-- =========================
-       LOGIN
-  ========================= -->
+<!-- =====================================================
+     CONNEXION
+===================================================== -->
 
-  <section id="loginScreen" class="login-screen">
-    <div class="login-card">
+<section id="loginScreen" class="login-screen">
 
-      <div class="brand">
-        <div class="brand-logo">P</div>
-        <h1>PHARE</h1>
-        <p>Plateforme de signalement</p>
-      </div>
+  <div class="login-card">
 
-      <div class="form-group">
-        <label for="loginFirstName">Prénom</label>
-        <input
-          type="text"
-          id="loginFirstName"
-          autocomplete="given-name"
-          placeholder="Votre prénom"
-        >
-      </div>
+```
+<div class="brand">
 
-      <div class="form-group">
-        <label for="loginLastName">Nom</label>
-        <input
-          type="text"
-          id="loginLastName"
-          autocomplete="family-name"
-          placeholder="Votre nom"
-        >
-      </div>
+  <div class="brand-logo">
+    PH
+  </div>
 
-      <button
-        type="button"
-        id="loginButton"
-        class="primary-button"
-        onclick="login()"
-      >
-        Se connecter
-      </button>
+  <div>
 
-      <div id="loginError" class="login-error"></div>
-    </div>
-  </section>
-
-
-  <!-- =========================
-       APPLICATION
-  ========================= -->
-
-  <div id="app" class="app">
-
-    <!-- TOPBAR -->
-    <header class="topbar">
-
-      <div class="topbar-left">
-        <div class="topbar-brand">PHARE</div>
-
-        <div class="connection">
-          <span id="statusDot" class="status-dot"></span>
-          <span id="connectionStatus">Connexion...</span>
-        </div>
-      </div>
-
-      <div class="user-area">
-        <div class="user-info">
-          <div id="headerUserName" class="user-name">Utilisateur</div>
-          <div id="headerUserRole" class="user-role">Utilisateur</div>
-        </div>
-
-        <div id="avatar" class="avatar">U</div>
-      </div>
-
-    </header>
-
-
-    <div class="layout">
-
-      <!-- =========================
-           SIDEBAR
-      ========================= -->
-
-      <aside class="sidebar">
-
-        <div class="sidebar-title">Navigation</div>
-
-        <button
-          id="navHome"
-          class="nav-button active"
-          onclick="showPage('home')"
-        >
-          Accueil
-        </button>
-
-        <button
-          id="navReport"
-          class="nav-button"
-          onclick="showPage('report')"
-        >
-          Nouveau signalement
-        </button>
-
-        <button
-          id="navAdmin"
-          class="nav-button"
-          onclick="showPage('admin')"
-          style="display:none;"
-        >
-          Centre des signalements
-        </button>
-
-        <button
-          id="logoutButton"
-          class="logout-button"
-          onclick="logout()"
-        >
-          Se déconnecter
-        </button>
-
-      </aside>
-
-
-      <!-- =========================
-           MAIN
-      ========================= -->
-
-      <main class="main">
-
-        <!-- =========================
-             HOME
-        ========================= -->
-
-        <section id="pageHome" class="page active">
-
-          <div class="page-title">
-            <h2>Bienvenue sur PHARE</h2>
-            <p>Une plateforme simple pour signaler une situation.</p>
-          </div>
-
-          <div id="adminStat" class="stats">
-
-            <div class="stat-card">
-              <div class="stat-label">Signalements reçus</div>
-              <div id="homeTotal" class="stat-value">0</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Statut du serveur</div>
-              <div class="stat-value">OK</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Connexion</div>
-              <div id="homeConnection" class="stat-value">...</div>
-            </div>
-
-          </div>
-
-          <div class="notice">
-            <h3>À quoi sert PHARE ?</h3>
-            <p>
-              PHARE permet de transmettre un signalement de manière simple
-              et sécurisée afin qu'il puisse être traité par les personnes
-              habilitées.
-            </p>
-          </div>
-
-          <div class="security-card">
-            <h3>Quelques conseils</h3>
-
-            <ul>
-              <li>Décris les faits de manière précise.</li>
-              <li>Indique la durée ou la fréquence des faits.</li>
-              <li>Évite les informations inutiles.</li>
-              <li>Utilise PHARE uniquement pour des signalements réels.</li>
-            </ul>
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             REPORT
-        ========================= -->
-
-        <section id="pageReport" class="page">
-
-          <div class="page-title">
-            <h2>Nouveau signalement</h2>
-            <p>Décris la situation que tu souhaites signaler.</p>
-          </div>
-
-          <div class="report-layout">
-
-            <div class="form-card">
-
-              <h3>Informations sur la personne concernée</h3>
-
-              <div class="form-row">
-
-                <div class="form-group">
-                  <label for="reportFirstName">Prénom</label>
-                  <input
-                    type="text"
-                    id="reportFirstName"
-                    placeholder="Prénom"
-                  >
-                </div>
-
-                <div class="form-group">
-                  <label for="reportLastName">Nom</label>
-                  <input
-                    type="text"
-                    id="reportLastName"
-                    placeholder="Nom"
-                  >
-                </div>
-
-              </div>
-
-              <div class="form-group">
-                <label for="reportType">Type de situation</label>
-
-                <select id="reportType">
-                  <option value="">Sélectionner</option>
-                  <option value="Menaces / intimidation">
-                    Menaces / intimidation
-                  </option>
-                  <option value="Insultes / propos humiliants">
-                    Insultes / propos humiliants
-                  </option>
-                  <option value="Harcèlement">
-                    Harcèlement
-                  </option>
-                  <option value="Violence physique">
-                    Violence physique
-                  </option>
-                  <option value="Violence verbale">
-                    Violence verbale
-                  </option>
-                  <option value="Cyberharcèlement">
-                    Cyberharcèlement
-                  </option>
-                  <option value="Autre">
-                    Autre
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="reportDuration">Depuis quand ?</label>
-
-                <select id="reportDuration">
-                  <option value="">Sélectionner</option>
-                  <option value="Aujourd'hui">
-                    Aujourd'hui
-                  </option>
-                  <option value="Depuis quelques jours">
-                    Depuis quelques jours
-                  </option>
-                  <option value="Depuis plusieurs semaines">
-                    Depuis plusieurs semaines
-                  </option>
-                  <option value="Depuis plusieurs mois">
-                    Depuis plusieurs mois
-                  </option>
-                  <option value="Depuis plusieurs années">
-                    Depuis plusieurs années
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="reportDescription">
-                  Description des faits
-                </label>
-
-                <textarea
-                  id="reportDescription"
-                  placeholder="Décris les faits le plus précisément possible..."
-                ></textarea>
-              </div>
-
-              <button
-                type="button"
-                class="primary-button"
-                onclick="sendReport()"
-              >
-                Envoyer le signalement
-              </button>
-
-              <div id="reportStatus" class="report-status"></div>
-
-            </div>
-
-
-            <div class="side-info">
-
-              <h3>Important</h3>
-
-              <p>
-                Ton signalement sera transmis au centre PHARE en temps réel.
-              </p>
-
-              <p>
-                Pense à rester factuel et à décrire précisément ce qui s'est
-                passé.
-              </p>
-
-              <p>
-                Une fois envoyé, le signalement est enregistré sur le serveur.
-              </p>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             ADMIN
-        ========================= -->
-
-        <section id="pageAdmin" class="page">
-
-          <div class="page-title">
-            <h2>Centre des signalements</h2>
-            <p>Gestion des signalements reçus en temps réel.</p>
-          </div>
-
-          <div class="stats">
-
-            <div class="stat-card">
-              <div class="stat-label">Total</div>
-              <div id="adminTotal" class="stat-value">0</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Temps réel</div>
-              <div id="adminRealtime" class="stat-value">Actif</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Serveur</div>
-              <div id="adminServerStatus" class="stat-value">...</div>
-            </div>
-
-          </div>
-
-
-          <div class="admin-toolbar">
-
-            <div class="admin-status">
-              <span id="adminStatusDot" class="status-dot"></span>
-              <span id="adminStatusText">
-                En attente des signalements...
-              </span>
-            </div>
-
-          </div>
-
-
-          <div id="reportsList" class="reports-list">
-
-            <div class="empty-reports">
-              Aucun signalement pour le moment.
-            </div>
-
-          </div>
-
-        </section>
-
-      </main>
-
+    <div class="brand-name">
+      PHARE
     </div>
 
-
-    <!-- =========================
-         MOBILE NAV
-    ========================= -->
-
-    <nav class="mobile-nav">
-
-      <button
-        id="mobileHome"
-        class="active"
-        onclick="showPage('home')"
-      >
-        Accueil
-      </button>
-
-      <button
-        id="mobileReport"
-        onclick="showPage('report')"
-      >
-        Signaler
-      </button>
-
-      <button
-        id="mobileAdmin"
-        onclick="showPage('admin')"
-        style="display:none;"
-      >
-        Admin
-      </button>
-
-    </nav>
+    <div class="brand-subtitle">
+      Plateforme de prévention et de signalement
+    </div>
 
   </div>
 
+</div>
+
+<h1 class="login-title">
+  Connexion
+</h1>
+
+<p class="login-description">
+  Accédez à votre espace PHARE pour effectuer
+  un signalement.
+</p>
 
-  <!-- TOAST -->
-  <div id="toast" class="toast"></div>
+<div class="field">
 
+  <label for="loginFirstName">
+    Prénom
+  </label>
+
+  <input
+    id="loginFirstName"
+    type="text"
+    autocomplete="given-name"
+    placeholder="Votre prénom"
+  >
+
+</div>
+
+<div class="field">
+
+  <label for="loginLastName">
+    Nom
+  </label>
+
+  <input
+    id="loginLastName"
+    type="text"
+    autocomplete="family-name"
+    placeholder="Votre nom"
+  >
+
+</div>
 
-  <script>
-    /* =========================
-       CONFIGURATION
-    ========================= */
+<button
+  id="loginButton"
+  class="btn btn-primary"
+  type="button"
+  onclick="login()"
+>
+  Se connecter
+</button>
 
-    const SERVER_URL = "https://phare-server.onrender.com";
+<div
+  id="loginError"
+  class="hidden"
+  style="
+    margin-top:15px;
+    padding:12px;
+    border-radius:10px;
+    background:#fff0f2;
+    color:#d12f3d;
+    font-size:12px;
+    line-height:1.5;
+  "
+></div>
+
+<div class="login-security">
+  🔒 Les signalements sont transmis au serveur PHARE
+  afin de permettre leur traitement.
+</div>
+```
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     APPLICATION
+===================================================== -->
+
+<div id="app" class="hidden">
+
+  <header class="topbar">
+
+```
+<div class="topbar-left">
+
+  <div class="topbar-logo">
+    PH
+  </div>
+
+  <div class="topbar-title">
+    PHARE
+  </div>
+
+  <div class="topbar-status">
+
+    <span
+      id="statusDot"
+      class="status-dot"
+    ></span>
+
+    <span id="connectionStatus">
+      Connexion...
+    </span>
+
+  </div>
+
+</div>
+
+<div class="user-chip">
+
+  <div
+    id="avatar"
+    class="avatar"
+  >
+    ?
+  </div>
 
-    const ADMIN_FIRST_NAME = "Ziyad";
-    const ADMIN_LAST_NAME = "HAMIED";
+  <div>
 
+    <div
+      id="headerUserName"
+      class="user-name"
+    >
+      Utilisateur
+    </div>
 
-    /* =========================
-       SOCKET.IO
-    ========================= */
+    <div
+      id="headerUserRole"
+      class="user-role"
+    >
+      Utilisateur
+    </div>
 
-    const socket = io(SERVER_URL, {
-      transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000
-    });
+  </div>
 
+</div>
+```
 
-    /* =========================
-       VARIABLES
-    ========================= */
+  </header>
 
-    let currentUser = null;
-    let reports = [];
-    let pendingReport = null;
+  <div class="layout">
 
+```
+<aside class="sidebar">
 
-    /* =========================
-       ELEMENTS
-    ========================= */
+  <div class="sidebar-section">
+    Navigation
+  </div>
 
-    const loginScreen = document.getElementById("loginScreen");
-    const app = document.getElementById("app");
+  <button
+    id="navHome"
+    class="nav-button active"
+    type="button"
+    onclick="showPage('home')"
+  >
+    <span class="nav-icon">⌂</span>
+    Accueil
+  </button>
 
-    const statusDot = document.getElementById("statusDot");
-    const connectionStatus =
-      document.getElementById("connectionStatus");
+  <button
+    id="navReport"
+    class="nav-button"
+    type="button"
+    onclick="showPage('report')"
+  >
+    <span class="nav-icon">⚠</span>
+    Nouveau signalement
+  </button>
 
-    const homeConnection =
-      document.getElementById("homeConnection");
+  <button
+    id="navAdmin"
+    class="nav-button hidden"
+    type="button"
+    onclick="showPage('admin')"
+  >
+    <span class="nav-icon">▣</span>
+    Signalements reçus
+  </button>
 
-    const adminServerStatus =
-      document.getElementById("adminServerStatus");
+  <div class="sidebar-bottom">
 
-    const adminStatusDot =
-      document.getElementById("adminStatusDot");
+    <button
+      class="nav-button"
+      type="button"
+      onclick="logout()"
+    >
+      <span class="nav-icon">↪</span>
+      Déconnexion
+    </button>
 
-    const adminStatusText =
-      document.getElementById("adminStatusText");
+  </div>
 
+</aside>
 
-    /* =========================
-       SOCKET CONNECTION
-    ========================= */
 
-    socket.on("connect", () => {
+<main class="main">
 
-      console.log("🟢 Socket connecté :", socket.id);
+  <!-- =================================================
+       ACCUEIL
+  ================================================== -->
 
-      statusDot.classList.add("connected");
-      connectionStatus.textContent = "Connecté";
+  <section id="pageHome">
 
-      homeConnection.textContent = "OK";
+    <div class="page-header">
 
-      if (adminServerStatus) {
-        adminServerStatus.textContent = "OK";
-      }
+      <h1>
+        Tableau de bord
+      </h1>
 
-      if (currentUser) {
-        socket.emit("role", currentUser.role);
-      }
-    });
+      <p>
+        Bienvenue dans votre espace PHARE.
+      </p>
 
+    </div>
 
-    socket.on("disconnect", () => {
 
-      console.log("🔴 Socket déconnecté");
+    <div class="notice blue">
 
-      statusDot.classList.remove("connected");
-      connectionStatus.textContent = "Déconnecté";
+      <div class="notice-icon">
+        ℹ️
+      </div>
 
-      homeConnection.textContent = "Hors ligne";
+      <div>
 
-      if (adminServerStatus) {
-        adminServerStatus.textContent = "Hors ligne";
-      }
-    });
+        <div class="notice-title">
+          Un problème ? Vous pouvez le signaler.
+        </div>
 
+        <div class="notice-text">
+          Si vous êtes victime ou témoin d'une situation
+          de harcèlement, de menace ou d'intimidation,
+          vous pouvez transmettre un signalement.
+        </div>
 
-    socket.on("connect_error", (error) => {
+      </div>
 
-      console.error("❌ Erreur Socket.IO :", error);
+    </div>
 
-      connectionStatus.textContent = "Erreur";
-      statusDot.classList.remove("connected");
 
-      if (adminServerStatus) {
-        adminServerStatus.textContent = "Erreur";
-      }
-    });
+    <div class="stats">
 
+      <div class="stat-card">
 
-    /* =========================
-       LOGIN
-    ========================= */
+        <div class="stat-label">
+          Plateforme
+        </div>
 
-    function login() {
+        <div
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          PHARE
+        </div>
 
-      const firstName =
-        document.getElementById("loginFirstName")
-          .value
-          .trim();
+        <div class="stat-small">
+          Prévention et signalement
+        </div>
 
-      const lastName =
-        document.getElementById("loginLastName")
-          .value
-          .trim();
+      </div>
 
-      const loginError =
-        document.getElementById("loginError");
 
+      <div class="stat-card">
 
-      if (!firstName || !lastName) {
+        <div class="stat-label">
+          Serveur
+        </div>
 
-        loginError.textContent =
-          "Merci de renseigner votre prénom et votre nom.";
+        <div
+          id="dashboardConnection"
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          —
+        </div>
 
-        return;
-      }
+        <div class="stat-small">
+          Connexion temps réel
+        </div>
 
+      </div>
 
-      const isAdmin =
-        firstName.toLowerCase() ===
-          ADMIN_FIRST_NAME.toLowerCase()
-        &&
-        lastName.toLowerCase() ===
-          ADMIN_LAST_NAME.toLowerCase();
 
+      <div
+        id="adminStat"
+        class="stat-card hidden"
+      >
 
-      currentUser = {
-        firstName: firstName,
-        lastName: lastName,
-        role: isAdmin ? "admin" : "user"
-      };
+        <div class="stat-label">
+          Signalements
+        </div>
 
+        <div
+          id="reportCount"
+          class="stat-value"
+        >
+          0
+        </div>
 
-      console.log(
-        "👤 Connexion :",
-        currentUser
-      );
+        <div class="stat-small">
+          Enregistrés
+        </div>
 
+      </div>
 
-      loginScreen.style.display = "none";
-      app.style.display = "block";
+    </div>
 
 
-      updateUserInterface();
+    <div class="card">
 
+      <div class="card-header">
 
-      if (socket.connected) {
-        socket.emit("role", currentUser.role);
-      }
+        <div>
 
+          <h2 class="card-title">
+            Comment utiliser PHARE ?
+          </h2>
 
-      if (currentUser.role === "admin") {
+          <p class="card-description">
+            Quelques recommandations.
+          </p>
 
-        /*
-         * IMPORTANT :
-         * On active uniquement le mode admin.
-         * Le CSS masque Accueil + Nouveau signalement.
-         */
+        </div>
 
-        document.body.classList.add("admin-mode");
+      </div>
 
-        showPage("admin");
 
-      } else {
+      <div
+        style="
+          color:#526174;
+          font-size:13px;
+          line-height:1.75;
+        "
+      >
 
-        document.body.classList.remove("admin-mode");
+        <p>
+          <strong>1.</strong>
+          Décrivez les faits précisément.
+        </p>
 
-        showPage("home");
-      }
-    }
+        <p>
+          <strong>2.</strong>
+          Indiquez le contexte et les personnes présentes.
+        </p>
 
+        <p>
+          <strong>3.</strong>
+          Restez factuel.
+        </p>
 
-    /* =========================
-       INTERFACE UTILISATEUR
-    ========================= */
+        <p>
+          <strong>4.</strong>
+          En cas d'urgence immédiate, utilisez les moyens
+          d'urgence appropriés.
+        </p>
 
-    function updateUserInterface() {
+      </div>
 
-      if (!currentUser) {
-        return;
-      }
 
+      <button
+        class="btn btn-primary"
+        style="width:auto;margin-top:8px;"
+        type="button"
+        onclick="showPage('report')"
+      >
+        ⚠ Effectuer un signalement
+      </button>
 
-      const fullName =
-        currentUser.firstName +
-        " " +
-        currentUser.lastName;
+    </div>
 
+  </section>
 
-      document.getElementById(
-        "headerUserName"
-      ).textContent = fullName;
 
+  <!-- =================================================
+       SIGNALEMENT
+  ================================================== -->
 
-      document.getElementById(
-        "headerUserRole"
-      ).textContent =
-        currentUser.role === "admin"
-          ? "Administrateur"
-          : "Utilisateur";
+  <section
+    id="pageReport"
+    class="hidden"
+  >
 
+    <div class="page-header">
 
-      const avatar =
-        (
-          currentUser.firstName.charAt(0) +
-          currentUser.lastName.charAt(0)
-        ).toUpperCase();
+      <h1>
+        Nouveau signalement
+      </h1>
 
+      <p>
+        Transmettez les informations nécessaires.
+      </p>
 
-      document.getElementById(
-        "avatar"
-      ).textContent = avatar;
+    </div>
 
 
-      const navAdmin =
-        document.getElementById("navAdmin");
+    <div class="report-layout">
 
-      const mobileAdmin =
-        document.getElementById("mobileAdmin");
+      <div class="card">
 
+        <div class="card-header">
 
-      if (currentUser.role === "admin") {
+          <div>
 
-        navAdmin.style.display = "block";
-        mobileAdmin.style.display = "block";
+            <h2 class="card-title">
+              Situation signalée
+            </h2>
 
-      } else {
+            <p class="card-description">
+              Décrivez les faits de manière précise.
+            </p>
 
-        navAdmin.style.display = "none";
-        mobileAdmin.style.display = "none";
-      }
-    }
+          </div>
 
+        </div>
 
-    /* =========================
-       NAVIGATION
-    ========================= */
 
-    function showPage(page) {
+        <div class="field">
 
-      if (!currentUser) {
-        return;
-      }
+          <label for="reportFirstName">
+            Prénom de la personne concernée
+          </label>
 
+          <input
+            id="reportFirstName"
+            type="text"
+            placeholder="Prénom"
+          >
 
-      /*
-       * Un utilisateur normal ne peut pas accéder
-       * au centre admin.
-       */
+        </div>
 
-      if (
-        page === "admin" &&
-        currentUser.role !== "admin"
-      ) {
 
-        return;
-      }
+        <div class="field">
 
+          <label for="reportLastName">
+            Nom de la personne concernée
+          </label>
 
-      /*
-       * Un admin reste dans le centre admin.
-       * Accueil et Nouveau signalement sont masqués.
-       */
+          <input
+            id="reportLastName"
+            type="text"
+            placeholder="Nom"
+          >
 
-      if (
-        currentUser.role === "admin" &&
-        page !== "admin"
-      ) {
+        </div>
 
-        page = "admin";
-      }
 
+        <div class="field">
 
-      document
-        .querySelectorAll(".page")
-        .forEach((element) => {
+          <label for="reportType">
+            Type de situation
+          </label>
 
-          element.classList.remove("active");
-        });
+          <select id="reportType">
 
+            <option value="">
+              Sélectionner un type
+            </option>
 
-      const selectedPage =
-        document.getElementById(
-          "page" +
-          page.charAt(0).toUpperCase() +
-          page.slice(1)
-        );
+            <option value="Harcèlement physique">
+              Harcèlement physique
+            </option>
 
+            <option value="Harcèlement verbal">
+              Harcèlement verbal
+            </option>
 
-      if (selectedPage) {
-        selectedPage.classList.add("active");
-      }
+            <option value="Harcèlement en ligne">
+              Harcèlement en ligne
+            </option>
 
+            <option value="Menaces / intimidation">
+              Menaces / intimidation
+            </option>
 
-      document
-        .querySelectorAll(".nav-button")
-        .forEach((button) => {
+            <option value="Autre">
+              Autre
+            </option>
 
-          button.classList.remove("active");
-        });
+          </select>
 
+        </div>
 
-      document
-        .querySelectorAll(".mobile-nav button")
-        .forEach((button) => {
 
-          button.classList.remove("active");
-        });
+        <div class="field">
 
+          <label for="reportDuration">
+            Depuis combien de temps ?
+          </label>
 
-      if (page === "home") {
+          <select id="reportDuration">
 
-        document
-          .getElementById("navHome")
-          .classList.add("active");
+            <option value="">
+              Sélectionner une durée
+            </option>
 
-        document
-          .getElementById("mobileHome")
-          .classList.add("active");
+            <option value="Aujourd'hui">
+              Aujourd'hui
+            </option>
 
-      } else if (page === "report") {
+            <option value="Depuis quelques jours">
+              Depuis quelques jours
+            </option>
 
-        document
-          .getElementById("navReport")
-          .classList.add("active");
+            <option value="Depuis quelques semaines">
+              Depuis quelques semaines
+            </option>
 
-        document
-          .getElementById("mobileReport")
-          .classList.add("active");
+            <option value="Depuis plusieurs mois">
+              Depuis plusieurs mois
+            </option>
 
-      } else if (page === "admin") {
+            <option value="Depuis plus d'un an">
+              Depuis plus d'un an
+            </option>
 
-        document
-          .getElementById("navAdmin")
-          .classList.add("active");
+            <option value="Je ne sais pas">
+              Je ne sais pas
+            </option>
 
-        document
-          .getElementById("mobileAdmin")
-          .classList.add("active");
-      }
-    }
+          </select>
 
+        </div>
 
-    /* =========================
-       ENVOI SIGNALement
-    ========================= */
 
-    function sendReport() {
+        <div class="field">
 
-      if (!currentUser) {
-        return;
-      }
+          <label for="reportDescription">
+            Description des faits
+          </label>
 
+          <textarea
+            id="reportDescription"
+            placeholder="Décrivez ce qui s'est passé, quand, où et dans quel contexte..."
+          ></textarea>
 
-      const firstName =
-        document.getElementById(
-          "reportFirstName"
-        ).value.trim();
+          <div class="field-help">
+            Décrivez uniquement les éléments dont vous avez
+            connaissance.
+          </div>
 
-      const lastName =
-        document.getElementById(
-          "reportLastName"
-        ).value.trim();
+        </div>
 
-      const type =
-        document.getElementById(
-          "reportType"
-        ).value;
 
-      const duration =
-        document.getElementById(
-          "reportDuration"
-        ).value;
+        <button
+          id="sendReportButton"
+          class="btn btn-danger"
+          type="button"
+          onclick="sendReport()"
+        >
+          🚨 Envoyer le signalement
+        </button>
 
-      const description =
-        document.getElementById(
-          "reportDescription"
-        ).value.trim();
 
+        <div
+          id="reportStatus"
+          class="report-status hidden"
+        ></div>
 
-      const reportStatus =
-        document.getElementById(
-          "reportStatus"
-        );
+      </div>
 
 
-      if (
-        !firstName ||
-        !lastName ||
-        !type ||
-        !description
-      ) {
+      <aside class="security-card">
 
-        reportStatus.textContent =
-          "Merci de remplir tous les champs obligatoires.";
+        <h3>
+          Avant l'envoi
+        </h3>
 
-        reportStatus.style.color = "#dc2626";
 
-        return;
-      }
+        <div class="security-item">
 
+          <span class="security-check">
+            ✓
+          </span>
 
-      const signalement = {
+          <span>
+            Vérifiez les informations saisies.
+          </span>
 
-        id:
-          crypto.randomUUID
-          ? crypto.randomUUID()
-          : Date.now().toString(),
+        </div>
 
-        firstName: firstName,
 
-        lastName: lastName,
+        <div class="security-item">
 
-        type: type,
+          <span class="security-check">
+            ✓
+          </span>
 
-        duration: duration,
+          <span>
+            Décrivez précisément les faits.
+          </span>
 
-        description: description,
+        </div>
 
-        authorFirstName:
-          currentUser.firstName,
 
-        authorLastName:
-          currentUser.lastName,
+        <div class="security-item">
 
-        date:
-          new Date().toLocaleString("fr-FR")
-      };
+          <span class="security-check">
+            ✓
+          </span>
 
+          <span>
+            Indiquez la durée approximative.
+          </span>
 
-      pendingReport = signalement;
+        </div>
 
 
-      console.log(
-        "🚨 Envoi du signalement :",
-        signalement
-      );
+        <div class="security-item">
 
+          <span class="security-check">
+            ✓
+          </span>
+
+          <span>
+            Le signalement sera transmis au serveur PHARE.
+          </span>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       ADMIN
+  ================================================== -->
+
+  <section
+    id="pageAdmin"
+    class="hidden"
+  >
+
+    <div class="page-header">
+
+      <h1>
+        Centre de signalements
+      </h1>
+
+      <p>
+        Les signalements apparaissent automatiquement.
+      </p>
+
+    </div>
+
+
+    <div class="notice orange">
+
+      <div class="notice-icon">
+        🔔
+      </div>
+
+      <div>
+
+        <div class="notice-title">
+          Réception en temps réel
+        </div>
+
+        <div class="notice-text">
+          Aucun rafraîchissement n'est nécessaire.
+          Les nouveaux signalements sont transmis
+          automatiquement.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="stats">
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Total
+        </div>
+
+        <div
+          id="adminTotal"
+          class="stat-value"
+        >
+          0
+        </div>
+
+        <div class="stat-small">
+          Signalements enregistrés
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Temps réel
+        </div>
+
+        <div
+          id="adminRealtime"
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          Actif
+        </div>
+
+        <div class="stat-small">
+          Socket.IO
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          Serveur
+        </div>
+
+        <div
+          id="adminServerStatus"
+          class="stat-value"
+          style="font-size:22px;"
+        >
+          —
+        </div>
+
+        <div class="stat-small">
+          État de connexion
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="admin-toolbar">
+
+        <div>
+
+          <h2 class="card-title">
+            Signalements reçus
+          </h2>
+
+          <p class="card-description">
+            Les plus récents sont affichés en premier.
+          </p>
+
+        </div>
+
+
+        <span class="live-badge">
+
+          <span class="live-dot"></span>
+
+          Temps réel
+
+        </span>
+
+      </div>
+
+
+      <div id="reportsList">
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            ✓
+          </div>
+
+          Aucun signalement reçu.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+```
+
+  </div>
+
+  <!-- =====================================================
+       MOBILE
+  ====================================================== -->
+
+  <nav class="mobile-nav">
+
+```
+<button
+  id="mobileHome"
+  class="active"
+  type="button"
+  onclick="showPage('home')"
+>
+  <div class="mobile-nav-icon">⌂</div>
+  Accueil
+</button>
+
+
+<button
+  id="mobileReport"
+  type="button"
+  onclick="showPage('report')"
+>
+  <div class="mobile-nav-icon">⚠</div>
+  Signaler
+</button>
+
+
+<button
+  id="mobileAdmin"
+  class="hidden"
+  type="button"
+  onclick="showPage('admin')"
+>
+  <div class="mobile-nav-icon">▣</div>
+  Admin
+</button>
+```
+
+  </nav>
+
+</div>
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div id="toastContainer"></div>
+
+<script>
+
+  /* =====================================================
+     CONFIGURATION
+  ===================================================== */
+
+  const SERVER_URL =
+    "https://phare-server.onrender.com";
+
+  const ADMIN_FIRST_NAME =
+    "Ziyad";
+
+  const ADMIN_LAST_NAME =
+    "HAMIED";
+
+  let currentUser = null;
+  let reports = [];
+  let pendingReport = null;
+
+
+  /* =====================================================
+     SOCKET.IO
+  ===================================================== */
+
+  const socket = io(SERVER_URL, {
+    transports: ["websocket", "polling"],
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000
+  });
+
+
+  /* =====================================================
+     CONNEXION
+  ===================================================== */
+
+  socket.on("connect", () => {
+
+    console.log(
+      "🟢 Connecté au serveur PHARE",
+      socket.id
+    );
+
+    setConnectionStatus(true);
+
+    if (currentUser) {
 
       socket.emit(
-        "nouveau_signalement",
+        "role",
+        currentUser.role
+      );
+
+    }
+
+  });
+
+
+  /* =====================================================
+     DÉCONNEXION
+  ===================================================== */
+
+  socket.on("disconnect", () => {
+
+    console.log(
+      "🔴 Déconnecté du serveur PHARE"
+    );
+
+    setConnectionStatus(false);
+
+  });
+
+
+  socket.on("connect_error", error => {
+
+    console.error(
+      "❌ Erreur Socket.IO :",
+      error.message
+    );
+
+    setConnectionStatus(false);
+
+  });
+
+
+  /* =====================================================
+     HISTORIQUE
+  ===================================================== */
+
+  socket.on(
+    "historique_signalements",
+    historique => {
+
+      console.log(
+        "📋 Historique reçu :",
+        historique
+      );
+
+      if (
+        !currentUser ||
+        currentUser.role !== "admin"
+      ) {
+        return;
+      }
+
+      reports =
+        Array.isArray(historique)
+          ? historique.map(normalizeReport)
+          : [];
+
+      renderReports();
+      updateReportCounters();
+
+    }
+  );
+
+
+  /* =====================================================
+     NOUVEAU SIGNALEMENT
+  ===================================================== */
+
+  socket.on(
+    "signalement_recu",
+    signalement => {
+
+      console.log(
+        "🚨 Nouveau signalement :",
         signalement
       );
 
+      if (
+        !currentUser ||
+        currentUser.role !== "admin"
+      ) {
+        return;
+      }
 
-      reportStatus.textContent =
-        "Signalement envoyé.";
+      const report =
+        normalizeReport(signalement);
 
-      reportStatus.style.color =
-        "#16a34a";
-
-
-      showToast(
-        "Signalement envoyé avec succès."
-      );
-
-
-      document.getElementById(
-        "reportFirstName"
-      ).value = "";
-
-      document.getElementById(
-        "reportLastName"
-      ).value = "";
-
-      document.getElementById(
-        "reportType"
-      ).value = "";
-
-      document.getElementById(
-        "reportDuration"
-      ).value = "";
-
-      document.getElementById(
-        "reportDescription"
-      ).value = "";
-
-
-      pendingReport = null;
-    }
-
-
-    /* =========================
-       HISTORIQUE ADMIN
-    ========================= */
-
-    socket.on(
-      "historique_signalements",
-      (history) => {
-
-        console.log(
-          "📋 Historique reçu :",
-          history
+      const exists =
+        reports.some(
+          item =>
+            String(item.id) === String(report.id)
         );
 
+      if (!exists) {
 
-        if (!Array.isArray(history)) {
+        reports.unshift(report);
+
+      }
+
+      renderReports();
+      updateReportCounters();
+
+      showToast(
+        "Nouveau signalement",
+        `${report.type || "Signalement"} — ${report.firstName || ""} ${report.lastName || ""}`,
+        "danger"
+      );
+
+      playAlert();
+      requestNotification(report);
+
+    }
+  );
+
+
+  /* =====================================================
+     SUPPRESSION CONFIRMÉE PAR LE SERVEUR
+  ===================================================== */
+
+  socket.on(
+    "signalement_supprime",
+    id => {
+
+      console.log(
+        "🗑️ Confirmation serveur : suppression de",
+        id
+      );
+
+      reports =
+        reports.filter(
+          report =>
+            String(report.id) !== String(id)
+        );
+
+      renderReports();
+      updateReportCounters();
+
+      showToast(
+        "Signalement supprimé",
+        "Le signalement a été supprimé définitivement.",
+        "success"
+      );
+
+    }
+  );
+
+
+  /* =====================================================
+     ERREUR SERVEUR
+  ===================================================== */
+
+  socket.on(
+    "erreur_signalement",
+    data => {
+
+      console.error(
+        "❌ Erreur serveur :",
+        data
+      );
+
+      pendingReport = null;
+
+      setSendButtonState(false);
+
+      setReportStatus(
+        data?.message ||
+        "Le serveur n'a pas pu effectuer l'opération.",
+        false
+      );
+
+    }
+  );
+
+
+  /* =====================================================
+     NORMALISATION
+  ===================================================== */
+
+  function normalizeReport(report) {
+
+    const result = {
+      ...report
+    };
+
+    if (
+      !result.date &&
+      result.createdAt
+    ) {
+
+      result.date =
+        formatDate(result.createdAt);
+
+    }
+
+    return result;
+
+  }
+
+
+  /* =====================================================
+     LOGIN
+  ===================================================== */
+
+  function login() {
+
+    const firstName =
+      document
+        .getElementById("loginFirstName")
+        .value
+        .trim();
+
+    const lastName =
+      document
+        .getElementById("loginLastName")
+        .value
+        .trim();
+
+    hideLoginError();
+
+    if (!firstName || !lastName) {
+
+      showLoginError(
+        "Veuillez renseigner votre prénom et votre nom."
+      );
+
+      return;
+
+    }
+
+    const isAdmin =
+      firstName.toLowerCase() ===
+        ADMIN_FIRST_NAME.toLowerCase()
+      &&
+      lastName.toLowerCase() ===
+        ADMIN_LAST_NAME.toLowerCase();
+
+    currentUser = {
+
+      firstName,
+      lastName,
+
+      role:
+        isAdmin
+          ? "admin"
+          : "user"
+
+    };
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+    document
+      .getElementById("app")
+      .classList.remove("hidden");
+
+    updateUserInterface();
+
+    if (socket.connected) {
+
+      socket.emit(
+        "role",
+        currentUser.role
+      );
+
+    }
+
+    showPage(
+      currentUser.role === "admin"
+        ? "admin"
+        : "home"
+    );
+
+    if (
+      currentUser.role === "admin"
+    ) {
+
+      requestNotification();
+
+    }
+
+  }
+
+
+  function showLoginError(message) {
+
+    const element =
+      document.getElementById(
+        "loginError"
+      );
+
+    element.textContent =
+      message;
+
+    element.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  function hideLoginError() {
+
+    document
+      .getElementById("loginError")
+      .classList.add("hidden");
+
+  }
+
+
+  /* =====================================================
+     INTERFACE
+  ===================================================== */
+
+  function updateUserInterface() {
+
+    if (!currentUser) {
+      return;
+    }
+
+    const fullName =
+      `${currentUser.firstName} ${currentUser.lastName}`;
+
+    document.getElementById(
+      "headerUserName"
+    ).textContent =
+      fullName;
+
+    document.getElementById(
+      "headerUserRole"
+    ).textContent =
+      currentUser.role === "admin"
+        ? "Administrateur"
+        : "Utilisateur";
+
+    document.getElementById(
+      "avatar"
+    ).textContent =
+      (
+        currentUser.firstName.charAt(0) +
+        currentUser.lastName.charAt(0)
+      ).toUpperCase();
+
+    const admin =
+      currentUser.role === "admin";
+
+    [
+      "navAdmin",
+      "mobileAdmin",
+      "adminStat"
+    ].forEach(id => {
+
+      const element =
+        document.getElementById(id);
+
+      if (!element) {
+        return;
+      }
+
+      element.classList.toggle(
+        "hidden",
+        !admin
+      );
+
+    });
+
+  }
+
+
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
+
+  function showPage(page) {
+
+    if (
+      page === "admin" &&
+      (
+        !currentUser ||
+        currentUser.role !== "admin"
+      )
+    ) {
+
+      page = "home";
+
+    }
+
+    document
+      .getElementById("pageHome")
+      .classList.add("hidden");
+
+    document
+      .getElementById("pageReport")
+      .classList.add("hidden");
+
+    document
+      .getElementById("pageAdmin")
+      .classList.add("hidden");
+
+    [
+      "navHome",
+      "navReport",
+      "navAdmin",
+      "mobileHome",
+      "mobileReport",
+      "mobileAdmin"
+    ].forEach(id => {
+
+      const element =
+        document.getElementById(id);
+
+      if (element) {
+
+        element.classList.remove(
+          "active"
+        );
+
+      }
+
+    });
+
+    if (page === "home") {
+
+      document
+        .getElementById("pageHome")
+        .classList.remove("hidden");
+
+      activateNav(
+        "navHome",
+        "mobileHome"
+      );
+
+    }
+
+    if (page === "report") {
+
+      document
+        .getElementById("pageReport")
+        .classList.remove("hidden");
+
+      activateNav(
+        "navReport",
+        "mobileReport"
+      );
+
+    }
+
+    if (page === "admin") {
+
+      document
+        .getElementById("pageAdmin")
+        .classList.remove("hidden");
+
+      activateNav(
+        "navAdmin",
+        "mobileAdmin"
+      );
+
+      renderReports();
+
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  function activateNav(
+    desktopId,
+    mobileId
+  ) {
+
+    const desktop =
+      document.getElementById(
+        desktopId
+      );
+
+    const mobile =
+      document.getElementById(
+        mobileId
+      );
+
+    if (desktop) {
+
+      desktop.classList.add(
+        "active"
+      );
+
+    }
+
+    if (mobile) {
+
+      mobile.classList.add(
+        "active"
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ENVOI SIGNALEMENT
+  ===================================================== */
+
+  function sendReport() {
+
+    if (pendingReport) {
+      return;
+    }
+
+    if (!currentUser) {
+
+      setReportStatus(
+        "Vous devez être connecté.",
+        false
+      );
+
+      return;
+
+    }
+
+    if (!socket.connected) {
+
+      setReportStatus(
+        "Le serveur PHARE est actuellement hors ligne.",
+        false
+      );
+
+      return;
+
+    }
+
+    const firstName =
+      document
+        .getElementById("reportFirstName")
+        .value
+        .trim();
+
+    const lastName =
+      document
+        .getElementById("reportLastName")
+        .value
+        .trim();
+
+    const type =
+      document
+        .getElementById("reportType")
+        .value;
+
+    const duration =
+      document
+        .getElementById("reportDuration")
+        .value;
+
+    const description =
+      document
+        .getElementById("reportDescription")
+        .value
+        .trim();
+
+    if (!firstName) {
+
+      setReportStatus(
+        "Veuillez renseigner le prénom de la personne concernée.",
+        false
+      );
+
+      return;
+
+    }
+
+    if (!lastName) {
+
+      setReportStatus(
+        "Veuillez renseigner le nom de la personne concernée.",
+        false
+      );
+
+      return;
+
+    }
+
+    if (!type) {
+
+      setReportStatus(
+        "Veuillez sélectionner le type de situation.",
+        false
+      );
+
+      return;
+
+    }
+
+    if (!duration) {
+
+      setReportStatus(
+        "Veuillez sélectionner une durée.",
+        false
+      );
+
+      return;
+
+    }
+
+    if (
+      description.length < 10
+    ) {
+
+      setReportStatus(
+        "Veuillez fournir une description plus précise.",
+        false
+      );
+
+      return;
+
+    }
+
+    const signalement = {
+
+      id:
+        generateId(),
+
+      firstName,
+      lastName,
+      type,
+      duration,
+      description,
+
+      authorFirstName:
+        currentUser.firstName,
+
+      authorLastName:
+        currentUser.lastName,
+
+      date:
+        new Date().toLocaleString(
+          "fr-FR",
+          {
+            dateStyle: "short",
+            timeStyle: "medium"
+          }
+        )
+
+    };
+
+    pendingReport =
+      signalement;
+
+    setSendButtonState(true);
+
+    setReportStatus(
+      "⏳ Transmission au serveur PHARE...",
+      true
+    );
+
+    socket.emit(
+      "nouveau_signalement",
+      signalement,
+      response => {
+
+        console.log(
+          "📥 Réponse serveur pour le signalement :",
+          response
+        );
+
+        if (!response?.success) {
+
+          pendingReport = null;
+
+          setSendButtonState(false);
+
+          setReportStatus(
+            response?.message ||
+            "Le signalement n'a pas pu être enregistré.",
+            false
+          );
+
+          return;
+
+        }
+
+        if (
+          pendingReport !== signalement
+        ) {
           return;
         }
 
+        pendingReport = null;
 
-        reports = history;
+        setSendButtonState(false);
 
-        renderReports();
+        setReportStatus(
+          "✓ Signalement transmis au serveur PHARE.",
+          true
+        );
+
+        clearReportForm();
+
+        showToast(
+          "Signalement transmis",
+          "Votre signalement a été enregistré.",
+          "success"
+        );
+
       }
     );
 
+  }
 
-    /* =========================
-       NOUVEAU SIGNALEMENT
-    ========================= */
 
-    socket.on(
-      "signalement_recu",
-      (signalement) => {
+  /* =====================================================
+     SUPPRESSION SIGNALEMENT
+  ===================================================== */
+
+  function supprimerSignalement(id) {
+
+    console.log(
+      "🖱️ BOUTON SUPPRIMER",
+      id
+    );
+
+    if (
+      !currentUser ||
+      currentUser.role !== "admin"
+    ) {
+
+      console.error(
+        "❌ Utilisateur non administrateur"
+      );
+
+      showToast(
+        "Accès refusé",
+        "Seul l'administrateur peut supprimer un signalement.",
+        "danger"
+      );
+
+      return;
+
+    }
+
+    if (!socket.connected) {
+
+      console.error(
+        "❌ Socket.IO non connecté"
+      );
+
+      showToast(
+        "Serveur indisponible",
+        "Impossible de supprimer le signalement actuellement.",
+        "danger"
+      );
+
+      return;
+
+    }
+
+    if (!id) {
+
+      console.error(
+        "❌ ID manquant"
+      );
+
+      showToast(
+        "Erreur",
+        "Identifiant du signalement manquant.",
+        "danger"
+      );
+
+      return;
+
+    }
+
+    const confirmation =
+      confirm(
+        "Voulez-vous vraiment supprimer ce signalement ?\n\nCette action est définitive."
+      );
+
+    if (!confirmation) {
+
+      console.log(
+        "ℹ️ Suppression annulée"
+      );
+
+      return;
+
+    }
+
+    console.log(
+      "📤 ENVOI AU SERVEUR : supprimer_signalement",
+      String(id)
+    );
+
+    socket.emit(
+      "supprimer_signalement",
+      String(id),
+      response => {
 
         console.log(
-          "🚨 Nouveau signalement en temps réel :",
-          signalement
+          "📥 RÉPONSE DU SERVEUR :",
+          response
         );
 
-
-        if (
-          currentUser &&
-          currentUser.role === "admin"
-        ) {
-
-          reports.unshift(signalement);
-
-          renderReports();
+        if (!response?.success) {
 
           showToast(
-            "Nouveau signalement reçu."
+            "Erreur",
+            response?.message ||
+            "La suppression a échoué.",
+            "danger"
           );
+
+          return;
+
         }
+
+        console.log(
+          "✅ Suppression confirmée par le serveur"
+        );
+
       }
     );
 
+  }
 
-    /* =========================
-       RENDU DES SIGNALEMENTS
-    ========================= */
 
-    function renderReports() {
+  /* =====================================================
+     ID
+  ===================================================== */
 
-      const reportsList =
-        document.getElementById(
-          "reportsList"
+  function generateId() {
+
+    if (
+      window.crypto &&
+      typeof window.crypto.randomUUID ===
+        "function"
+    ) {
+
+      return window.crypto.randomUUID();
+
+    }
+
+    return (
+      Date.now().toString(36) +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2)
+    );
+
+  }
+
+
+  /* =====================================================
+     BOUTON ENVOI
+  ===================================================== */
+
+  function setSendButtonState(
+    sending
+  ) {
+
+    const button =
+      document.getElementById(
+        "sendReportButton"
+      );
+
+    if (!button) {
+      return;
+    }
+
+    button.disabled =
+      sending;
+
+    button.textContent =
+      sending
+        ? "⏳ Transmission..."
+        : "🚨 Envoyer le signalement";
+
+  }
+
+
+  /* =====================================================
+     FORMULAIRE
+  ===================================================== */
+
+  function clearReportForm() {
+
+    document.getElementById(
+      "reportFirstName"
+    ).value = "";
+
+    document.getElementById(
+      "reportLastName"
+    ).value = "";
+
+    document.getElementById(
+      "reportType"
+    ).value = "";
+
+    document.getElementById(
+      "reportDuration"
+    ).value = "";
+
+    document.getElementById(
+      "reportDescription"
+    ).value = "";
+
+  }
+
+
+  /* =====================================================
+     STATUT FORMULAIRE
+  ===================================================== */
+
+  function setReportStatus(
+    message,
+    success
+  ) {
+
+    const element =
+      document.getElementById(
+        "reportStatus"
+      );
+
+    element.classList.remove(
+      "hidden"
+    );
+
+    element.textContent =
+      message;
+
+    element.style.background =
+      success
+        ? "var(--green-soft)"
+        : "var(--red-soft)";
+
+    element.style.color =
+      success
+        ? "var(--green)"
+        : "var(--red)";
+
+  }
+
+
+  /* =====================================================
+     AFFICHAGE ADMIN
+  ===================================================== */
+
+  function renderReports() {
+
+    const container =
+      document.getElementById(
+        "reportsList"
+      );
+
+    if (!container) {
+      return;
+    }
+
+    if (!reports.length) {
+
+      container.innerHTML = `
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            ✓
+          </div>
+
+          Aucun signalement reçu.
+
+        </div>
+      `;
+
+      return;
+
+    }
+
+    container.innerHTML = "";
+
+    reports.forEach(report => {
+
+      const item =
+        document.createElement(
+          "article"
+        );
+
+      item.className =
+        "report-item";
+
+      item.dataset.signalementId =
+        String(report.id);
+
+      const date =
+        report.date ||
+        formatDate(
+          report.createdAt
         );
 
 
-      const adminTotal =
-        document.getElementById(
-          "adminTotal"
-        );
+      /* =================================================
+         CONTENU DU SIGNALEMENT
+      ================================================= */
 
+      item.innerHTML = `
 
-      const homeTotal =
-        document.getElementById(
-          "homeTotal"
-        );
+        <div class="report-top">
 
+          <div>
 
-      adminTotal.textContent =
-        reports.length;
+            <div class="report-type">
+              ${escapeHtml(
+                report.type ||
+                "Situation non précisée"
+              )}
+            </div>
 
+            <div class="report-person">
+              Personne concernée :
+              <strong>
+                ${escapeHtml(
+                  report.firstName ||
+                  ""
+                )}
+                ${escapeHtml(
+                  report.lastName ||
+                  ""
+                )}
+              </strong>
+            </div>
 
-      if (homeTotal) {
-        homeTotal.textContent =
-          reports.length;
-      }
-
-
-      if (reports.length === 0) {
-
-        reportsList.innerHTML = `
-          <div class="empty-reports">
-            Aucun signalement pour le moment.
-          </div>
-        `;
-
-        adminStatusText.textContent =
-          "Aucun signalement.";
-
-        return;
-      }
-
-
-      adminStatusText.textContent =
-        reports.length +
-        " signalement(s) enregistré(s).";
-
-
-      reportsList.innerHTML = "";
-
-
-      reports.forEach((report) => {
-
-        const item =
-          document.createElement("div");
-
-        item.className =
-          "report-item";
-
-
-        const header =
-          document.createElement("div");
-
-        header.className =
-          "report-item-header";
-
-
-        const person =
-          document.createElement("div");
-
-        person.innerHTML = `
-          <div class="report-person">
-            ${escapeHtml(
-              report.firstName || ""
-            )}
-            ${escapeHtml(
-              report.lastName || ""
-            )}
           </div>
 
-          <div class="report-type">
-            ${escapeHtml(
-              report.type || "Non précisé"
-            )}
-          </div>
-        `;
+          <span class="badge badge-danger">
+            Signalement
+          </span>
 
+        </div>
+
+
+        <div class="report-description">
+          ${escapeHtml(
+            report.description ||
+            ""
+          )}
+        </div>
+
+
+        <div class="report-meta">
+
+          <span>
+            🕒 Depuis :
+            ${escapeHtml(
+              report.duration ||
+              "Non précisé"
+            )}
+          </span>
+
+          <span>
+            📅
+            ${escapeHtml(
+              date
+            )}
+          </span>
+
+          <span>
+            👤 Signalé par :
+            ${escapeHtml(
+              report.authorFirstName ||
+              ""
+            )}
+            ${escapeHtml(
+              report.authorLastName ||
+              ""
+            )}
+          </span>
+
+        </div>
+
+      `;
+
+
+      /* =================================================
+         BOUTON SUPPRESSION
+         IMPORTANT :
+         PAS DE onclick DANS LE HTML
+      ================================================= */
+
+      if (
+        currentUser &&
+        currentUser.role === "admin"
+      ) {
 
         const deleteButton =
-          document.createElement("button");
+          document.createElement(
+            "button"
+          );
 
-        deleteButton.type = "button";
+        deleteButton.type =
+          "button";
 
         deleteButton.className =
           "delete-button";
 
         deleteButton.textContent =
-          "Supprimer";
+          "🗑️ Supprimer";
 
         deleteButton.dataset.id =
-          report.id;
+          String(report.id);
 
 
         deleteButton.addEventListener(
@@ -1801,358 +2987,542 @@
 
             event.stopPropagation();
 
+            console.log(
+              "🖱️ CLIC SUR SUPPRIMER"
+            );
+
+            console.log(
+              "ID du signalement :",
+              this.dataset.id
+            );
+
             supprimerSignalement(
               this.dataset.id
             );
+
           }
         );
 
 
-        header.appendChild(person);
-        header.appendChild(deleteButton);
+        item.appendChild(
+          deleteButton
+        );
+
+      }
 
 
-        const description =
-          document.createElement("div");
+      container.appendChild(
+        item
+      );
 
-        description.className =
-          "report-description";
+    });
 
-        description.textContent =
-          report.description ||
-          "Aucune description";
+  }
 
 
-        const meta =
-          document.createElement("div");
+  /* =====================================================
+     COMPTEURS
+  ===================================================== */
 
-        meta.className =
-          "report-meta";
+  function updateReportCounters() {
 
+    const count =
+      reports.length;
 
-        const duration =
-          report.duration ||
-          "Non précisé";
+    const reportCount =
+      document.getElementById(
+        "reportCount"
+      );
 
+    const adminTotal =
+      document.getElementById(
+        "adminTotal"
+      );
 
-        const author =
-          (
-            report.authorFirstName ||
-            ""
-          ) +
-          " " +
-          (
-            report.authorLastName ||
-            ""
-          );
+    if (reportCount) {
 
+      reportCount.textContent =
+        count;
 
-        const date =
-          report.date ||
-          report.createdAt ||
-          "Date inconnue";
-
-
-        meta.innerHTML = `
-          <div>
-            <strong>Durée :</strong>
-            ${escapeHtml(duration)}
-          </div>
-
-          <div>
-            <strong>Signalé par :</strong>
-            ${escapeHtml(author.trim() || "Inconnu")}
-          </div>
-
-          <div>
-            <strong>Date :</strong>
-            ${escapeHtml(String(date))}
-          </div>
-        `;
-
-
-        item.appendChild(header);
-        item.appendChild(description);
-        item.appendChild(meta);
-
-
-        reportsList.appendChild(item);
-      });
     }
 
+    if (adminTotal) {
 
-    /* =========================
-       SUPPRESSION
-    ========================= */
+      adminTotal.textContent =
+        count;
 
-    function supprimerSignalement(id) {
+    }
+
+  }
+
+
+  /* =====================================================
+     DATE
+  ===================================================== */
+
+  function formatDate(value) {
+
+    if (!value) {
+      return "";
+    }
+
+    const date =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+
+      return String(value);
+
+    }
+
+    return date.toLocaleString(
+      "fr-FR",
+      {
+        dateStyle: "short",
+        timeStyle: "medium"
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     CONNEXION
+  ===================================================== */
+
+  function setConnectionStatus(
+    online
+  ) {
+
+    const dot =
+      document.getElementById(
+        "statusDot"
+      );
+
+    const text =
+      document.getElementById(
+        "connectionStatus"
+      );
+
+    const dashboard =
+      document.getElementById(
+        "dashboardConnection"
+      );
+
+    const adminServer =
+      document.getElementById(
+        "adminServerStatus"
+      );
+
+    if (online) {
+
+      dot.classList.add(
+        "online"
+      );
+
+      dot.classList.remove(
+        "offline"
+      );
+
+      text.textContent =
+        "Serveur connecté";
+
+      dashboard.textContent =
+        "En ligne";
+
+      dashboard.style.color =
+        "var(--green)";
+
+      if (adminServer) {
+
+        adminServer.textContent =
+          "En ligne";
+
+        adminServer.style.color =
+          "var(--green)";
+
+      }
+
+    } else {
+
+      dot.classList.remove(
+        "online"
+      );
+
+      dot.classList.add(
+        "offline"
+      );
+
+      text.textContent =
+        "Serveur indisponible";
+
+      dashboard.textContent =
+        "Hors ligne";
+
+      dashboard.style.color =
+        "var(--red)";
+
+      if (adminServer) {
+
+        adminServer.textContent =
+          "Hors ligne";
+
+        adminServer.style.color =
+          "var(--red)";
+
+      }
+
+    }
+
+  }
+
+
+  /* =====================================================
+     NOTIFICATION
+  ===================================================== */
+
+  async function requestNotification(
+    signalement
+  ) {
+
+    if (
+      !("Notification" in window)
+    ) {
+
+      return;
+
+    }
+
+    try {
 
       if (
-        !currentUser ||
-        currentUser.role !== "admin"
+        Notification.permission ===
+        "default"
       ) {
 
-        return;
+        await Notification.requestPermission();
+
       }
 
+      if (
+        Notification.permission ===
+          "granted" &&
+        signalement
+      ) {
 
-      if (!id) {
-        return;
-      }
+        new Notification(
+          "🚨 Nouveau signalement PHARE",
+          {
+            body:
+              `${signalement.type || "Signalement"} — ` +
+              `${signalement.firstName || ""} ` +
+              `${signalement.lastName || ""}`,
 
-
-      const confirmation =
-        confirm(
-          "Voulez-vous vraiment supprimer ce signalement ?"
+            tag:
+              `phare-${signalement.id}`
+          }
         );
 
-
-      if (!confirmation) {
-        return;
       }
 
+    } catch (error) {
 
       console.log(
-        "🗑️ Demande de suppression :",
-        id
+        "Notification indisponible."
       );
 
-
-      /*
-       * Pas de callback ici :
-       * le serveur confirme la suppression
-       * avec l'événement signalement_supprime.
-       */
-
-      socket.emit(
-        "supprimer_signalement",
-        String(id)
-      );
     }
 
-
-    /* =========================
-       SIGNALement SUPPRIMÉ
-    ========================= */
-
-    socket.on(
-      "signalement_supprime",
-      (id) => {
-
-        console.log(
-          "🗑️ Signalement supprimé :",
-          id
-        );
+  }
 
 
-        reports =
-          reports.filter(
-            (report) =>
-              String(report.id) !==
-              String(id)
-          );
+  /* =====================================================
+     ALERTE
+  ===================================================== */
 
+  function playAlert() {
 
-        renderReports();
+    try {
 
+      const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
 
-        showToast(
-          "Signalement supprimé."
-        );
+      if (!AudioContext) {
+        return;
       }
+
+      const context =
+        new AudioContext();
+
+      const oscillator =
+        context.createOscillator();
+
+      const gain =
+        context.createGain();
+
+      oscillator.type =
+        "sine";
+
+      oscillator.frequency.value =
+        880;
+
+      gain.gain.setValueAtTime(
+        0.001,
+        context.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.15,
+        context.currentTime + .02
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        context.currentTime + .4
+      );
+
+      oscillator.connect(
+        gain
+      );
+
+      gain.connect(
+        context.destination
+      );
+
+      oscillator.start();
+
+      oscillator.stop(
+        context.currentTime + .4
+      );
+
+    } catch (error) {
+
+      console.log(
+        "Alerte sonore indisponible."
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     TOAST
+  ===================================================== */
+
+  function showToast(
+    title,
+    message,
+    type = "info"
+  ) {
+
+    const container =
+      document.getElementById(
+        "toastContainer"
+      );
+
+    const toast =
+      document.createElement(
+        "div"
+      );
+
+    toast.className =
+      "toast";
+
+    const icon =
+      type === "danger"
+        ? "🚨"
+        : type === "success"
+          ? "✓"
+          : "ℹ";
+
+    const iconElement =
+      document.createElement(
+        "div"
+      );
+
+    iconElement.className =
+      "toast-icon";
+
+    iconElement.textContent =
+      icon;
+
+    const content =
+      document.createElement(
+        "div"
+      );
+
+    const titleElement =
+      document.createElement(
+        "div"
+      );
+
+    titleElement.className =
+      "toast-title";
+
+    titleElement.textContent =
+      title;
+
+    const messageElement =
+      document.createElement(
+        "div"
+      );
+
+    messageElement.className =
+      "toast-message";
+
+    messageElement.textContent =
+      message;
+
+    content.appendChild(
+      titleElement
     );
 
-
-    /* =========================
-       ERREURS SERVEUR
-    ========================= */
-
-    socket.on(
-      "erreur_signalement",
-      (data) => {
-
-        console.error(
-          "❌ Erreur serveur :",
-          data
-        );
-
-
-        showToast(
-          data?.message ||
-          "Une erreur est survenue."
-        );
-      }
+    content.appendChild(
+      messageElement
     );
 
+    toast.appendChild(
+      iconElement
+    );
 
-    /* =========================
-       LOGOUT
-    ========================= */
+    toast.appendChild(
+      content
+    );
 
-    function logout() {
+    container.appendChild(
+      toast
+    );
 
-      currentUser = null;
-      reports = [];
-      pendingReport = null;
+    setTimeout(
+      () => toast.remove(),
+      5000
+    );
+
+  }
 
 
-      document.body.classList.remove(
-        "admin-mode"
+  /* =====================================================
+     SECURITE HTML
+  ===================================================== */
+
+  function escapeHtml(value) {
+
+    const element =
+      document.createElement(
+        "div"
       );
 
+    element.textContent =
+      value == null
+        ? ""
+        : String(value);
 
-      app.style.display = "none";
-      loginScreen.style.display = "flex";
+    return element.innerHTML;
 
-
-      document.getElementById(
-        "loginFirstName"
-      ).value = "";
-
-      document.getElementById(
-        "loginLastName"
-      ).value = "";
-
-      document.getElementById(
-        "loginError"
-      ).textContent = "";
+  }
 
 
-      document.getElementById(
-        "reportsList"
-      ).innerHTML = `
-        <div class="empty-reports">
-          Aucun signalement pour le moment.
-        </div>
-      `;
+  /* =====================================================
+     DÉCONNEXION
+  ===================================================== */
 
+  function logout() {
 
-      showPageAfterLogout();
-    }
+    currentUser = null;
 
+    reports = [];
 
-    function showPageAfterLogout() {
+    pendingReport = null;
 
-      document
-        .querySelectorAll(".page")
-        .forEach((element) => {
+    document
+      .getElementById("app")
+      .classList.add("hidden");
 
-          element.classList.remove("active");
-        });
-
-
-      document
-        .getElementById("pageHome")
-        .classList.add("active");
-
-
-      document
-        .querySelectorAll(".nav-button")
-        .forEach((button) => {
-
-          button.classList.remove("active");
-        });
-
-
-      document
-        .getElementById("navHome")
-        .classList.add("active");
-    }
-
-
-    /* =========================
-       TOAST
-    ========================= */
-
-    let toastTimer = null;
-
-
-    function showToast(message) {
-
-      const toast =
-        document.getElementById(
-          "toast"
-        );
-
-
-      toast.textContent =
-        message;
-
-
-      toast.classList.add(
-        "show"
-      );
-
-
-      clearTimeout(toastTimer);
-
-
-      toastTimer =
-        setTimeout(() => {
-
-          toast.classList.remove(
-            "show"
-          );
-
-        }, 3000);
-    }
-
-
-    /* =========================
-       SÉCURITÉ AFFICHAGE
-    ========================= */
-
-    function escapeHtml(value) {
-
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-
-    /* =========================
-       TOUCHE ENTRÉE LOGIN
-    ========================= */
+    document
+      .getElementById("loginScreen")
+      .classList.remove("hidden");
 
     document
       .getElementById("loginFirstName")
-      .addEventListener(
-        "keydown",
-        function(event) {
-
-          if (event.key === "Enter") {
-            login();
-          }
-        }
-      );
-
+      .value = "";
 
     document
       .getElementById("loginLastName")
-      .addEventListener(
-        "keydown",
-        function(event) {
+      .value = "";
 
-          if (event.key === "Enter") {
-            login();
-          }
-        }
-      );
+    hideLoginError();
 
+    clearReportForm();
 
-    /* =========================
-       ÉTAT ADMIN INITIAL
-    ========================= */
+    setSendButtonState(false);
 
-    document.body.classList.remove(
-      "admin-mode"
+    socket.emit(
+      "role",
+      "user"
     );
 
-  </script>
+    showPage("home");
+
+  }
+
+
+  /* =====================================================
+     ENTER = LOGIN
+  ===================================================== */
+
+  document
+    .getElementById("loginFirstName")
+    .addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          login();
+
+        }
+
+      }
+    );
+
+
+  document
+    .getElementById("loginLastName")
+    .addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          login();
+
+        }
+
+      }
+    );
+
+
+  /* =====================================================
+     INITIALISATION
+  ===================================================== */
+
+  setConnectionStatus(
+    socket.connected
+  );
+
+  updateReportCounters();
+
+</script>
 
 </body>
 </html>
-```
