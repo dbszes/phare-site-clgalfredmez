@@ -1,0 +1,2796 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f2747">
+
+  <title>PHARE — Plateforme de signalement</title>
+
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+  <style>
+    :root {
+      --navy: #0f2747;
+      --navy-2: #16365f;
+      --blue: #1d5fd1;
+      --blue-light: #edf4ff;
+
+      --green: #16845b;
+      --green-light: #eaf8f2;
+
+      --red: #c92d3a;
+      --red-light: #fff0f1;
+
+      --orange: #b96b00;
+      --orange-light: #fff7e8;
+
+      --text: #172033;
+      --muted: #687386;
+      --border: #dfe5ec;
+      --background: #f4f6f9;
+      --white: #ffffff;
+
+      --shadow-sm: 0 2px 8px rgba(15, 39, 71, .06);
+      --shadow-md: 0 8px 28px rgba(15, 39, 71, .09);
+
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      background: var(--background);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 30px;
+
+      background:
+        radial-gradient(
+          circle at 20% 10%,
+          rgba(29, 95, 209, .18),
+          transparent 35%
+        ),
+        linear-gradient(
+          135deg,
+          #0b203b,
+          #143861
+        );
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 470px;
+
+      background: rgba(255,255,255,.98);
+
+      border-radius: 20px;
+
+      padding: 42px;
+
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.25);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      margin-bottom: 30px;
+    }
+
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+
+      border-radius: 15px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--navy);
+      color: white;
+
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .brand-name {
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .brand-subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .login-title {
+      margin: 0 0 8px;
+      font-size: 28px;
+      color: var(--navy);
+    }
+
+    .login-description {
+      margin: 0 0 28px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 14px;
+      font-weight: 700;
+      color: #293449;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+
+      border: 1px solid var(--border);
+      background: white;
+
+      border-radius: 10px;
+
+      padding: 13px 14px;
+
+      color: var(--text);
+
+      outline: none;
+
+      transition:
+        border .15s ease,
+        box-shadow .15s ease;
+    }
+
+    .field textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--blue);
+
+      box-shadow:
+        0 0 0 3px rgba(29,95,209,.12);
+    }
+
+    .field-help {
+      margin-top: 6px;
+
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 13px 18px;
+
+      font-weight: 700;
+
+      transition:
+        transform .12s ease,
+        opacity .12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      width: 100%;
+
+      background: var(--blue);
+      color: white;
+
+      box-shadow:
+        0 6px 16px rgba(29,95,209,.2);
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #eef1f5;
+      color: #273348;
+    }
+
+    .btn-success {
+      background: var(--green);
+      color: white;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      height: 70px;
+
+      background: white;
+      border-bottom: 1px solid var(--border);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 30px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .topbar-logo {
+      width: 38px;
+      height: 38px;
+
+      border-radius: 10px;
+
+      background: var(--navy);
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .topbar-title {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+      background: #aaa;
+    }
+
+    .status-dot.online {
+      background: var(--green);
+    }
+
+    .status-dot.offline {
+      background: var(--red);
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--blue-light);
+      color: var(--blue);
+
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+      background: var(--navy);
+
+      padding: 25px 15px;
+
+      color: white;
+    }
+
+    .sidebar-section {
+      margin: 0 10px 10px;
+
+      color: #91a4be;
+
+      text-transform: uppercase;
+      letter-spacing: .08em;
+
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .nav-button {
+      width: 100%;
+
+      border: 0;
+      background: transparent;
+
+      color: #c9d4e3;
+
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+
+      padding: 12px 13px;
+
+      margin-bottom: 4px;
+
+      border-radius: 9px;
+
+      text-align: left;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav-button:hover {
+      background: rgba(255,255,255,.07);
+      color: white;
+    }
+
+    .nav-button.active {
+      background: rgba(255,255,255,.13);
+      color: white;
+    }
+
+    .nav-icon {
+      width: 20px;
+      text-align: center;
+      opacity: .9;
+    }
+
+    .sidebar-bottom {
+      margin-top: 35px;
+      padding: 15px 10px;
+
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main {
+      padding: 35px;
+
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    .page-header {
+      margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+
+      font-size: 29px;
+
+      color: var(--navy);
+
+      letter-spacing: -.4px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+
+      color: var(--muted);
+
+      line-height: 1.5;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .card {
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: var(--radius);
+
+      padding: 24px;
+
+      box-shadow: var(--shadow-sm);
+
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      margin: 0;
+
+      color: var(--navy);
+
+      font-size: 18px;
+    }
+
+    .card-description {
+      margin: 5px 0 0;
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    /* =========================
+       DASHBOARD
+    ========================= */
+
+    .stats {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 16px;
+
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 13px;
+
+      padding: 20px;
+
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+
+      color: var(--navy);
+
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    /* =========================
+       ALERT
+    ========================= */
+
+    .important-notice {
+      display: flex;
+      gap: 14px;
+
+      padding: 17px;
+
+      background: var(--blue-light);
+
+      border: 1px solid #cddfff;
+
+      border-radius: 12px;
+
+      margin-bottom: 20px;
+    }
+
+    .notice-icon {
+      font-size: 20px;
+    }
+
+    .notice-title {
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .notice-text {
+      color: #53647a;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       REPORT FORM
+    ========================= */
+
+    .report-layout {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        330px;
+
+      gap: 20px;
+    }
+
+    .report-security {
+      background: #f8fafc;
+
+      border: 1px solid var(--border);
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      height: fit-content;
+    }
+
+    .report-security h3 {
+      margin-top: 0;
+
+      color: var(--navy);
+
+      font-size: 15px;
+    }
+
+    .security-item {
+      display: flex;
+      gap: 10px;
+
+      margin: 15px 0;
+
+      color: #526174;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+    /* =========================
+       ADMIN REPORTS
+    ========================= */
+
+    .report-item {
+      border: 1px solid var(--border);
+
+      border-left: 4px solid var(--red);
+
+      border-radius: 11px;
+
+      padding: 18px;
+
+      margin-bottom: 12px;
+
+      background: white;
+
+      animation: appear .2s ease;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .report-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      gap: 15px;
+
+      margin-bottom: 12px;
+    }
+
+    .report-type {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+
+      padding: 5px 8px;
+
+      border-radius: 6px;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .badge-danger {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .badge-blue {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    .report-description {
+      color: #374357;
+
+      line-height: 1.6;
+
+      white-space: pre-wrap;
+    }
+
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+
+      margin-top: 15px;
+
+      color: var(--muted);
+
+      font-size: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+
+      padding: 50px 20px;
+
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    #toastContainer {
+      position: fixed;
+
+      right: 22px;
+      bottom: 22px;
+
+      z-index: 200;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 10px;
+
+      width: min(380px, calc(100vw - 30px));
+    }
+
+    .toast {
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 12px;
+
+      padding: 15px 17px;
+
+      box-shadow: var(--shadow-md);
+
+      display: flex;
+      gap: 12px;
+
+      animation: toastIn .2s ease;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toast-icon {
+      font-size: 20px;
+    }
+
+    .toast-title {
+      font-weight: 800;
+
+      font-size: 14px;
+
+      margin-bottom: 3px;
+    }
+
+    .toast-message {
+      color: var(--muted);
+
+      font-size: 12px;
+
+      line-height: 1.4;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    .mobile-nav {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 210px 1fr;
+      }
+
+      .main {
+        padding: 25px;
+      }
+
+      .report-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        padding: 0 15px;
+      }
+
+      .topbar-title {
+        display: none;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 18px 15px 95px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-nav {
+        position: fixed;
+
+        display: grid;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        height: 70px;
+
+        z-index: 100;
+
+        background: white;
+
+        border-top: 1px solid var(--border);
+
+        box-shadow: 0 -5px 20px rgba(0,0,0,.08);
+      }
+
+      .mobile-nav button {
+        border: 0;
+        background: white;
+
+        color: var(--muted);
+
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .mobile-nav button.active {
+        color: var(--blue);
+      }
+
+      .login-card {
+        padding: 28px 22px;
+      }
+
+      .login-screen {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     CONNEXION
+===================================================== -->
+
+<section id="loginScreen" class="login-screen">
+
+  <div class="login-card">
+
+    <div class="brand">
+
+      <div class="brand-logo">
+        PH
+      </div>
+
+      <div>
+        <div class="brand-name">
+          PHARE
+        </div>
+
+        <div class="brand-subtitle">
+          Plateforme de prévention et de signalement
+        </div>
+      </div>
+
+    </div>
+
+    <h1 class="login-title">
+      Connexion
+    </h1>
+
+    <p class="login-description">
+      Accédez à votre espace PHARE pour effectuer ou suivre
+      un signalement.
+    </p>
+
+    <div class="field">
+
+      <label for="loginFirstName">
+        Prénom
+      </label>
+
+      <input
+        id="loginFirstName"
+        type="text"
+        autocomplete="given-name"
+        placeholder="Votre prénom"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label for="loginLastName">
+        Nom
+      </label>
+
+      <input
+        id="loginLastName"
+        type="text"
+        autocomplete="family-name"
+        placeholder="Votre nom"
+      >
+
+    </div>
+
+    <button
+      class="btn btn-primary"
+      onclick="login()"
+    >
+      Se connecter
+    </button>
+
+    <p
+      id="loginError"
+      class="hidden"
+      style="
+        color:#c92d3a;
+        background:#fff0f1;
+        border-radius:8px;
+        padding:11px;
+        font-size:13px;
+        margin-top:15px;
+      "
+    ></p>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     APPLICATION
+===================================================== -->
+
+<div id="app" class="app hidden">
+
+  <!-- TOPBAR -->
+
+  <header class="topbar">
+
+    <div class="topbar-left">
+
+      <div class="topbar-logo">
+        PH
+      </div>
+
+      <div class="topbar-title">
+        PHARE
+      </div>
+
+      <div class="topbar-status">
+
+        <span
+          id="statusDot"
+          class="status-dot"
+        ></span>
+
+        <span id="connectionStatus">
+          Connexion au serveur...
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="user-chip">
+
+      <div class="avatar" id="avatar">
+        ?
+      </div>
+
+      <div>
+
+        <div
+          class="user-name"
+          id="headerUserName"
+        >
+          Utilisateur
+        </div>
+
+        <div
+          class="user-role"
+          id="headerUserRole"
+        >
+          Utilisateur
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        Navigation
+      </div>
+
+      <button
+        id="navHome"
+        class="nav-button active"
+        onclick="showPage('home')"
+      >
+        <span class="nav-icon">⌂</span>
+        Accueil
+      </button>
+
+      <button
+        id="navReport"
+        class="nav-button"
+        onclick="showPage('report')"
+      >
+        <span class="nav-icon">⚠</span>
+        Signaler
+      </button>
+
+      <button
+        id="navAdmin"
+        class="nav-button hidden"
+        onclick="showPage('admin')"
+      >
+        <span class="nav-icon">▣</span>
+        Signalements reçus
+      </button>
+
+      <div class="sidebar-bottom">
+
+        <button
+          class="nav-button"
+          onclick="logout()"
+        >
+          <span class="nav-icon">↪</span>
+          Déconnexion
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+      <!-- ===============================================
+           ACCUEIL
+      ================================================ -->
+
+      <section id="pageHome">
+
+        <div class="page-header">
+
+          <h1>
+            Tableau de bord
+          </h1>
+
+          <p>
+            Bienvenue dans votre espace PHARE.
+          </p>
+
+        </div>
+
+
+        <div class="important-notice">
+
+          <div class="notice-icon">
+            ℹ️
+          </div>
+
+          <div>
+
+            <div class="notice-title">
+              Besoin d'aide ou de protection ?
+            </div>
+
+            <div class="notice-text">
+              Si vous êtes victime ou témoin d'une situation
+              de harcèlement, vous pouvez effectuer un
+              signalement depuis cet espace.
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="stats">
+
+          <div class="stat-card">
+
+            <div class="stat-label">
+              Service
+            </div>
+
+            <div
+              class="stat-value"
+              style="font-size:21px;"
+            >
+              PHARE
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-label">
+              Connexion
+            </div>
+
+            <div
+              id="dashboardConnection"
+              class="stat-value"
+              style="font-size:21px;"
+            >
+              —
+            </div>
+
+          </div>
+
+
+          <div
+            id="adminStat"
+            class="stat-card hidden"
+          >
+
+            <div class="stat-label">
+              Nouveaux signalements
+            </div>
+
+            <div
+              id="reportCount"
+              class="stat-value"
+            >
+              0
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h2 class="card-title">
+                Protection et confidentialité
+              </h2>
+
+              <p class="card-description">
+                Les informations transmises doivent rester
+                factuelles et précises.
+              </p>
+
+            </div>
+
+          </div>
+
+          <div style="
+            color:#526174;
+            line-height:1.7;
+            font-size:14px;
+          ">
+
+            <p>
+              Décrivez les faits observés sans exagération
+              ni jugement.
+            </p>
+
+            <p>
+              Si une intervention immédiate est nécessaire,
+              utilisez les moyens d'urgence appropriés.
+            </p>
+
+            <p>
+              Les signalements transmis à PHARE sont
+              destinés à l'équipe responsable de leur
+              traitement.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===============================================
+           SIGNALEMENT
+      ================================================ -->
+
+      <section
+        id="pageReport"
+        class="hidden"
+      >
+
+        <div class="page-header">
+
+          <h1>
+            Nouveau signalement
+          </h1>
+
+          <p>
+            Décrivez précisément la situation que vous
+            souhaitez porter à notre attention.
+          </p>
+
+        </div>
+
+
+        <div class="report-layout">
+
+          <div class="card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h2 class="card-title">
+                  Informations sur la situation
+                </h2>
+
+                <p class="card-description">
+                  Les champs marqués sont nécessaires
+                  pour traiter correctement le signalement.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- PRENOM -->
+
+            <div class="field">
+
+              <label for="reportFirstName">
+                Prénom
+              </label>
+
+              <input
+                id="reportFirstName"
+                type="text"
+                placeholder="Prénom de la personne concernée"
+              >
+
+            </div>
+
+
+            <!-- NOM -->
+
+            <div class="field">
+
+              <label for="reportLastName">
+                Nom
+              </label>
+
+              <input
+                id="reportLastName"
+                type="text"
+                placeholder="Nom de la personne concernée"
+              >
+
+            </div>
+
+
+            <!-- TYPE -->
+
+            <div class="field">
+
+              <label for="reportType">
+                Type de situation
+              </label>
+
+              <select id="reportType">
+
+                <option value="">
+                  Sélectionner un type
+                </option>
+
+                <option value="Harcèlement physique">
+                  Harcèlement physique
+                </option>
+
+                <option value="Harcèlement verbal">
+                  Harcèlement verbal
+                </option>
+
+                <option value="Harcèlement en ligne">
+                  Harcèlement en ligne
+                </option>
+
+                <option value="Menaces">
+                  Menaces / intimidation
+                </option>
+
+                <option value="Autre">
+                  Autre
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- DUREE -->
+
+            <div class="field">
+
+              <label for="reportDuration">
+                Depuis combien de temps cela se produit-il ?
+              </label>
+
+              <select id="reportDuration">
+
+                <option value="">
+                  Sélectionner une durée
+                </option>
+
+                <option value="Aujourd'hui">
+                  Aujourd'hui
+                </option>
+
+                <option value="Depuis quelques jours">
+                  Depuis quelques jours
+                </option>
+
+                <option value="Depuis quelques semaines">
+                  Depuis quelques semaines
+                </option>
+
+                <option value="Depuis plusieurs mois">
+                  Depuis plusieurs mois
+                </option>
+
+                <option value="Depuis plus d'un an">
+                  Depuis plus d'un an
+                </option>
+
+                <option value="Je ne sais pas">
+                  Je ne sais pas
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="field">
+
+              <label for="reportDescription">
+                Description des faits
+              </label>
+
+              <textarea
+                id="reportDescription"
+                placeholder="Décrivez ce qui s'est passé : lieu, faits, contexte, personnes présentes, répétition éventuelle..."
+              ></textarea>
+
+              <div class="field-help">
+                Restez aussi précis et factuel que possible.
+              </div>
+
+            </div>
+
+
+            <button
+              class="btn btn-danger"
+              style="width:100%;"
+              onclick="sendReport()"
+            >
+              🚨 Envoyer le signalement
+            </button>
+
+            <div
+              id="reportStatus"
+              class="hidden"
+              style="
+                margin-top:15px;
+                padding:13px;
+                border-radius:9px;
+                font-size:13px;
+              "
+            ></div>
+
+          </div>
+
+
+          <!-- SIDE INFO -->
+
+          <aside class="report-security">
+
+            <h3>
+              Avant d'envoyer
+            </h3>
+
+            <div class="security-item">
+              <span>✓</span>
+              <span>
+                Vérifiez que les informations sont exactes.
+              </span>
+            </div>
+
+            <div class="security-item">
+              <span>✓</span>
+              <span>
+                Décrivez les faits plutôt que de supposer
+                les intentions des personnes.
+              </span>
+            </div>
+
+            <div class="security-item">
+              <span>✓</span>
+              <span>
+                Indiquez depuis combien de temps la situation
+                existe.
+              </span>
+            </div>
+
+            <div class="security-item">
+              <span>✓</span>
+              <span>
+                Une fois envoyé, le signalement est transmis
+                au serveur PHARE.
+              </span>
+            </div>
+
+          </aside>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===============================================
+           ADMINISTRATION
+      ================================================ -->
+
+      <section
+        id="pageAdmin"
+        class="hidden"
+      >
+
+        <div class="page-header">
+
+          <h1>
+            Centre de signalements
+          </h1>
+
+          <p>
+            Réception en temps réel des signalements
+            transmis à PHARE.
+          </p>
+
+        </div>
+
+
+        <div
+          class="important-notice"
+          style="
+            background:#fff7e8;
+            border-color:#f2d49d;
+          "
+        >
+
+          <div class="notice-icon">
+            🔔
+          </div>
+
+          <div>
+
+            <div class="notice-title">
+              Surveillance active
+            </div>
+
+            <div class="notice-text">
+              Cette page reçoit automatiquement les nouveaux
+              signalements lorsque le serveur est connecté.
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h2 class="card-title">
+                Signalements
+              </h2>
+
+              <p class="card-description">
+                Les nouveaux signalements apparaissent en haut
+                de la liste.
+              </p>
+
+            </div>
+
+            <span
+              id="adminLiveBadge"
+              class="badge badge-blue"
+            >
+              ● Temps réel
+            </span>
+
+          </div>
+
+
+          <div id="reportsList">
+
+            <div class="empty-state">
+
+              <div class="empty-icon">
+                ✓
+              </div>
+
+              Aucun signalement reçu.
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+
+
+  <!-- MOBILE -->
+
+  <nav class="mobile-nav">
+
+    <button
+      id="mobileHome"
+      class="active"
+      onclick="showPage('home')"
+    >
+      <div>⌂</div>
+      Accueil
+    </button>
+
+    <button
+      id="mobileReport"
+      onclick="showPage('report')"
+    >
+      <div>⚠</div>
+      Signaler
+    </button>
+
+    <button
+      id="mobileAdmin"
+      class="hidden"
+      onclick="showPage('admin')"
+    >
+      <div>▣</div>
+      Admin
+    </button>
+
+  </nav>
+
+</div>
+
+
+<!-- TOASTS -->
+
+<div id="toastContainer"></div>
+
+
+<script>
+
+  /* =====================================================
+     CONFIGURATION
+  ===================================================== */
+
+  const SERVER_URL =
+    "https://phare-server.onrender.com";
+
+
+  /*
+   * Administrateur principal
+   *
+   * Pour le test actuel.
+   */
+  const MAIN_ADMIN_FIRST_NAME = "Ziyad";
+  const MAIN_ADMIN_LAST_NAME = "HAMIED";
+
+
+  let currentUser = null;
+  let reports = [];
+
+
+  /* =====================================================
+     SOCKET.IO
+  ===================================================== */
+
+  const socket = io(SERVER_URL, {
+    transports: ["websocket", "polling"]
+  });
+
+
+  socket.on("connect", () => {
+
+    console.log(
+      "PHARE connecté au serveur :",
+      socket.id
+    );
+
+    setConnectionStatus(true);
+
+    if (currentUser) {
+
+      socket.emit(
+        "role",
+        currentUser.role
+      );
+
+    }
+
+  });
+
+
+  socket.on("disconnect", () => {
+
+    console.log(
+      "PHARE déconnecté du serveur"
+    );
+
+    setConnectionStatus(false);
+
+  });
+
+
+  /*
+   * Réception d'un signalement.
+   *
+   * Seul Ziyad est considéré comme administrateur
+   * dans cette version de test.
+   */
+
+  socket.on(
+    "signalement_recu",
+    (signalement) => {
+
+      console.log(
+        "🚨 Signalement reçu :",
+        signalement
+      );
+
+
+      if (
+        !currentUser ||
+        currentUser.role !== "admin"
+      ) {
+        return;
+      }
+
+
+      reports.unshift(signalement);
+
+      renderReports();
+
+
+      document.getElementById(
+        "reportCount"
+      ).textContent = reports.length;
+
+
+      showToast(
+        "🚨 Nouveau signalement",
+        `${signalement.type} — ${signalement.firstName || ""}`,
+        "danger"
+      );
+
+
+      playAlert();
+
+
+      requestNotificationPermissionAndNotify(
+        signalement
+      );
+
+    }
+  );
+
+
+  /* =====================================================
+     CONNEXION
+  ===================================================== */
+
+  function login() {
+
+    const firstName =
+      document
+        .getElementById("loginFirstName")
+        .value
+        .trim();
+
+    const lastName =
+      document
+        .getElementById("loginLastName")
+        .value
+        .trim();
+
+
+    const error =
+      document.getElementById("loginError");
+
+
+    error.classList.add("hidden");
+
+
+    if (!firstName || !lastName) {
+
+      error.textContent =
+        "Veuillez renseigner votre prénom et votre nom.";
+
+      error.classList.remove("hidden");
+
+      return;
+    }
+
+
+    const isAdmin =
+      firstName.toLowerCase() ===
+        MAIN_ADMIN_FIRST_NAME.toLowerCase()
+      &&
+      lastName.toLowerCase() ===
+        MAIN_ADMIN_LAST_NAME.toLowerCase();
+
+
+    currentUser = {
+
+      firstName,
+
+      lastName,
+
+      role: isAdmin
+        ? "admin"
+        : "user"
+
+    };
+
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+
+    document
+      .getElementById("app")
+      .classList.remove("hidden");
+
+
+    updateUserInterface();
+
+
+    socket.emit(
+      "role",
+      currentUser.role
+    );
+
+
+    showPage(
+      isAdmin
+        ? "admin"
+        : "home"
+    );
+
+
+    if (isAdmin) {
+
+      requestNotificationPermissionAndNotify();
+
+    }
+
+  }
+
+
+  /* =====================================================
+     INTERFACE UTILISATEUR
+  ===================================================== */
+
+  function updateUserInterface() {
+
+    const fullName =
+      `${currentUser.firstName} ${currentUser.lastName}`;
+
+
+    document.getElementById(
+      "headerUserName"
+    ).textContent = fullName;
+
+
+    document.getElementById(
+      "headerUserRole"
+    ).textContent =
+      currentUser.role === "admin"
+        ? "Administrateur"
+        : "Utilisateur";
+
+
+    const initials =
+      (
+        currentUser.firstName.charAt(0) +
+        currentUser.lastName.charAt(0)
+      ).toUpperCase();
+
+
+    document.getElementById(
+      "avatar"
+    ).textContent = initials;
+
+
+    const adminElements = [
+
+      "navAdmin",
+      "mobileAdmin",
+      "adminStat"
+
+    ];
+
+
+    adminElements.forEach(id => {
+
+      const element =
+        document.getElementById(id);
+
+      if (!element) return;
+
+      if (currentUser.role === "admin") {
+
+        element.classList.remove("hidden");
+
+      } else {
+
+        element.classList.add("hidden");
+
+      }
+
+    });
+
+
+    document.getElementById(
+      "reportFirstName"
+    ).value = currentUser.firstName;
+
+
+    document.getElementById(
+      "reportLastName"
+    ).value = currentUser.lastName;
+
+  }
+
+
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
+
+  function showPage(page) {
+
+    const pages = [
+
+      "pageHome",
+      "pageReport",
+      "pageAdmin"
+
+    ];
+
+
+    pages.forEach(id => {
+
+      document
+        .getElementById(id)
+        .classList.add("hidden");
+
+    });
+
+
+    const navigation = [
+
+      "navHome",
+      "navReport",
+      "navAdmin"
+
+    ];
+
+
+    navigation.forEach(id => {
+
+      document
+        .getElementById(id)
+        .classList.remove("active");
+
+    });
+
+
+    const mobileNavigation = [
+
+      "mobileHome",
+      "mobileReport",
+      "mobileAdmin"
+
+    ];
+
+
+    mobileNavigation.forEach(id => {
+
+      document
+        .getElementById(id)
+        .classList.remove("active");
+
+    });
+
+
+    if (page === "home") {
+
+      document
+        .getElementById("pageHome")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("navHome")
+        .classList.add("active");
+
+      document
+        .getElementById("mobileHome")
+        .classList.add("active");
+
+    }
+
+
+    if (page === "report") {
+
+      document
+        .getElementById("pageReport")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("navReport")
+        .classList.add("active");
+
+      document
+        .getElementById("mobileReport")
+        .classList.add("active");
+
+    }
+
+
+    if (
+      page === "admin" &&
+      currentUser &&
+      currentUser.role === "admin"
+    ) {
+
+      document
+        .getElementById("pageAdmin")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("navAdmin")
+        .classList.add("active");
+
+      document
+        .getElementById("mobileAdmin")
+        .classList.add("active");
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ENVOI DU SIGNALEMENT
+  ===================================================== */
+
+  function sendReport() {
+
+    if (
+      !currentUser ||
+      !socket.connected
+    ) {
+
+      setReportStatus(
+        "Impossible d'envoyer le signalement : le serveur est actuellement indisponible.",
+        false
+      );
+
+      return;
+
+    }
+
+
+    const firstName =
+      document
+        .getElementById("reportFirstName")
+        .value
+        .trim();
+
+
+    const lastName =
+      document
+        .getElementById("reportLastName")
+        .value
+        .trim();
+
+
+    const type =
+      document
+        .getElementById("reportType")
+        .value;
+
+
+    const duration =
+      document
+        .getElementById("reportDuration")
+        .value;
+
+
+    const description =
+      document
+        .getElementById("reportDescription")
+        .value
+        .trim();
+
+
+    if (!firstName) {
+
+      setReportStatus(
+        "Veuillez renseigner le prénom.",
+        false
+      );
+
+      return;
+
+    }
+
+
+    if (!lastName) {
+
+      setReportStatus(
+        "Veuillez renseigner le nom.",
+        false
+      );
+
+      return;
+
+    }
+
+
+    if (!type) {
+
+      setReportStatus(
+        "Veuillez sélectionner le type de situation.",
+        false
+      );
+
+      return;
+
+    }
+
+
+    if (!duration) {
+
+      setReportStatus(
+        "Veuillez indiquer depuis combien de temps la situation se produit.",
+        false
+      );
+
+      return;
+
+    }
+
+
+    if (description.length < 10) {
+
+      setReportStatus(
+        "La description doit contenir suffisamment d'informations.",
+        false
+      );
+
+      return;
+
+    }
+
+
+    const signalement = {
+
+      id:
+        crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now().toString(),
+
+      firstName,
+
+      lastName,
+
+      type,
+
+      duration,
+
+      description,
+
+      authorFirstName:
+        currentUser.firstName,
+
+      authorLastName:
+        currentUser.lastName,
+
+      date:
+        new Date().toLocaleString(
+          "fr-FR",
+          {
+            dateStyle: "short",
+            timeStyle: "medium"
+          }
+        )
+
+    };
+
+
+    socket.emit(
+      "nouveau_signalement",
+      signalement
+    );
+
+
+    setReportStatus(
+      "Signalement transmis avec succès. Il a été envoyé au serveur PHARE.",
+      true
+    );
+
+
+    document
+      .getElementById("reportDescription")
+      .value = "";
+
+
+    document
+      .getElementById("reportDuration")
+      .value = "";
+
+
+    document
+      .getElementById("reportType")
+      .value = "";
+
+
+    showToast(
+      "Signalement transmis",
+      "Votre signalement a bien été envoyé.",
+      "success"
+    );
+
+  }
+
+
+  /* =====================================================
+     STATUT FORMULAIRE
+  ===================================================== */
+
+  function setReportStatus(
+    message,
+    success
+  ) {
+
+    const element =
+      document.getElementById(
+        "reportStatus"
+      );
+
+
+    element.classList.remove(
+      "hidden"
+    );
+
+
+    element.textContent = message;
+
+
+    element.style.background =
+      success
+        ? "#eaf8f2"
+        : "#fff0f1";
+
+
+    element.style.color =
+      success
+        ? "#16845b"
+        : "#c92d3a";
+
+  }
+
+
+  /* =====================================================
+     AFFICHAGE ADMIN
+  ===================================================== */
+
+  function renderReports() {
+
+    const container =
+      document.getElementById(
+        "reportsList"
+      );
+
+
+    if (!reports.length) {
+
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">✓</div>
+          Aucun signalement reçu.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    reports.forEach(report => {
+
+      const item =
+        document.createElement("article");
+
+      item.className =
+        "report-item";
+
+
+      item.innerHTML = `
+
+        <div class="report-top">
+
+          <div>
+
+            <div class="report-type">
+              ${escapeHtml(
+                report.type
+              )}
+            </div>
+
+            <div
+              style="
+                color:#687386;
+                font-size:12px;
+                margin-top:4px;
+              "
+            >
+              Personne concernée :
+              <strong>
+                ${escapeHtml(
+                  report.firstName || ""
+                )}
+                ${escapeHtml(
+                  report.lastName || ""
+                )}
+              </strong>
+            </div>
+
+          </div>
+
+          <span class="badge badge-danger">
+            Nouveau
+          </span>
+
+        </div>
+
+
+        <div class="report-description">
+          ${escapeHtml(
+            report.description
+          )}
+        </div>
+
+
+        <div class="report-meta">
+
+          <span>
+            🕒
+            Depuis :
+            <strong>
+              ${escapeHtml(
+                report.duration || "Non précisé"
+              )}
+            </strong>
+          </span>
+
+          <span>
+            📅
+            ${escapeHtml(
+              report.date || ""
+            )}
+          </span>
+
+          <span>
+            👤
+            Signalé par :
+            ${escapeHtml(
+              report.authorFirstName || ""
+            )}
+            ${escapeHtml(
+              report.authorLastName || ""
+            )}
+          </span>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(item);
+
+    });
+
+  }
+
+
+  /* =====================================================
+     CONNEXION SERVEUR
+  ===================================================== */
+
+  function setConnectionStatus(
+    online
+  ) {
+
+    const dot =
+      document.getElementById(
+        "statusDot"
+      );
+
+
+    const text =
+      document.getElementById(
+        "connectionStatus"
+      );
+
+
+    const dashboard =
+      document.getElementById(
+        "dashboardConnection"
+      );
+
+
+    if (online) {
+
+      dot.classList.add(
+        "online"
+      );
+
+      dot.classList.remove(
+        "offline"
+      );
+
+      text.textContent =
+        "Serveur connecté";
+
+      dashboard.textContent =
+        "En ligne";
+
+      dashboard.style.color =
+        "var(--green)";
+
+    } else {
+
+      dot.classList.remove(
+        "online"
+      );
+
+      dot.classList.add(
+        "offline"
+      );
+
+      text.textContent =
+        "Serveur indisponible";
+
+      dashboard.textContent =
+        "Hors ligne";
+
+      dashboard.style.color =
+        "var(--red)";
+
+    }
+
+  }
+
+
+  /* =====================================================
+     NOTIFICATION
+  ===================================================== */
+
+  async function requestNotificationPermissionAndNotify(
+    signalement
+  ) {
+
+    if (
+      !("Notification" in window)
+    ) {
+      return;
+    }
+
+
+    try {
+
+      if (
+        Notification.permission ===
+        "default"
+      ) {
+
+        await Notification.requestPermission();
+
+      }
+
+
+      if (
+        Notification.permission ===
+        "granted" &&
+        signalement
+      ) {
+
+        new Notification(
+          "🚨 Nouveau signalement PHARE",
+          {
+            body:
+              `${signalement.type} — ` +
+              `${signalement.firstName || ""} ` +
+              `${signalement.lastName || ""}`,
+
+            tag:
+              "phare-signalement-" +
+              signalement.id
+          }
+        );
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "Notification non disponible."
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     SON D'ALERTE
+  ===================================================== */
+
+  function playAlert() {
+
+    try {
+
+      const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+
+      if (!AudioContext) {
+        return;
+      }
+
+
+      const context =
+        new AudioContext();
+
+
+      const oscillator =
+        context.createOscillator();
+
+
+      const gain =
+        context.createGain();
+
+
+      oscillator.type =
+        "sine";
+
+
+      oscillator.frequency.value =
+        880;
+
+
+      gain.gain.setValueAtTime(
+        0.001,
+        context.currentTime
+      );
+
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.18,
+        context.currentTime + 0.02
+      );
+
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        context.currentTime + 0.45
+      );
+
+
+      oscillator.connect(gain);
+
+      gain.connect(
+        context.destination
+      );
+
+
+      oscillator.start();
+
+      oscillator.stop(
+        context.currentTime + 0.45
+      );
+
+    } catch (error) {
+
+      console.log(
+        "Alerte sonore indisponible."
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     TOAST
+  ===================================================== */
+
+  function showToast(
+    title,
+    message,
+    type = "info"
+  ) {
+
+    const container =
+      document.getElementById(
+        "toastContainer"
+      );
+
+
+    const toast =
+      document.createElement(
+        "div"
+      );
+
+
+    toast.className =
+      "toast";
+
+
+    const icon =
+      type === "danger"
+        ? "🚨"
+        : type === "success"
+          ? "✓"
+          : "ℹ";
+
+
+    toast.innerHTML = `
+
+      <div class="toast-icon">
+        ${icon}
+      </div>
+
+      <div>
+
+        <div class="toast-title">
+          ${escapeHtml(title)}
+        </div>
+
+        <div class="toast-message">
+          ${escapeHtml(message)}
+        </div>
+
+      </div>
+
+    `;
+
+
+    container.appendChild(
+      toast
+    );
+
+
+    setTimeout(() => {
+
+      toast.remove();
+
+    }, 5000);
+
+  }
+
+
+  /* =====================================================
+     SECURITE HTML
+  ===================================================== */
+
+  function escapeHtml(
+    value
+  ) {
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+
+    div.textContent =
+      value == null
+        ? ""
+        : String(value);
+
+
+    return div.innerHTML;
+
+  }
+
+
+  /* =====================================================
+     DECONNEXION
+  ===================================================== */
+
+  function logout() {
+
+    currentUser = null;
+
+    reports = [];
+
+
+    document
+      .getElementById("app")
+      .classList.add("hidden");
+
+
+    document
+      .getElementById("loginScreen")
+      .classList.remove("hidden");
+
+
+    document
+      .getElementById("loginFirstName")
+      .value = "";
+
+
+    document
+      .getElementById("loginLastName")
+      .value = "";
+
+
+    document
+      .getElementById("reportsList")
+      .innerHTML = `
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            ✓
+          </div>
+
+          Aucun signalement reçu.
+
+        </div>
+
+      `;
+
+
+    socket.emit(
+      "role",
+      "user"
+    );
+
+  }
+
+</script>
+
+</body>
+</html>
