@@ -155,11 +155,80 @@ io.on("connection", async (socket) => {
       });
 
       console.log("⚡ Signalement envoyé aux admins");
+
     } catch (error) {
       console.error("❌ Erreur sauvegarde :", error);
 
       socket.emit("erreur_signalement", {
         message: "Impossible d'enregistrer le signalement."
+      });
+    }
+  });
+
+  // -------------------------------
+  // SUPPRESSION D'UN SIGNALEMENT
+  // -------------------------------
+
+  socket.on("supprimer_signalement", async (id) => {
+    // Seul un admin peut supprimer
+    if (socket.data.role !== "admin") {
+      console.log(
+        `🚫 Suppression refusée pour ${socket.id}`
+      );
+
+      socket.emit("erreur_signalement", {
+        message: "Action non autorisée."
+      });
+
+      return;
+    }
+
+    try {
+      const result = await pool.query(
+        `
+        DELETE FROM signalements
+        WHERE id = $1
+        RETURNING id
+        `,
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        console.log(
+          "⚠️ Signalement introuvable :", id
+        );
+
+        socket.emit("erreur_signalement", {
+          message: "Signalement introuvable."
+        });
+
+        return;
+      }
+
+      console.log(
+        "🗑️ Signalement supprimé de PostgreSQL :",
+        id
+      );
+
+      // Prévenir tous les admins connectés
+      io.sockets.sockets.forEach((client) => {
+        if (client.data.role === "admin") {
+          client.emit("signalement_supprime", id);
+        }
+      });
+
+      console.log(
+        "⚡ Suppression envoyée aux admins"
+      );
+
+    } catch (error) {
+      console.error(
+        "❌ Erreur suppression :",
+        error
+      );
+
+      socket.emit("erreur_signalement", {
+        message: "Impossible de supprimer le signalement."
       });
     }
   });
