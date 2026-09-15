@@ -22,8 +22,27 @@ app.get("/", (req, res) => {
   });
 });
 
+// Connexion des ordinateurs
 io.on("connection", (socket) => {
   console.log("PC connecté :", socket.id);
+
+  // Le PC indique s'il est administrateur
+  socket.on("role", (role) => {
+    socket.data.role = role;
+    console.log(`${socket.id} → rôle : ${role}`);
+  });
+
+  // Réception d'un signalement
+  socket.on("nouveau_signalement", (signalement) => {
+    console.log("🚨 Nouveau signalement :", signalement);
+
+    // Envoie le signalement à tous les administrateurs
+    io.sockets.sockets.forEach((client) => {
+      if (client.data.role === "admin") {
+        client.emit("signalement_recu", signalement);
+      }
+    });
+  });
 
   socket.on("disconnect", () => {
     console.log("PC déconnecté :", socket.id);
