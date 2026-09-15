@@ -21,6 +21,7 @@
       --green-soft: #eaf8f2;
 
       --red: #d12f3d;
+      --red-dark: #b52230;
       --red-soft: #fff0f2;
 
       --orange: #b96b00;
@@ -311,9 +312,45 @@
         0 7px 18px rgba(209, 47, 61, .16);
     }
 
+    .btn-danger:hover {
+      background: var(--red-dark);
+    }
+
     .btn-secondary {
       background: #eef2f6;
       color: #263449;
+    }
+
+    /* =====================================================
+       DELETE BUTTON
+    ===================================================== */
+
+    .delete-button {
+      margin-top: 15px;
+
+      padding: 9px 13px;
+
+      border: 0;
+      border-radius: 8px;
+
+      background: var(--red);
+      color: white;
+
+      font-size: 11px;
+      font-weight: 800;
+
+      transition: .12s ease;
+    }
+
+    .delete-button:hover {
+      background: var(--red-dark);
+      transform: translateY(-1px);
+    }
+
+    .delete-button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* =====================================================
@@ -1114,6 +1151,10 @@
         flex-direction: column;
       }
 
+      .delete-button {
+        width: 100%;
+      }
+
     }
   </style>
 </head>
@@ -1232,8 +1273,6 @@
 
 <div id="app" class="hidden">
 
-  <!-- TOPBAR -->
-
   <header class="topbar">
 
     <div class="topbar-left">
@@ -1296,8 +1335,6 @@
 
   <div class="layout">
 
-    <!-- SIDEBAR -->
-
     <aside class="sidebar">
 
       <div class="sidebar-section">
@@ -1354,10 +1391,7 @@
     </aside>
 
 
-    <!-- MAIN -->
-
     <main class="main">
-
 
       <!-- =================================================
            ACCUEIL
@@ -1557,7 +1591,6 @@
 
 
         <div class="report-layout">
-
 
           <div class="card">
 
@@ -1950,7 +1983,9 @@
   </div>
 
 
-  <!-- MOBILE -->
+  <!-- =====================================================
+       MOBILE
+  ====================================================== -->
 
   <nav class="mobile-nav">
 
@@ -1990,7 +2025,9 @@
 </div>
 
 
-<!-- TOAST -->
+<!-- =====================================================
+     TOAST
+===================================================== -->
 
 <div id="toastContainer"></div>
 
@@ -2192,17 +2229,48 @@
 
 
   /* =====================================================
+     SIGNALEMENT SUPPRIMÉ
+  ===================================================== */
+
+  socket.on(
+    "signalement_supprime",
+    id => {
+
+      console.log(
+        "🗑️ Signalement supprimé :",
+        id
+      );
+
+
+      reports =
+        reports.filter(
+          report =>
+            report.id !== id
+        );
+
+
+      renderReports();
+
+      updateReportCounters();
+
+
+      showToast(
+        "Signalement supprimé",
+        "Le signalement a été supprimé définitivement.",
+        "success"
+      );
+
+    }
+  );
+
+
+  /* =====================================================
      ERREUR SERVEUR
   ===================================================== */
 
   socket.on(
     "erreur_signalement",
     data => {
-
-      /*
-       * Si le serveur refuse l'enregistrement,
-       * on débloque le bouton.
-       */
 
       pendingReport = null;
 
@@ -2211,7 +2279,7 @@
 
       setReportStatus(
         data?.message ||
-        "Le serveur n'a pas pu enregistrer le signalement.",
+        "Le serveur n'a pas pu effectuer l'opération.",
         false
       );
 
@@ -2330,14 +2398,6 @@
 
     updateUserInterface();
 
-
-    /*
-     * Le serveur connaît maintenant le rôle
-     * demandé par le navigateur.
-     *
-     * IMPORTANT : dans la future version sécurisée,
-     * le serveur devra déterminer lui-même ce rôle.
-     */
 
     socket.emit(
       "role",
@@ -2691,8 +2751,6 @@
         .trim();
 
 
-    /* VALIDATION */
-
     if (!firstName) {
 
       setReportStatus(
@@ -2809,18 +2867,6 @@
     );
 
 
-    /*
-     * Le serveur actuel ne renvoie pas de confirmation
-     * spécifique en cas de succès.
-     *
-     * On attend donc le signalement_recu uniquement
-     * si nous sommes admin, mais pour un utilisateur
-     * normal on utilise un délai de sécurité.
-     *
-     * Cette logique sera améliorée côté server.js
-     * avec un événement "signalement_enregistre".
-     */
-
     setTimeout(() => {
 
       if (
@@ -2831,11 +2877,6 @@
 
       }
 
-
-      /*
-       * Le serveur n'a pas renvoyé d'erreur.
-       * Socket.IO a bien transmis l'événement.
-       */
 
       pendingReport = null;
 
@@ -2860,6 +2901,75 @@
       );
 
     }, 1200);
+
+  }
+
+
+  /* =====================================================
+     SUPPRESSION SIGNALEMENT
+  ===================================================== */
+
+  function supprimerSignalement(
+    id
+  ) {
+
+    if (
+      !currentUser ||
+      currentUser.role !== "admin"
+    ) {
+
+      showToast(
+        "Accès refusé",
+        "Seul l'administrateur peut supprimer un signalement.",
+        "danger"
+      );
+
+      return;
+
+    }
+
+
+    if (!socket.connected) {
+
+      showToast(
+        "Serveur indisponible",
+        "Impossible de supprimer le signalement actuellement.",
+        "danger"
+      );
+
+      return;
+
+    }
+
+
+    if (!id) {
+
+      showToast(
+        "Erreur",
+        "Identifiant du signalement manquant.",
+        "danger"
+      );
+
+      return;
+
+    }
+
+
+    const confirmation =
+      confirm(
+        "Voulez-vous vraiment supprimer ce signalement ?\n\nCette action est définitive."
+      );
+
+
+    if (!confirmation) {
+      return;
+    }
+
+
+    socket.emit(
+      "supprimer_signalement",
+      id
+    );
 
   }
 
@@ -2893,7 +3003,7 @@
 
 
   /* =====================================================
-     BOUTON
+     BOUTON ENVOI
   ===================================================== */
 
   function setSendButtonState(
@@ -3040,11 +3150,30 @@
         "report-item";
 
 
+      item.dataset.signalementId =
+        report.id;
+
+
       const date =
         report.date ||
         formatDate(
           report.createdAt
         );
+
+
+      const deleteButton =
+        currentUser &&
+        currentUser.role === "admin"
+          ? `
+            <button
+              class="delete-button"
+              type="button"
+              onclick="supprimerSignalement(${JSON.stringify(report.id)})"
+            >
+              🗑️ Supprimer
+            </button>
+          `
+          : "";
 
 
       item.innerHTML = `
@@ -3121,6 +3250,9 @@
           </span>
 
         </div>
+
+
+        ${deleteButton}
 
       `;
 
