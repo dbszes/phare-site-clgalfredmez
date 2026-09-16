@@ -167,6 +167,12 @@
       transform: translateY(-1px);
     }
 
+    .primary-button:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .login-error {
       display: none;
       background: #fff0f0;
@@ -176,6 +182,40 @@
       padding: 12px;
       margin-top: 15px;
       font-size: 14px;
+    }
+
+    .login-success {
+      display: none;
+      background: #effcf7;
+      border: 1px solid #c7f3e3;
+      color: #14805f;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .auth-switch button {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-weight: 800;
+      padding: 0;
+    }
+
+    .auth-switch button:hover {
+      text-decoration: underline;
+    }
+
+    .register-fields {
+      display: none;
     }
 
     /* =========================
@@ -1102,27 +1142,27 @@
 
 <body>
 
-  <!-- =========================
-       LOGIN
-  ========================= -->
+<section class="login-screen" id="loginScreen">
 
-  <section class="login-screen" id="loginScreen">
-    <div class="login-card">
+  <div class="login-card">
 
-      <div class="login-brand">
-        <div class="logo">PH</div>
-        <div>
-          <div class="brand-title">PHARE</div>
-          <div class="brand-subtitle">Plateforme de signalement</div>
-        </div>
+    <div class="login-brand">
+      <div class="logo">PH</div>
+
+      <div>
+        <div class="brand-title">PHARE</div>
+        <div class="brand-subtitle">Plateforme de signalement</div>
       </div>
+    </div>
 
-      <h1>Accès à la plateforme</h1>
+    <h1 id="authTitle">Accès à la plateforme</h1>
 
-      <p class="login-description">
-        Identifiez-vous pour accéder à votre espace PHARE.
-        Les administrateurs disposent également des fonctions de supervision.
-      </p>
+    <p class="login-description" id="authDescription">
+      Identifiez-vous pour accéder à votre espace PHARE.
+      Les administrateurs disposent également des fonctions de supervision.
+    </p>
+
+    <div class="register-fields" id="registerFields">
 
       <div class="field">
         <label for="loginFirstName">Prénom</label>
@@ -1144,485 +1184,305 @@
         >
       </div>
 
-      <button class="primary-button" id="loginButton">
-        Accéder à PHARE
+    </div>
+
+    <div id="loginNameFields">
+
+      <div class="field">
+        <label for="loginFirstNameLogin">Prénom</label>
+        <input
+          type="text"
+          id="loginFirstNameLogin"
+          placeholder="Votre prénom"
+          autocomplete="given-name"
+        >
+      </div>
+
+      <div class="field">
+        <label for="loginLastNameLogin">Nom</label>
+        <input
+          type="text"
+          id="loginLastNameLogin"
+          placeholder="Votre nom"
+          autocomplete="family-name"
+        >
+      </div>
+
+    </div>
+
+    <div class="field">
+      <label for="loginEmail">Adresse e-mail</label>
+
+      <input
+        type="email"
+        id="loginEmail"
+        placeholder="vous@exemple.fr"
+        autocomplete="email"
+      >
+    </div>
+
+    <div class="field">
+      <label for="loginPassword">Mot de passe</label>
+
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Votre mot de passe"
+        autocomplete="current-password"
+      >
+    </div>
+
+    <button class="primary-button" id="loginButton">
+      Se connecter
+    </button>
+
+    <div class="auth-switch">
+
+      <span id="authSwitchText">
+        Vous n'avez pas encore de compte ?
+      </span>
+
+      <button id="authSwitchButton">
+        Créer un compte
       </button>
 
-      <div class="login-error" id="loginError"></div>
     </div>
-  </section>
+
+    <div class="login-error" id="loginError"></div>
+    <div class="login-success" id="loginSuccess"></div>
+
+  </div>
+
+</section>
 
 
-  <!-- =========================
-       APPLICATION
-  ========================= -->
+<div class="app" id="app">
 
-  <div class="app" id="app">
+  <header class="topbar">
 
-    <!-- TOPBAR -->
+    <div class="topbar-left">
 
-    <header class="topbar">
+      <div class="topbar-logo">PH</div>
 
-      <div class="topbar-left">
-        <div class="topbar-logo">PH</div>
+      <div>
+        <div class="topbar-title">PHARE</div>
+        <div class="topbar-subtitle">Plateforme de signalement</div>
+      </div>
+
+    </div>
+
+    <div class="topbar-right">
+
+      <div class="connection">
+
+        <span
+          class="status-dot offline"
+          id="statusDot"
+        ></span>
+
+        <span id="connectionStatus">
+          Connexion...
+        </span>
+
+      </div>
+
+      <div class="profile">
+
+        <div class="avatar" id="avatar">--</div>
 
         <div>
-          <div class="topbar-title">PHARE</div>
-          <div class="topbar-subtitle">
-            Plateforme de signalement
+
+          <div
+            class="profile-name"
+            id="headerUserName"
+          >
+            Utilisateur
           </div>
-        </div>
-      </div>
 
-      <div class="topbar-right">
-
-        <div class="connection">
-          <span class="status-dot" id="statusDot"></span>
-          <span id="connectionStatus">Connexion...</span>
-        </div>
-
-        <div class="profile">
-          <div class="avatar" id="avatar">--</div>
-
-          <div>
-            <div class="profile-name" id="headerUserName">
-              Utilisateur
-            </div>
-
-            <div class="profile-role" id="headerUserRole">
-              Utilisateur
-            </div>
+          <div
+            class="profile-role"
+            id="headerUserRole"
+          >
+            Utilisateur
           </div>
+
         </div>
 
       </div>
-    </header>
+
+    </div>
+
+  </header>
 
 
-    <!-- SIDEBAR -->
+  <aside class="sidebar">
 
-    <aside class="sidebar">
+    <div class="sidebar-section-title">
+      Navigation
+    </div>
 
-      <div class="sidebar-section-title">
-        Navigation
+    <button
+      class="nav-button active"
+      id="navHome"
+    >
+      <span class="nav-icon">⌂</span>
+      <span>Accueil</span>
+    </button>
+
+    <button
+      class="nav-button"
+      id="navReport"
+    >
+      <span class="nav-icon">＋</span>
+      <span>Nouveau signalement</span>
+    </button>
+
+    <div id="adminNavigation">
+
+      <div
+        class="sidebar-section-title"
+        style="margin-top:25px;"
+      >
+        Administration
       </div>
 
-      <button class="nav-button active" id="navHome">
-        <span class="nav-icon">⌂</span>
-        <span>Accueil</span>
+      <button
+        class="nav-button"
+        id="navAdmin"
+      >
+        <span class="nav-icon">▦</span>
+        <span>Centre d'administration</span>
       </button>
 
-      <button class="nav-button" id="navReport">
-        <span class="nav-icon">＋</span>
-        <span>Nouveau signalement</span>
+    </div>
+
+    <div class="sidebar-bottom">
+
+      <button
+        class="nav-button logout-button"
+        id="logoutButton"
+      >
+        <span class="nav-icon">↪</span>
+        <span>Déconnexion</span>
       </button>
 
-      <div id="adminNavigation">
+    </div>
 
-        <div class="sidebar-section-title" style="margin-top:25px;">
-          Administration
-        </div>
+  </aside>
 
-        <button class="nav-button" id="navAdmin">
-          <span class="nav-icon">▦</span>
-          <span>Centre d'administration</span>
-        </button>
 
-      </div>
+  <main class="content">
 
-      <div class="sidebar-bottom">
+    <section class="page active" id="pageHome">
 
-        <button class="nav-button logout-button" id="logoutButton">
-          <span class="nav-icon">↪</span>
-          <span>Déconnexion</span>
-        </button>
+      <div class="page-heading">
+
+        <h1>Bienvenue sur PHARE</h1>
+
+        <p>
+          Votre espace sécurisé de signalement et d'accompagnement.
+        </p>
 
       </div>
 
-    </aside>
+      <div class="welcome-card">
 
+        <h2 id="welcomeTitle">
+          Bonjour.
+        </h2>
 
-    <!-- CONTENT -->
+        <p>
+          PHARE permet de transmettre un signalement de manière simple,
+          structurée et sécurisée. Chaque signalement est transmis au
+          serveur et pris en compte par les personnes habilitées.
+        </p>
 
-    <main class="content">
+      </div>
 
-      <!-- =========================
-           HOME
-      ========================= -->
+      <div class="quick-actions">
 
-      <section class="page active" id="pageHome">
+        <div class="quick-card">
 
-        <div class="page-heading">
-          <h1>Bienvenue sur PHARE</h1>
-          <p>
-            Votre espace sécurisé de signalement et d'accompagnement.
-          </p>
-        </div>
-
-        <div class="welcome-card">
-          <h2 id="welcomeTitle">
-            Bonjour.
-          </h2>
+          <h3>Effectuer un signalement</h3>
 
           <p>
-            PHARE permet de transmettre un signalement de manière simple,
-            structurée et sécurisée. Chaque signalement est transmis au
-            serveur et pris en compte par les personnes habilitées.
+            Décrivez une situation qui nécessite d'être portée à
+            l'attention de l'équipe PHARE.
           </p>
-        </div>
 
-        <div class="quick-actions">
-
-          <div class="quick-card">
-            <h3>Effectuer un signalement</h3>
-
-            <p>
-              Décrivez une situation qui nécessite d'être portée à
-              l'attention de l'équipe PHARE.
-            </p>
-
-            <button class="small-button" id="homeReportButton">
-              Nouveau signalement
-            </button>
-          </div>
-
-          <div class="quick-card">
-            <h3>Protection des informations</h3>
-
-            <p>
-              Les informations saisies sont transmises au serveur PHARE
-              afin d'être conservées et traitées par les personnes
-              autorisées.
-            </p>
-          </div>
+          <button
+            class="small-button"
+            id="homeReportButton"
+          >
+            Nouveau signalement
+          </button>
 
         </div>
 
-      </section>
+        <div class="quick-card">
 
+          <h3>Protection des informations</h3>
 
-      <!-- =========================
-           REPORT FORM
-      ========================= -->
-
-      <section class="page" id="pageReport">
-
-        <div class="page-heading">
-          <h1>Nouveau signalement</h1>
           <p>
-            Renseignez les informations nécessaires au traitement de la situation.
+            Les informations saisies sont transmises au serveur PHARE
+            afin d'être conservées et traitées par les personnes
+            autorisées.
           </p>
+
         </div>
 
-        <div class="form-card">
+      </div>
 
-          <div class="form-section">
+    </section>
 
-            <div class="form-section-title">
-              Personne concernée
-            </div>
 
-            <div class="form-grid">
+    <section class="page" id="pageReport">
 
-              <div class="field">
-                <label for="firstName">Prénom</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  placeholder="Prénom de la personne concernée"
-                >
-              </div>
+      <div class="page-heading">
 
-              <div class="field">
-                <label for="lastName">Nom</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  placeholder="Nom de la personne concernée"
-                >
-              </div>
+        <h1>Nouveau signalement</h1>
 
-            </div>
+        <p>
+          Renseignez les informations nécessaires au traitement de la situation.
+        </p>
 
+      </div>
+
+      <div class="form-card">
+
+        <div class="form-section">
+
+          <div class="form-section-title">
+            Personne concernée
           </div>
 
-
-          <div class="form-section">
-
-            <div class="form-section-title">
-              Situation signalée
-            </div>
-
-            <div class="form-grid">
-
-              <div class="field">
-                <label for="type">
-                  Type de situation
-                </label>
-
-                <select id="type">
-                  <option value="">
-                    Sélectionner une catégorie
-                  </option>
-
-                  <option value="Harcèlement verbal">
-                    Harcèlement verbal
-                  </option>
-
-                  <option value="Harcèlement physique">
-                    Harcèlement physique
-                  </option>
-
-                  <option value="Harcèlement en ligne">
-                    Harcèlement en ligne
-                  </option>
-
-                  <option value="Menaces / intimidation">
-                    Menaces / intimidation
-                  </option>
-
-                  <option value="Discrimination">
-                    Discrimination
-                  </option>
-
-                  <option value="Violence">
-                    Violence
-                  </option>
-
-                  <option value="Autre">
-                    Autre
-                  </option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="duration">
-                  Depuis quand ?
-                </label>
-
-                <select id="duration">
-                  <option value="">
-                    Sélectionner
-                  </option>
-
-                  <option value="Aujourd'hui">
-                    Aujourd'hui
-                  </option>
-
-                  <option value="Depuis quelques jours">
-                    Depuis quelques jours
-                  </option>
-
-                  <option value="Depuis plusieurs semaines">
-                    Depuis plusieurs semaines
-                  </option>
-
-                  <option value="Depuis plusieurs mois">
-                    Depuis plusieurs mois
-                  </option>
-
-                  <option value="Depuis plusieurs années">
-                    Depuis plusieurs années
-                  </option>
-
-                  <option value="Je ne sais pas">
-                    Je ne sais pas
-                  </option>
-                </select>
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="form-section">
-
-            <div class="form-section-title">
-              Description
-            </div>
+          <div class="form-grid">
 
             <div class="field">
-              <label for="description">
-                Décrivez les faits
+
+              <label for="firstName">
+                Prénom
               </label>
 
-              <textarea
-                id="description"
-                placeholder="Décrivez les faits de manière aussi précise que possible..."
-              ></textarea>
-            </div>
-
-          </div>
-
-
-          <div class="form-submit">
-
-            <button
-              class="primary-button"
-              id="sendReportButton"
-            >
-              Transmettre le signalement
-            </button>
-
-          </div>
-
-          <div class="form-message" id="formMessage"></div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =========================
-           ADMIN CENTER
-      ========================= -->
-
-      <section class="page" id="pageAdmin">
-
-        <div class="admin-header">
-
-          <div>
-            <h1>Centre d'administration</h1>
-
-            <p>
-              Supervision des signalements et des connexions en temps réel.
-            </p>
-          </div>
-
-          <div class="live-badge">
-            <span></span>
-            TEMPS RÉEL ACTIF
-          </div>
-
-        </div>
-
-
-        <!-- STATS -->
-
-        <div class="stats-grid">
-
-          <div class="stat-card">
-            <div class="stat-label">
-              Signalements
-            </div>
-
-            <div class="stat-value" id="adminTotal">
-              0
-            </div>
-
-            <div class="stat-detail">
-              Total enregistré
-            </div>
-          </div>
-
-
-          <div class="stat-card">
-            <div class="stat-label">
-              Derniers signalements
-            </div>
-
-            <div class="stat-value" id="adminRealtime">
-              0
-            </div>
-
-            <div class="stat-detail">
-              Reçus depuis l'ouverture
-            </div>
-          </div>
-
-
-          <div class="stat-card">
-            <div class="stat-label">
-              Personnes connectées
-            </div>
-
-            <div class="stat-value" id="adminConnected">
-              0
-            </div>
-
-            <div class="stat-detail">
-              Connexions actives
-            </div>
-          </div>
-
-
-          <div class="stat-card">
-            <div class="stat-label">
-              Serveur
-            </div>
-
-            <div class="stat-value" id="adminServerStatus">
-              —
-            </div>
-
-            <div class="stat-detail">
-              État de la connexion
-            </div>
-          </div>
-
-        </div>
-
-
-        <!-- ADMIN GRID -->
-
-        <div class="admin-grid">
-
-          <!-- SIGNALMENTS -->
-
-          <div class="admin-panel">
-
-            <div class="panel-header">
-
-              <div>
-                <h2>Signalements</h2>
-                <p>
-                  Tous les signalements enregistrés sur PHARE
-                </p>
-              </div>
-
               <input
-                type="search"
-                class="search-box"
-                id="reportSearch"
-                placeholder="Rechercher..."
+                type="text"
+                id="firstName"
+                placeholder="Prénom de la personne concernée"
               >
 
             </div>
 
-            <div class="reports-list" id="reportsList">
+            <div class="field">
 
-              <div class="empty-state">
-                <div class="empty-icon">◌</div>
-                Aucun signalement enregistré.
-              </div>
+              <label for="lastName">
+                Nom
+              </label>
 
-            </div>
-
-          </div>
-
-
-          <!-- CONNECTED USERS -->
-
-          <div class="admin-panel">
-
-            <div class="panel-header">
-
-              <div>
-                <h2>Personnes connectées</h2>
-
-                <p>
-                  Présence en temps réel
-                </p>
-              </div>
-
-            </div>
-
-            <div class="users-list" id="connectedUsersList">
-
-              <div class="empty-state">
-                Synchronisation...
-              </div>
+              <input
+                type="text"
+                id="lastName"
+                placeholder="Nom de la personne concernée"
+              >
 
             </div>
 
@@ -1630,131 +1490,329 @@
 
         </div>
 
-      </section>
 
-    </main>
+        <div class="form-section">
+
+          <div class="form-section-title">
+            Situation signalée
+          </div>
+
+          <div class="form-grid">
+
+            <div class="field">
+
+              <label for="type">
+                Type de situation
+              </label>
+
+              <select id="type">
+
+                <option value="">
+                  Sélectionner une catégorie
+                </option>
+
+                <option value="Harcèlement verbal">
+                  Harcèlement verbal
+                </option>
+
+                <option value="Harcèlement physique">
+                  Harcèlement physique
+                </option>
+
+                <option value="Harcèlement en ligne">
+                  Harcèlement en ligne
+                </option>
+
+                <option value="Menaces / intimidation">
+                  Menaces / intimidation
+                </option>
+
+                <option value="Discrimination">
+                  Discrimination
+                </option>
+
+                <option value="Violence">
+                  Violence
+                </option>
+
+                <option value="Autre">
+                  Autre
+                </option>
+
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label for="duration">
+                Depuis quand ?
+              </label>
+
+              <select id="duration">
+
+                <option value="">
+                  Sélectionner
+                </option>
+
+                <option value="Aujourd'hui">
+                  Aujourd'hui
+                </option>
+
+                <option value="Depuis quelques jours">
+                  Depuis quelques jours
+                </option>
+
+                <option value="Depuis plusieurs semaines">
+                  Depuis plusieurs semaines
+                </option>
+
+                <option value="Depuis plusieurs mois">
+                  Depuis plusieurs mois
+                </option>
+
+                <option value="Depuis plusieurs années">
+                  Depuis plusieurs années
+                </option>
+
+                <option value="Je ne sais pas">
+                  Je ne sais pas
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
 
 
-    <!-- MOBILE NAV -->
+        <div class="form-section">
 
-    <nav class="mobile-nav">
+          <div class="form-section-title">
+            Description
+          </div>
 
-      <button id="mobileHome" class="active">
-        <span class="mobile-nav-icon">⌂</span>
-        Accueil
-      </button>
+          <div class="field">
 
-      <button id="mobileReport">
-        <span class="mobile-nav-icon">＋</span>
-        Signaler
-      </button>
+            <label for="description">
+              Décrivez les faits
+            </label>
 
-      <button id="mobileAdmin">
-        <span class="mobile-nav-icon">▦</span>
-        Admin
-      </button>
+            <textarea
+              id="description"
+              placeholder="Décrivez les faits de manière aussi précise que possible..."
+            ></textarea>
 
-    </nav>
+          </div>
 
-  </div>
+        </div>
 
 
-  <!-- =========================
-       DETAIL MODAL
-  ========================= -->
+        <div class="form-submit">
 
-  <div class="modal-overlay" id="detailModal">
+          <button
+            class="primary-button"
+            id="sendReportButton"
+          >
+            Transmettre le signalement
+          </button>
 
-    <div class="modal">
+        </div>
 
-      <div class="modal-header">
-
-        <h2>Détail du signalement</h2>
-
-        <button class="modal-close" id="detailClose">
-          ×
-        </button>
+        <div
+          class="form-message"
+          id="formMessage"
+        ></div>
 
       </div>
 
-      <div class="modal-body">
+    </section>
 
-        <div class="detail-grid">
 
-          <div class="detail-item">
-            <div class="detail-label">
-              Personne concernée
-            </div>
+    <section class="page" id="pageAdmin">
 
-            <div class="detail-value" id="detailPerson">
-              —
-            </div>
+      <div class="admin-header">
+
+        <div>
+
+          <h1>
+            Centre d'administration
+          </h1>
+
+          <p>
+            Supervision des signalements et des connexions en temps réel.
+          </p>
+
+        </div>
+
+        <div class="live-badge">
+
+          <span></span>
+          TEMPS RÉEL ACTIF
+
+        </div>
+
+      </div>
+
+
+      <div class="stats-grid">
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Signalements
           </div>
 
-
-          <div class="detail-item">
-            <div class="detail-label">
-              Type
-            </div>
-
-            <div class="detail-value" id="detailType">
-              —
-            </div>
+          <div
+            class="stat-value"
+            id="adminTotal"
+          >
+            0
           </div>
 
-
-          <div class="detail-item">
-            <div class="detail-label">
-              Durée
-            </div>
-
-            <div class="detail-value" id="detailDuration">
-              —
-            </div>
+          <div class="stat-detail">
+            Total enregistré
           </div>
 
+        </div>
 
-          <div class="detail-item">
-            <div class="detail-label">
-              Auteur
-            </div>
 
-            <div class="detail-value" id="detailAuthor">
-              —
-            </div>
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Derniers signalements
           </div>
 
-
-          <div class="detail-item">
-            <div class="detail-label">
-              Date
-            </div>
-
-            <div class="detail-value" id="detailDate">
-              —
-            </div>
+          <div
+            class="stat-value"
+            id="adminRealtime"
+          >
+            0
           </div>
 
-
-          <div class="detail-item">
-            <div class="detail-label">
-              Identifiant
-            </div>
-
-            <div class="detail-value" id="detailId">
-              —
-            </div>
+          <div class="stat-detail">
+            Reçus depuis l'ouverture
           </div>
 
+        </div>
 
-          <div class="detail-item detail-full">
 
-            <div class="detail-label">
-              Description
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Personnes connectées
+          </div>
+
+          <div
+            class="stat-value"
+            id="adminConnected"
+          >
+            0
+          </div>
+
+          <div class="stat-detail">
+            Connexions actives
+          </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Serveur
+          </div>
+
+          <div
+            class="stat-value"
+            id="adminServerStatus"
+          >
+            —
+          </div>
+
+          <div class="stat-detail">
+            État de la connexion
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="admin-grid">
+
+        <div class="admin-panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h2>
+                Signalements
+              </h2>
+
+              <p>
+                Tous les signalements enregistrés sur PHARE
+              </p>
+
             </div>
 
-            <div class="detail-value" id="detailDescription">
-              —
+            <input
+              type="search"
+              class="search-box"
+              id="reportSearch"
+              placeholder="Rechercher..."
+            >
+
+          </div>
+
+          <div
+            class="reports-list"
+            id="reportsList"
+          >
+
+            <div class="empty-state">
+
+              <div class="empty-icon">
+                ◌
+              </div>
+
+              Aucun signalement enregistré.
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="admin-panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h2>
+                Personnes connectées
+              </h2>
+
+              <p>
+                Présence en temps réel
+              </p>
+
+            </div>
+
+          </div>
+
+          <div
+            class="users-list"
+            id="connectedUsersList"
+          >
+
+            <div class="empty-state">
+              Synchronisation...
             </div>
 
           </div>
@@ -1763,707 +1821,1342 @@
 
       </div>
 
-      <div class="modal-footer">
+    </section>
 
-        <button class="secondary-button" id="detailCloseBottom">
-          Fermer
-        </button>
+  </main>
 
-        <button class="danger-button" id="detailDelete">
-          Supprimer
-        </button>
+
+  <nav class="mobile-nav">
+
+    <button
+      id="mobileHome"
+      class="active"
+    >
+      <span class="mobile-nav-icon">⌂</span>
+      Accueil
+    </button>
+
+    <button id="mobileReport">
+      <span class="mobile-nav-icon">＋</span>
+      Signaler
+    </button>
+
+    <button id="mobileAdmin">
+      <span class="mobile-nav-icon">▦</span>
+      Admin
+    </button>
+
+  </nav>
+
+</div>
+
+
+<div
+  class="modal-overlay"
+  id="detailModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <h2>
+        Détail du signalement
+      </h2>
+
+      <button
+        class="modal-close"
+        id="detailClose"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <div class="detail-grid">
+
+        <div class="detail-item">
+
+          <div class="detail-label">
+            Personne concernée
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailPerson"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <div class="detail-label">
+            Type
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailType"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <div class="detail-label">
+            Durée
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailDuration"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <div class="detail-label">
+            Auteur
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailAuthor"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <div class="detail-label">
+            Date
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailDate"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <div class="detail-label">
+            Identifiant
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailId"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="detail-item detail-full">
+
+          <div class="detail-label">
+            Description
+          </div>
+
+          <div
+            class="detail-value"
+            id="detailDescription"
+          >
+            —
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
-  </div>
+    <div class="modal-footer">
 
+      <button
+        class="secondary-button"
+        id="detailCloseBottom"
+      >
+        Fermer
+      </button>
 
-  <!-- =========================
-       DELETE MODAL
-  ========================= -->
-
-  <div class="modal-overlay" id="deleteModal">
-
-    <div class="modal">
-
-      <div class="modal-header">
-
-        <h2>Supprimer le signalement</h2>
-
-        <button class="modal-close" id="deleteClose">
-          ×
-        </button>
-
-      </div>
-
-      <div class="modal-body">
-
-        <p style="line-height:1.6;color:#5f6b7a;">
-          Vous êtes sur le point de supprimer définitivement ce
-          signalement de la base de données PHARE.
-        </p>
-
-        <p
-          id="deleteTarget"
-          style="margin-top:14px;font-weight:900;color:#081525;"
-        >
-          —
-        </p>
-
-      </div>
-
-      <div class="modal-footer">
-
-        <button class="secondary-button" id="deleteCancel">
-          Annuler
-        </button>
-
-        <button class="danger-button" id="deleteConfirm">
-          Supprimer définitivement
-        </button>
-
-      </div>
+      <button
+        class="danger-button"
+        id="detailDelete"
+      >
+        Supprimer
+      </button>
 
     </div>
 
   </div>
 
-
-  <!-- TOAST -->
-
-  <div class="toast" id="toast"></div>
+</div>
 
 
-  <script>
+<div
+  class="modal-overlay"
+  id="deleteModal"
+>
 
-    /* =====================================================
-       CONFIGURATION
-    ===================================================== */
+  <div class="modal">
 
-    const SERVER_URL = "https://phare-server.onrender.com";
+    <div class="modal-header">
 
-    const ADMIN_FIRST_NAME = "Ziyad";
-    const ADMIN_LAST_NAME = "HAMIED";
+      <h2>
+        Supprimer le signalement
+      </h2>
 
+      <button
+        class="modal-close"
+        id="deleteClose"
+      >
+        ×
+      </button>
 
-    /* =====================================================
-       SOCKET.IO
-    ===================================================== */
+    </div>
 
-    const socket = io(SERVER_URL, {
-      transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000
-    });
+    <div class="modal-body">
 
+      <p style="line-height:1.6;color:#5f6b7a;">
+        Vous êtes sur le point de supprimer définitivement ce
+        signalement de la base de données PHARE.
+      </p>
 
-    /* =====================================================
-       VARIABLES
-    ===================================================== */
+      <p
+        id="deleteTarget"
+        style="margin-top:14px;font-weight:900;color:#081525;"
+      >
+        —
+      </p>
 
-    let currentUser = null;
-    let reports = [];
-    let realtimeCount = 0;
-    let connectedUsers = [];
+    </div>
 
-    let selectedReport = null;
-    let reportToDelete = null;
+    <div class="modal-footer">
 
+      <button
+        class="secondary-button"
+        id="deleteCancel"
+      >
+        Annuler
+      </button>
 
-    /* =====================================================
-       DOM
-    ===================================================== */
+      <button
+        class="danger-button"
+        id="deleteConfirm"
+      >
+        Supprimer définitivement
+      </button>
 
-    const loginScreen = document.getElementById("loginScreen");
-    const app = document.getElementById("app");
+    </div>
 
-    const loginFirstName =
-      document.getElementById("loginFirstName");
+  </div>
 
-    const loginLastName =
-      document.getElementById("loginLastName");
-
-    const loginButton =
-      document.getElementById("loginButton");
-
-    const loginError =
-      document.getElementById("loginError");
-
-    const statusDot =
-      document.getElementById("statusDot");
-
-    const connectionStatus =
-      document.getElementById("connectionStatus");
-
-    const headerUserName =
-      document.getElementById("headerUserName");
-
-    const headerUserRole =
-      document.getElementById("headerUserRole");
-
-    const avatar =
-      document.getElementById("avatar");
-
-    const welcomeTitle =
-      document.getElementById("welcomeTitle");
-
-    const reportsList =
-      document.getElementById("reportsList");
-
-    const connectedUsersList =
-      document.getElementById("connectedUsersList");
-
-    const reportSearch =
-      document.getElementById("reportSearch");
-
-    const adminTotal =
-      document.getElementById("adminTotal");
-
-    const adminRealtime =
-      document.getElementById("adminRealtime");
-
-    const adminConnected =
-      document.getElementById("adminConnected");
-
-    const adminServerStatus =
-      document.getElementById("adminServerStatus");
-
-    const formMessage =
-      document.getElementById("formMessage");
+</div>
 
 
-    /* =====================================================
-       UTILITAIRES
-    ===================================================== */
+<div
+  class="toast"
+  id="toast"
+></div>
 
-    function escapeHtml(value) {
 
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+<script>
 
+  /* =====================================================
+     CONFIGURATION
+  ===================================================== */
+
+  const SERVER_URL =
+    "https://phare-server.onrender.com";
+
+  const TOKEN_KEY =
+    "phare_auth_token";
+
+
+  /* =====================================================
+     VARIABLES
+  ===================================================== */
+
+  let socket = null;
+
+  let currentUser = null;
+  let reports = [];
+  let realtimeCount = 0;
+  let connectedUsers = [];
+
+  let selectedReport = null;
+  let reportToDelete = null;
+
+  let authMode = "login";
+
+
+  /* =====================================================
+     DOM
+  ===================================================== */
+
+  const loginScreen =
+    document.getElementById("loginScreen");
+
+  const app =
+    document.getElementById("app");
+
+  const loginFirstName =
+    document.getElementById("loginFirstName");
+
+  const loginLastName =
+    document.getElementById("loginLastName");
+
+  const loginFirstNameLogin =
+    document.getElementById("loginFirstNameLogin");
+
+  const loginLastNameLogin =
+    document.getElementById("loginLastNameLogin");
+
+  const loginEmail =
+    document.getElementById("loginEmail");
+
+  const loginPassword =
+    document.getElementById("loginPassword");
+
+  const loginButton =
+    document.getElementById("loginButton");
+
+  const loginError =
+    document.getElementById("loginError");
+
+  const loginSuccess =
+    document.getElementById("loginSuccess");
+
+  const authTitle =
+    document.getElementById("authTitle");
+
+  const authDescription =
+    document.getElementById("authDescription");
+
+  const registerFields =
+    document.getElementById("registerFields");
+
+  const loginNameFields =
+    document.getElementById("loginNameFields");
+
+  const authSwitchText =
+    document.getElementById("authSwitchText");
+
+  const authSwitchButton =
+    document.getElementById("authSwitchButton");
+
+  const statusDot =
+    document.getElementById("statusDot");
+
+  const connectionStatus =
+    document.getElementById("connectionStatus");
+
+  const headerUserName =
+    document.getElementById("headerUserName");
+
+  const headerUserRole =
+    document.getElementById("headerUserRole");
+
+  const avatar =
+    document.getElementById("avatar");
+
+  const welcomeTitle =
+    document.getElementById("welcomeTitle");
+
+  const reportsList =
+    document.getElementById("reportsList");
+
+  const connectedUsersList =
+    document.getElementById("connectedUsersList");
+
+  const reportSearch =
+    document.getElementById("reportSearch");
+
+  const adminTotal =
+    document.getElementById("adminTotal");
+
+  const adminRealtime =
+    document.getElementById("adminRealtime");
+
+  const adminConnected =
+    document.getElementById("adminConnected");
+
+  const adminServerStatus =
+    document.getElementById("adminServerStatus");
+
+  const formMessage =
+    document.getElementById("formMessage");
+
+
+  /* =====================================================
+     UTILITAIRES
+  ===================================================== */
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function getInitials(firstName, lastName) {
+
+    const a =
+      String(firstName || "")
+        .trim()
+        .charAt(0);
+
+    const b =
+      String(lastName || "")
+        .trim()
+        .charAt(0);
+
+    return (
+      a + b
+    ).toUpperCase() || "--";
+
+  }
+
+
+  function isAdminUser() {
+
+    return Boolean(
+      currentUser &&
+      currentUser.role === "admin"
+    );
+
+  }
+
+
+  function formatDate(value) {
+
+    if (!value) {
+      return "Date inconnue";
     }
 
+    try {
 
-    function getInitials(firstName, lastName) {
+      const date =
+        new Date(value);
 
-      const a = String(firstName || "").trim().charAt(0);
-      const b = String(lastName || "").trim().charAt(0);
-
-      return (a + b).toUpperCase() || "--";
-
-    }
-
-
-    function isAdminUser() {
-
-      if (!currentUser) {
-        return false;
-      }
-
-      return currentUser.role === "admin";
-
-    }
-
-
-    function formatDate(value) {
-
-      if (!value) {
-        return "Date inconnue";
-      }
-
-      try {
-
-        const date = new Date(value);
-
-        if (Number.isNaN(date.getTime())) {
-          return String(value);
-        }
-
-        return date.toLocaleString("fr-FR", {
-          dateStyle: "short",
-          timeStyle: "short"
-        });
-
-      } catch {
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
         return String(value);
       }
 
+      return date.toLocaleString(
+        "fr-FR",
+        {
+          dateStyle: "short",
+          timeStyle: "short"
+        }
+      );
+
+    } catch {
+
+      return String(value);
+
     }
 
+  }
 
-    function showToast(message, type = "success") {
 
-      const toast = document.getElementById("toast");
+  function showToast(
+    message,
+    type = "success"
+  ) {
 
-      toast.textContent = message;
-      toast.className = "toast show " + type;
+    const toast =
+      document.getElementById("toast");
 
-      clearTimeout(window.toastTimer);
+    toast.textContent =
+      message;
 
-      window.toastTimer = setTimeout(() => {
-        toast.className = "toast";
+    toast.className =
+      "toast show " + type;
+
+    clearTimeout(
+      window.toastTimer
+    );
+
+    window.toastTimer =
+      setTimeout(() => {
+
+        toast.className =
+          "toast";
+
       }, 3500);
 
-    }
+  }
 
 
-    /* =====================================================
-       LOGIN
-    ===================================================== */
+  function showLoginError(message) {
 
-    function login() {
+    loginError.textContent =
+      message;
 
-      const firstName =
-        loginFirstName.value.trim();
+    loginError.style.display =
+      "block";
 
-      const lastName =
-        loginLastName.value.trim();
+    loginSuccess.style.display =
+      "none";
 
-      if (!firstName || !lastName) {
-
-        loginError.textContent =
-          "Veuillez renseigner votre prénom et votre nom.";
-
-        loginError.style.display = "block";
-
-        return;
-
-      }
-
-      loginError.style.display = "none";
+  }
 
 
-      const isAdmin =
-        firstName.toLowerCase() === ADMIN_FIRST_NAME.toLowerCase() &&
-        lastName.toLowerCase() === ADMIN_LAST_NAME.toLowerCase();
+  function showLoginSuccess(message) {
+
+    loginSuccess.textContent =
+      message;
+
+    loginSuccess.style.display =
+      "block";
+
+    loginError.style.display =
+      "none";
+
+  }
 
 
-      currentUser = {
-        firstName,
-        lastName,
-        role: isAdmin ? "admin" : "user"
-      };
+  function clearAuthMessages() {
+
+    loginError.textContent = "";
+    loginSuccess.textContent = "";
+
+    loginError.style.display =
+      "none";
+
+    loginSuccess.style.display =
+      "none";
+
+  }
 
 
-      loginScreen.style.display = "none";
-      app.style.display = "block";
+  function setAuthLoading(loading) {
+
+    loginButton.disabled =
+      loading;
+
+    loginButton.textContent =
+      loading
+        ? "Veuillez patienter..."
+        : authMode === "login"
+          ? "Se connecter"
+          : "Créer mon compte";
+
+  }
 
 
-      updateUserInterface();
+  /* =====================================================
+     AUTH MODE
+  ===================================================== */
 
+  function setAuthMode(mode) {
 
-      /*
-        On transmet l'identité au serveur.
-        Le serveur pourra ainsi afficher les personnes
-        connectées dans le centre d'administration.
-      */
+    authMode =
+      mode === "register"
+        ? "register"
+        : "login";
 
-      socket.emit("role", {
-        role: currentUser.role,
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName
-      });
+    clearAuthMessages();
 
+    if (authMode === "register") {
 
-      if (isAdmin) {
+      authTitle.textContent =
+        "Créer votre compte";
 
-        showPage("admin");
+      authDescription.textContent =
+        "Créez votre compte PHARE avec vos informations personnelles et un mot de passe sécurisé.";
 
-      } else {
+      registerFields.style.display =
+        "block";
 
-        showPage("home");
+      loginNameFields.style.display =
+        "none";
 
-      }
+      loginPassword.autocomplete =
+        "new-password";
 
-    }
+      loginButton.textContent =
+        "Créer mon compte";
 
+      authSwitchText.textContent =
+        "Vous avez déjà un compte ?";
 
-    loginButton.addEventListener("click", login);
+      authSwitchButton.textContent =
+        "Se connecter";
 
+    } else {
 
-    loginFirstName.addEventListener("keydown", event => {
+      authTitle.textContent =
+        "Accès à la plateforme";
 
-      if (event.key === "Enter") {
-        login();
-      }
+      authDescription.textContent =
+        "Identifiez-vous pour accéder à votre espace PHARE. Les administrateurs disposent également des fonctions de supervision.";
 
-    });
+      registerFields.style.display =
+        "none";
 
+      loginNameFields.style.display =
+        "block";
 
-    loginLastName.addEventListener("keydown", event => {
+      loginPassword.autocomplete =
+        "current-password";
 
-      if (event.key === "Enter") {
-        login();
-      }
+      loginButton.textContent =
+        "Se connecter";
 
-    });
+      authSwitchText.textContent =
+        "Vous n'avez pas encore de compte ?";
 
-
-    /* =====================================================
-       INTERFACE UTILISATEUR
-    ===================================================== */
-
-    function updateUserInterface() {
-
-      if (!currentUser) {
-        return;
-      }
-
-      const fullName =
-        `${currentUser.firstName} ${currentUser.lastName}`;
-
-      headerUserName.textContent = fullName;
-
-      headerUserRole.textContent =
-        currentUser.role === "admin"
-          ? "Administrateur"
-          : "Utilisateur";
-
-      avatar.textContent =
-        getInitials(
-          currentUser.firstName,
-          currentUser.lastName
-        );
-
-      welcomeTitle.textContent =
-        `Bonjour ${currentUser.firstName}.`;
-
-
-      /*
-        L'admin garde la navigation normale.
-        Il peut donc créer un signalement ET administrer.
-      */
-
-      document
-        .getElementById("adminNavigation")
-        .style.display =
-        currentUser.role === "admin"
-          ? "block"
-          : "none";
-
-      document
-        .getElementById("mobileAdmin")
-        .style.display =
-        currentUser.role === "admin"
-          ? "block"
-          : "none";
+      authSwitchButton.textContent =
+        "Créer un compte";
 
     }
 
-
-    /* =====================================================
-       NAVIGATION
-    ===================================================== */
-
-    function showPage(pageName) {
-
-      if (pageName === "admin" && !isAdminUser()) {
-
-        showToast(
-          "Accès réservé aux administrateurs.",
-          "error"
-        );
-
-        return;
-
-      }
+  }
 
 
-      document
-        .querySelectorAll(".page")
-        .forEach(page => {
-          page.classList.remove("active");
-        });
+  authSwitchButton.addEventListener(
+    "click",
+    () => {
+
+      setAuthMode(
+        authMode === "login"
+          ? "register"
+          : "login"
+      );
+
+    }
+  );
 
 
-      const page =
-        document.getElementById(
-          "page" +
-          pageName.charAt(0).toUpperCase() +
-          pageName.slice(1)
-        );
+  /* =====================================================
+     AUTHENTIFICATION
+  ===================================================== */
+
+  async function authenticate() {
+
+    clearAuthMessages();
+
+    const firstName =
+      authMode === "register"
+        ? loginFirstName.value.trim()
+        : loginFirstNameLogin.value.trim();
+
+    const lastName =
+      authMode === "register"
+        ? loginLastName.value.trim()
+        : loginLastNameLogin.value.trim();
+
+    const email =
+      loginEmail.value.trim().toLowerCase();
+
+    const password =
+      loginPassword.value;
 
 
-      if (page) {
-        page.classList.add("active");
-      }
+    if (
+      !email ||
+      !password
+    ) {
 
+      showLoginError(
+        "Veuillez renseigner votre e-mail et votre mot de passe."
+      );
 
-      document
-        .querySelectorAll(".nav-button")
-        .forEach(button => {
-          button.classList.remove("active");
-        });
-
-
-      document
-        .querySelectorAll(".mobile-nav button")
-        .forEach(button => {
-          button.classList.remove("active");
-        });
-
-
-      if (pageName === "home") {
-
-        document
-          .getElementById("navHome")
-          .classList.add("active");
-
-        document
-          .getElementById("mobileHome")
-          .classList.add("active");
-
-      }
-
-
-      if (pageName === "report") {
-
-        document
-          .getElementById("navReport")
-          .classList.add("active");
-
-        document
-          .getElementById("mobileReport")
-          .classList.add("active");
-
-      }
-
-
-      if (pageName === "admin") {
-
-        document
-          .getElementById("navAdmin")
-          .classList.add("active");
-
-        document
-          .getElementById("mobileAdmin")
-          .classList.add("active");
-
-        renderReports();
-        renderConnectedUsers();
-
-      }
+      return;
 
     }
 
 
-    document
-      .getElementById("navHome")
-      .addEventListener("click", () => showPage("home"));
+    if (
+      authMode === "register" &&
+      (!firstName || !lastName)
+    ) {
+
+      showLoginError(
+        "Veuillez renseigner votre prénom et votre nom."
+      );
+
+      return;
+
+    }
 
 
-    document
-      .getElementById("navReport")
-      .addEventListener("click", () => showPage("report"));
+    if (
+      !email.includes("@")
+    ) {
+
+      showLoginError(
+        "Veuillez saisir une adresse e-mail valide."
+      );
+
+      return;
+
+    }
 
 
-    document
-      .getElementById("navAdmin")
-      .addEventListener("click", () => showPage("admin"));
+    if (
+      authMode === "register" &&
+      password.length < 8
+    ) {
+
+      showLoginError(
+        "Le mot de passe doit contenir au moins 8 caractères."
+      );
+
+      return;
+
+    }
 
 
-    document
-      .getElementById("homeReportButton")
-      .addEventListener("click", () => showPage("report"));
+    setAuthLoading(true);
 
 
-    document
-      .getElementById("mobileHome")
-      .addEventListener("click", () => showPage("home"));
+    try {
+
+      const endpoint =
+        authMode === "register"
+          ? "/api/auth/register"
+          : "/api/auth/login";
 
 
-    document
-      .getElementById("mobileReport")
-      .addEventListener("click", () => showPage("report"));
+      const body =
+        authMode === "register"
+          ? {
+              firstName,
+              lastName,
+              email,
+              password
+            }
+          : {
+              email,
+              password
+            };
 
 
-    document
-      .getElementById("mobileAdmin")
-      .addEventListener("click", () => {
+      const response =
+        await fetch(
+          SERVER_URL + endpoint,
+          {
+            method: "POST",
 
-        if (isAdminUser()) {
-          showPage("admin");
-        }
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
 
-      });
-
-
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
-
-    document
-      .getElementById("logoutButton")
-      .addEventListener("click", () => {
-
-        currentUser = null;
-        reports = [];
-        connectedUsers = [];
-
-        app.style.display = "none";
-        loginScreen.style.display = "flex";
-
-        loginFirstName.value = "";
-        loginLastName.value = "";
-
-        renderReports();
-        renderConnectedUsers();
-
-      });
-
-
-    /* =====================================================
-       ENVOI D'UN SIGNALEMENT
-    ===================================================== */
-
-    document
-      .getElementById("sendReportButton")
-      .addEventListener("click", sendReport);
-
-
-    function sendReport() {
-
-      if (!currentUser) {
-
-        showToast(
-          "Vous devez être connecté.",
-          "error"
+            body:
+              JSON.stringify(body)
+          }
         );
 
-        return;
 
-      }
-
-
-      const firstName =
-        document.getElementById("firstName")
-          .value.trim();
-
-      const lastName =
-        document.getElementById("lastName")
-          .value.trim();
-
-      const type =
-        document.getElementById("type")
-          .value;
-
-      const duration =
-        document.getElementById("duration")
-          .value;
-
-      const description =
-        document.getElementById("description")
-          .value.trim();
+      const data =
+        await response.json()
+          .catch(() => ({}));
 
 
       if (
-        !firstName ||
-        !lastName ||
-        !type ||
-        !description
+        !response.ok ||
+        !data.success
       ) {
 
-        formMessage.textContent =
-          "Veuillez compléter les informations obligatoires.";
+        throw new Error(
+          data.message ||
+          "Impossible de traiter la demande."
+        );
 
-        formMessage.style.color = "#d73737";
+      }
+
+
+      /* =========================
+         INSCRIPTION
+      ========================= */
+
+      if (
+        authMode === "register"
+      ) {
+
+        loginFirstNameLogin.value =
+          firstName;
+
+        loginLastNameLogin.value =
+          lastName;
+
+        loginEmail.value =
+          email;
+
+        loginPassword.value =
+          "";
+
+
+        setAuthMode("login");
+
+
+        loginEmail.value =
+          email;
+
+        loginFirstNameLogin.value =
+          firstName;
+
+        loginLastNameLogin.value =
+          lastName;
+
+
+        showLoginSuccess(
+          "Compte créé avec succès. Vous pouvez maintenant vous connecter."
+        );
 
         return;
 
       }
 
 
-      const signalement = {
+      /* =========================
+         CONNEXION
+      ========================= */
 
-        id:
-          crypto.randomUUID
-          ? crypto.randomUUID()
-          : Date.now().toString(),
+      if (
+        !data.token ||
+        !data.user
+      ) {
 
-        firstName,
-        lastName,
-        type,
-        duration,
-        description,
+        throw new Error(
+          "Réponse d'authentification invalide."
+        );
 
-        authorFirstName:
-          currentUser.firstName,
-
-        authorLastName:
-          currentUser.lastName,
-
-        date:
-          new Date().toLocaleString("fr-FR")
-
-      };
+      }
 
 
-      formMessage.textContent =
-        "Transmission du signalement...";
-
-      formMessage.style.color =
-        "#2f80ed";
-
-
-      socket.emit(
-        "nouveau_signalement",
-        signalement
+      localStorage.setItem(
+        TOKEN_KEY,
+        data.token
       );
 
 
-      /*
-        Le serveur confirme l'enregistrement par l'événement
-        signalement_recu côté admin et par erreur_signalement
-        en cas d'échec.
-      */
+      currentUser =
+        normalizeUser(data.user);
 
-      formMessage.textContent =
-        "Signalement transmis avec succès.";
 
-      formMessage.style.color =
-        "#159a73";
-
+      openApplication();
 
       showToast(
-        "Signalement transmis.",
+        `Bienvenue ${currentUser.firstName}.`,
         "success"
       );
 
 
-      document
-        .getElementById("firstName")
-        .value = "";
+    } catch (error) {
 
-      document
-        .getElementById("lastName")
-        .value = "";
+      console.error(
+        "Erreur authentification :",
+        error
+      );
 
-      document
-        .getElementById("type")
-        .value = "";
+      showLoginError(
+        error.message ||
+        "Impossible de se connecter au serveur."
+      );
 
-      document
-        .getElementById("duration")
-        .value = "";
+    } finally {
 
-      document
-        .getElementById("description")
-        .value = "";
+      setAuthLoading(false);
+
+    }
+
+  }
+
+
+  function normalizeUser(user) {
+
+    return {
+
+      id:
+        user.id ??
+        user.userId ??
+        null,
+
+      firstName:
+        String(
+          user.firstName ||
+          user.firstname ||
+          ""
+        ).trim(),
+
+      lastName:
+        String(
+          user.lastName ||
+          user.lastname ||
+          ""
+        ).trim(),
+
+      email:
+        String(
+          user.email ||
+          ""
+        ).trim(),
+
+      role:
+        user.role === "admin"
+          ? "admin"
+          : "user"
+
+    };
+
+  }
+
+
+  function openApplication() {
+
+    loginScreen.style.display =
+      "none";
+
+    app.style.display =
+      "block";
+
+
+    realtimeCount = 0;
+    reports = [];
+    connectedUsers = [];
+
+
+    updateUserInterface();
+
+    createSocket();
+
+
+    if (isAdminUser()) {
+
+      showPage("admin");
+
+    } else {
+
+      showPage("home");
+
+    }
+
+  }
+
+
+  loginButton.addEventListener(
+    "click",
+    authenticate
+  );
+
+
+  [
+    loginFirstName,
+    loginLastName,
+    loginFirstNameLogin,
+    loginLastNameLogin,
+    loginEmail,
+    loginPassword
+  ].forEach(input => {
+
+    input.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          authenticate();
+
+        }
+
+      }
+    );
+
+  });
+
+
+  /* =====================================================
+     SESSION
+  ===================================================== */
+
+  async function restoreSession() {
+
+    const token =
+      localStorage.getItem(
+        TOKEN_KEY
+      );
+
+
+    if (!token) {
+
+      setAuthMode("login");
+
+      return;
 
     }
 
 
-    /* =====================================================
-       HISTORIQUE ADMIN
-    ===================================================== */
+    try {
+
+      const response =
+        await fetch(
+          SERVER_URL +
+          "/api/auth/me",
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`
+            }
+          }
+        );
+
+
+      const data =
+        await response.json()
+          .catch(() => ({}));
+
+
+      if (
+        !response.ok ||
+        !data.success ||
+        !data.user
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Session expirée."
+        );
+
+      }
+
+
+      currentUser =
+        normalizeUser(data.user);
+
+
+      openApplication();
+
+
+    } catch (error) {
+
+      console.log(
+        "Session non restaurée :",
+        error.message
+      );
+
+
+      localStorage.removeItem(
+        TOKEN_KEY
+      );
+
+
+      currentUser = null;
+
+
+      loginScreen.style.display =
+        "flex";
+
+      app.style.display =
+        "none";
+
+
+      setAuthMode("login");
+
+    }
+
+  }
+
+
+  /* =====================================================
+     INTERFACE
+  ===================================================== */
+
+  function updateUserInterface() {
+
+    if (!currentUser) {
+      return;
+    }
+
+
+    const fullName =
+      `${currentUser.firstName} ${currentUser.lastName}`
+        .trim();
+
+
+    headerUserName.textContent =
+      fullName ||
+      currentUser.email;
+
+
+    headerUserRole.textContent =
+      isAdminUser()
+        ? "Administrateur"
+        : "Utilisateur";
+
+
+    avatar.textContent =
+      getInitials(
+        currentUser.firstName,
+        currentUser.lastName
+      );
+
+
+    welcomeTitle.textContent =
+      currentUser.firstName
+        ? `Bonjour ${currentUser.firstName}.`
+        : "Bonjour.";
+
+
+    document
+      .getElementById("adminNavigation")
+      .style.display =
+        isAdminUser()
+          ? "block"
+          : "none";
+
+
+    document
+      .getElementById("mobileAdmin")
+      .style.display =
+        isAdminUser()
+          ? "block"
+          : "none";
+
+  }
+
+
+  /* =====================================================
+     SOCKET.IO
+  ===================================================== */
+
+  function createSocket() {
+
+    const token =
+      localStorage.getItem(
+        TOKEN_KEY
+      );
+
+
+    if (!token) {
+      return null;
+    }
+
+
+    if (socket) {
+
+      try {
+        socket.disconnect();
+      } catch {}
+
+    }
+
+
+    socket =
+      io(
+        SERVER_URL,
+        {
+          auth: {
+            token
+          },
+
+          transports: [
+            "websocket",
+            "polling"
+          ],
+
+          reconnection: true,
+          reconnectionAttempts: Infinity,
+          reconnectionDelay: 1000,
+          reconnectionDelayMax: 5000
+        }
+      );
+
+
+    attachSocketEvents();
+
+
+    return socket;
+
+  }
+
+
+  function forceLogout(message) {
+
+    if (socket) {
+
+      try {
+        socket.disconnect();
+      } catch {}
+
+      socket = null;
+
+    }
+
+
+    localStorage.removeItem(
+      TOKEN_KEY
+    );
+
+
+    currentUser = null;
+    reports = [];
+    connectedUsers = [];
+    realtimeCount = 0;
+
+
+    closeDetailModal();
+    closeDeleteModal();
+
+
+    app.style.display =
+      "none";
+
+    loginScreen.style.display =
+      "flex";
+
+
+    setAuthMode("login");
+
+
+    if (message) {
+      showLoginError(message);
+    }
+
+  }
+
+
+  function attachSocketEvents() {
+
+    if (!socket) {
+      return;
+    }
+
+
+    socket.on(
+      "connect",
+      () => {
+
+        statusDot.classList.remove(
+          "offline"
+        );
+
+        connectionStatus.textContent =
+          "Serveur connecté";
+
+        adminServerStatus.textContent =
+          "OK";
+
+      }
+    );
+
+
+    socket.on(
+      "disconnect",
+      reason => {
+
+        statusDot.classList.add(
+          "offline"
+        );
+
+        connectionStatus.textContent =
+          "Serveur déconnecté";
+
+        adminServerStatus.textContent =
+          "OFF";
+
+
+        console.log(
+          "Socket déconnecté :",
+          reason
+        );
+
+      }
+    );
+
+
+    socket.on(
+      "connect_error",
+      error => {
+
+        statusDot.classList.add(
+          "offline"
+        );
+
+        connectionStatus.textContent =
+          "Connexion impossible";
+
+        adminServerStatus.textContent =
+          "OFF";
+
+
+        console.error(
+          "Socket.IO :",
+          error
+        );
+
+
+        if (
+          error &&
+          /session|auth|token|unauthorized|authentication/i
+            .test(
+              error.message || ""
+            )
+        ) {
+
+          forceLogout(
+            "Votre session a expiré. Veuillez vous reconnecter."
+          );
+
+        }
+
+      }
+    );
+
+
+    socket.on(
+      "auth_error",
+      data => {
+
+        forceLogout(
+          data?.message ||
+          "Session invalide ou expirée."
+        );
+
+      }
+    );
+
+
+    /* =========================
+       HISTORIQUE
+    ========================= */
 
     socket.on(
       "historique_signalements",
@@ -2473,10 +3166,12 @@
           return;
         }
 
+
         reports =
           Array.isArray(data)
             ? data
             : [];
+
 
         updateAdminStats();
         renderReports();
@@ -2485,9 +3180,9 @@
     );
 
 
-    /* =====================================================
-       NOUVEAU SIGNALEMENT EN TEMPS RÉEL
-    ===================================================== */
+    /* =========================
+       NOUVEAU SIGNALEMENT
+    ========================= */
 
     socket.on(
       "signalement_recu",
@@ -2508,7 +3203,9 @@
 
         if (!alreadyExists) {
 
-          reports.unshift(signalement);
+          reports.unshift(
+            signalement
+          );
 
           realtimeCount++;
 
@@ -2528,23 +3225,23 @@
     );
 
 
-    /* =====================================================
-       ERREUR
-    ===================================================== */
-
     socket.on(
       "erreur_signalement",
       data => {
 
-        showToast(
+        const message =
           data?.message ||
-          "Une erreur est survenue.",
+          "Une erreur est survenue.";
+
+
+        showToast(
+          message,
           "error"
         );
 
+
         formMessage.textContent =
-          data?.message ||
-          "Une erreur est survenue.";
+          message;
 
         formMessage.style.color =
           "#d73737";
@@ -2553,9 +3250,9 @@
     );
 
 
-    /* =====================================================
-       SUPPRESSION REÇUE
-    ===================================================== */
+    /* =========================
+       SUPPRESSION
+    ========================= */
 
     socket.on(
       "signalement_supprime",
@@ -2571,7 +3268,8 @@
 
         if (
           selectedReport &&
-          String(selectedReport.id) === String(id)
+          String(selectedReport.id) ===
+            String(id)
         ) {
 
           closeDetailModal();
@@ -2581,7 +3279,8 @@
 
         if (
           reportToDelete &&
-          String(reportToDelete.id) === String(id)
+          String(reportToDelete.id) ===
+            String(id)
         ) {
 
           closeDeleteModal();
@@ -2602,9 +3301,9 @@
     );
 
 
-    /* =====================================================
-       UTILISATEURS CONNECTÉS
-    ===================================================== */
+    /* =========================
+       UTILISATEURS
+    ========================= */
 
     socket.on(
       "utilisateurs_connectes",
@@ -2614,10 +3313,12 @@
           return;
         }
 
+
         connectedUsers =
           Array.isArray(users)
             ? users
             : [];
+
 
         updateAdminStats();
         renderConnectedUsers();
@@ -2625,47 +3326,521 @@
       }
     );
 
+  }
 
-    function renderConnectedUsers() {
 
-      if (!isAdminUser()) {
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
 
-        connectedUsersList.innerHTML = `
-          <div class="empty-state">
-            Accès réservé à l'administration.
-          </div>
-        `;
+  function showPage(pageName) {
 
-        return;
+    if (
+      pageName === "admin" &&
+      !isAdminUser()
+    ) {
+
+      showToast(
+        "Accès réservé aux administrateurs.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    document
+      .querySelectorAll(".page")
+      .forEach(page => {
+
+        page.classList.remove(
+          "active"
+        );
+
+      });
+
+
+    const page =
+      document.getElementById(
+        "page" +
+        pageName.charAt(0).toUpperCase() +
+        pageName.slice(1)
+      );
+
+
+    if (page) {
+      page.classList.add("active");
+    }
+
+
+    document
+      .querySelectorAll(
+        ".nav-button"
+      )
+      .forEach(button => {
+
+        button.classList.remove(
+          "active"
+        );
+
+      });
+
+
+    document
+      .querySelectorAll(
+        ".mobile-nav button"
+      )
+      .forEach(button => {
+
+        button.classList.remove(
+          "active"
+        );
+
+      });
+
+
+    if (pageName === "home") {
+
+      document
+        .getElementById("navHome")
+        .classList.add("active");
+
+      document
+        .getElementById("mobileHome")
+        .classList.add("active");
+
+    }
+
+
+    if (pageName === "report") {
+
+      document
+        .getElementById("navReport")
+        .classList.add("active");
+
+      document
+        .getElementById("mobileReport")
+        .classList.add("active");
+
+    }
+
+
+    if (pageName === "admin") {
+
+      document
+        .getElementById("navAdmin")
+        .classList.add("active");
+
+      document
+        .getElementById("mobileAdmin")
+        .classList.add("active");
+
+      renderReports();
+      renderConnectedUsers();
+
+    }
+
+  }
+
+
+  document
+    .getElementById("navHome")
+    .addEventListener(
+      "click",
+      () => showPage("home")
+    );
+
+
+  document
+    .getElementById("navReport")
+    .addEventListener(
+      "click",
+      () => showPage("report")
+    );
+
+
+  document
+    .getElementById("navAdmin")
+    .addEventListener(
+      "click",
+      () => showPage("admin")
+    );
+
+
+  document
+    .getElementById("homeReportButton")
+    .addEventListener(
+      "click",
+      () => showPage("report")
+    );
+
+
+  document
+    .getElementById("mobileHome")
+    .addEventListener(
+      "click",
+      () => showPage("home")
+    );
+
+
+  document
+    .getElementById("mobileReport")
+    .addEventListener(
+      "click",
+      () => showPage("report")
+    );
+
+
+  document
+    .getElementById("mobileAdmin")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (isAdminUser()) {
+          showPage("admin");
+        }
 
       }
+    );
 
 
-      if (!connectedUsers.length) {
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
 
-        connectedUsersList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">◌</div>
-            Aucune personne connectée.
-          </div>
-        `;
+  document
+    .getElementById("logoutButton")
+    .addEventListener(
+      "click",
+      logout
+    );
 
-        return;
+
+  function logout() {
+
+    if (socket) {
+
+      try {
+        socket.disconnect();
+      } catch {}
+
+      socket = null;
+
+    }
+
+
+    localStorage.removeItem(
+      TOKEN_KEY
+    );
+
+
+    currentUser = null;
+    reports = [];
+    connectedUsers = [];
+    realtimeCount = 0;
+
+    selectedReport = null;
+    reportToDelete = null;
+
+
+    closeDetailModal();
+    closeDeleteModal();
+
+
+    app.style.display =
+      "none";
+
+    loginScreen.style.display =
+      "flex";
+
+
+    loginFirstName.value = "";
+    loginLastName.value = "";
+
+    loginFirstNameLogin.value =
+      "";
+
+    loginLastNameLogin.value =
+      "";
+
+    loginEmail.value =
+      "";
+
+    loginPassword.value =
+      "";
+
+
+    formMessage.textContent =
+      "";
+
+
+    renderReports();
+    renderConnectedUsers();
+
+    setAuthMode("login");
+
+    showToast(
+      "Vous avez été déconnecté.",
+      "success"
+    );
+
+  }
+
+
+  /* =====================================================
+     SIGNALEMENT
+  ===================================================== */
+
+  document
+    .getElementById("sendReportButton")
+    .addEventListener(
+      "click",
+      sendReport
+    );
+
+
+  function sendReport() {
+
+    if (!currentUser) {
+
+      showToast(
+        "Vous devez être connecté.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !socket ||
+      !socket.connected
+    ) {
+
+      showToast(
+        "Connexion au serveur indisponible.",
+        "error"
+      );
+
+      formMessage.textContent =
+        "Impossible d'envoyer le signalement : serveur déconnecté.";
+
+      formMessage.style.color =
+        "#d73737";
+
+      return;
+
+    }
+
+
+    const firstName =
+      document
+        .getElementById("firstName")
+        .value
+        .trim();
+
+
+    const lastName =
+      document
+        .getElementById("lastName")
+        .value
+        .trim();
+
+
+    const type =
+      document
+        .getElementById("type")
+        .value;
+
+
+    const duration =
+      document
+        .getElementById("duration")
+        .value;
+
+
+    const description =
+      document
+        .getElementById("description")
+        .value
+        .trim();
+
+
+    if (
+      !firstName ||
+      !lastName ||
+      !type ||
+      !description
+    ) {
+
+      formMessage.textContent =
+        "Veuillez compléter les informations obligatoires.";
+
+      formMessage.style.color =
+        "#d73737";
+
+      return;
+
+    }
+
+
+    const signalement = {
+
+      id:
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : Date.now().toString(),
+
+      firstName,
+      lastName,
+      type,
+      duration,
+      description
+
+    };
+
+
+    formMessage.textContent =
+      "Transmission du signalement...";
+
+    formMessage.style.color =
+      "#2f80ed";
+
+
+    const button =
+      document.getElementById(
+        "sendReportButton"
+      );
+
+
+    button.disabled =
+      true;
+
+
+    socket.emit(
+      "nouveau_signalement",
+      signalement,
+      response => {
+
+        button.disabled =
+          false;
+
+
+        if (
+          response &&
+          response.success
+        ) {
+
+          formMessage.textContent =
+            "Signalement transmis avec succès.";
+
+          formMessage.style.color =
+            "#159a73";
+
+
+          showToast(
+            "Signalement enregistré.",
+            "success"
+          );
+
+
+          document
+            .getElementById("firstName")
+            .value = "";
+
+          document
+            .getElementById("lastName")
+            .value = "";
+
+          document
+            .getElementById("type")
+            .value = "";
+
+          document
+            .getElementById("duration")
+            .value = "";
+
+          document
+            .getElementById("description")
+            .value = "";
+
+        } else {
+
+          const message =
+            response?.message ||
+            "Impossible d'enregistrer le signalement.";
+
+          formMessage.textContent =
+            message;
+
+          formMessage.style.color =
+            "#d73737";
+
+
+          showToast(
+            message,
+            "error"
+          );
+
+        }
 
       }
+    );
+
+  }
 
 
-      connectedUsersList.innerHTML =
-        connectedUsers.map(user => {
+  /* =====================================================
+     UTILISATEURS CONNECTÉS
+  ===================================================== */
+
+  function renderConnectedUsers() {
+
+    if (!isAdminUser()) {
+
+      connectedUsersList.innerHTML = `
+        <div class="empty-state">
+          Accès réservé à l'administration.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    if (!connectedUsers.length) {
+
+      connectedUsersList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">◌</div>
+          Aucune personne connectée.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    connectedUsersList.innerHTML =
+      connectedUsers
+        .map(user => {
 
           const name =
             `${user.firstName || "Utilisateur"} ${user.lastName || ""}`
               .trim();
 
+
           const role =
             user.role === "admin"
               ? "Administrateur"
               : "Utilisateur";
+
 
           return `
             <div class="connected-user">
@@ -2699,71 +3874,77 @@
             </div>
           `;
 
-        }).join("");
+        })
+        .join("");
+
+  }
+
+
+  /* =====================================================
+     STATISTIQUES
+  ===================================================== */
+
+  function updateAdminStats() {
+
+    adminTotal.textContent =
+      reports.length;
+
+    adminRealtime.textContent =
+      realtimeCount;
+
+    adminConnected.textContent =
+      connectedUsers.length;
+
+    adminServerStatus.textContent =
+      socket &&
+      socket.connected
+        ? "OK"
+        : "OFF";
+
+  }
+
+
+  /* =====================================================
+     SIGNALEMENTS
+  ===================================================== */
+
+  function renderReports() {
+
+    if (!reportsList) {
+      return;
+    }
+
+
+    if (!reports.length) {
+
+      reportsList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">◌</div>
+          Aucun signalement enregistré.
+        </div>
+      `;
+
+      return;
 
     }
 
 
-    /* =====================================================
-       STATISTIQUES
-    ===================================================== */
-
-    function updateAdminStats() {
-
-      adminTotal.textContent =
-        reports.length;
-
-      adminRealtime.textContent =
-        realtimeCount;
-
-      adminConnected.textContent =
-        connectedUsers.length;
-
-      adminServerStatus.textContent =
-        socket.connected
-          ? "OK"
-          : "OFF";
-
-    }
+    const query =
+      reportSearch
+        ? reportSearch.value
+            .trim()
+            .toLowerCase()
+        : "";
 
 
-    /* =====================================================
-       AFFICHAGE DES SIGNALEMENTS
-    ===================================================== */
-
-    function renderReports() {
-
-      if (!reportsList) {
-        return;
-      }
-
-
-      if (!reports.length) {
-
-        reportsList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">◌</div>
-            Aucun signalement enregistré.
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      const query =
-        reportSearch
-          ? reportSearch.value.trim().toLowerCase()
-          : "";
-
-
-      const filtered =
-        reports.filter(report => {
+    const filtered =
+      reports.filter(
+        report => {
 
           if (!query) {
             return true;
           }
+
 
           const searchable = [
 
@@ -2776,34 +3957,40 @@
             report.authorLastName
 
           ]
-          .join(" ")
-          .toLowerCase();
-
-          return searchable.includes(query);
-
-        });
+            .join(" ")
+            .toLowerCase();
 
 
-      if (!filtered.length) {
+          return searchable.includes(
+            query
+          );
 
-        reportsList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">⌕</div>
-            Aucun résultat.
-          </div>
-        `;
-
-        return;
-
-      }
+        }
+      );
 
 
-      reportsList.innerHTML =
-        filtered.map(report => {
+    if (!filtered.length) {
+
+      reportsList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⌕</div>
+          Aucun résultat.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    reportsList.innerHTML =
+      filtered
+        .map(report => {
 
           const person =
             `${report.firstName || ""} ${report.lastName || ""}`
               .trim();
+
 
           const author =
             `${report.authorFirstName || ""} ${report.authorLastName || ""}`
@@ -2847,7 +4034,6 @@
 
               </div>
 
-
               <div class="report-actions">
 
                 <button
@@ -2869,392 +4055,420 @@
             </div>
           `;
 
-        }).join("");
+        })
+        .join("");
 
 
-      document
-        .querySelectorAll(".view-button")
-        .forEach(button => {
+    document
+      .querySelectorAll(".view-button")
+      .forEach(button => {
 
-          button.addEventListener(
-            "click",
-            () => {
+        button.addEventListener(
+          "click",
+          () => {
 
-              const report =
-                reports.find(
-                  item =>
-                    String(item.id) ===
-                    String(button.dataset.id)
-                );
+            const report =
+              reports.find(
+                item =>
+                  String(item.id) ===
+                  String(button.dataset.id)
+              );
 
-              if (report) {
-                openDetailModal(report);
-              }
 
+            if (report) {
+              openDetailModal(report);
             }
-          );
 
-        });
+          }
+        );
+
+      });
 
 
-      document
-        .querySelectorAll(".delete-button")
-        .forEach(button => {
+    document
+      .querySelectorAll(".delete-button")
+      .forEach(button => {
 
-          button.addEventListener(
-            "click",
-            () => {
+        button.addEventListener(
+          "click",
+          () => {
 
-              const report =
-                reports.find(
-                  item =>
-                    String(item.id) ===
-                    String(button.dataset.id)
-                );
+            const report =
+              reports.find(
+                item =>
+                  String(item.id) ===
+                  String(button.dataset.id)
+              );
 
-              if (report) {
-                openDeleteModal(report);
-              }
 
+            if (report) {
+              openDeleteModal(report);
             }
-          );
 
-        });
+          }
+        );
 
-    }
+      });
 
-
-    reportSearch.addEventListener(
-      "input",
-      renderReports
-    );
+  }
 
 
-    /* =====================================================
-       DETAIL MODAL
-    ===================================================== */
-
-    function openDetailModal(report) {
-
-      selectedReport = report;
-
-      const person =
-        `${report.firstName || ""} ${report.lastName || ""}`
-          .trim();
-
-      const author =
-        `${report.authorFirstName || ""} ${report.authorLastName || ""}`
-          .trim();
+  reportSearch.addEventListener(
+    "input",
+    renderReports
+  );
 
 
-      document.getElementById("detailPerson")
-        .textContent = person || "—";
+  /* =====================================================
+     DETAIL
+  ===================================================== */
 
-      document.getElementById("detailType")
-        .textContent = report.type || "—";
+  function openDetailModal(report) {
 
-      document.getElementById("detailDuration")
-        .textContent = report.duration || "—";
+    selectedReport =
+      report;
 
-      document.getElementById("detailAuthor")
-        .textContent = author || "—";
 
-      document.getElementById("detailDate")
-        .textContent =
+    const person =
+      `${report.firstName || ""} ${report.lastName || ""}`
+        .trim();
+
+
+    const author =
+      `${report.authorFirstName || ""} ${report.authorLastName || ""}`
+        .trim();
+
+
+    document
+      .getElementById("detailPerson")
+      .textContent =
+        person || "—";
+
+
+    document
+      .getElementById("detailType")
+      .textContent =
+        report.type || "—";
+
+
+    document
+      .getElementById("detailDuration")
+      .textContent =
+        report.duration || "—";
+
+
+    document
+      .getElementById("detailAuthor")
+      .textContent =
+        author || "—";
+
+
+    document
+      .getElementById("detailDate")
+      .textContent =
         formatDate(
           report.createdAt ||
           report.date
         );
 
-      document.getElementById("detailId")
-        .textContent =
+
+    document
+      .getElementById("detailId")
+      .textContent =
         report.id || "—";
 
-      document.getElementById("detailDescription")
-        .textContent =
+
+    document
+      .getElementById("detailDescription")
+      .textContent =
         report.description || "—";
 
 
-      document
-        .getElementById("detailModal")
-        .classList.add("show");
+    document
+      .getElementById("detailModal")
+      .classList.add("show");
+
+  }
+
+
+  function closeDetailModal() {
+
+    selectedReport =
+      null;
+
+
+    document
+      .getElementById("detailModal")
+      .classList.remove(
+        "show"
+      );
+
+  }
+
+
+  document
+    .getElementById("detailClose")
+    .addEventListener(
+      "click",
+      closeDetailModal
+    );
+
+
+  document
+    .getElementById("detailCloseBottom")
+    .addEventListener(
+      "click",
+      closeDetailModal
+    );
+
+
+  /* =====================================================
+     SUPPRESSION
+  ===================================================== */
+
+  function openDeleteModal(report) {
+
+    if (!isAdminUser()) {
+
+      showToast(
+        "Action réservée à l'administration.",
+        "error"
+      );
+
+      return;
 
     }
 
 
-    function closeDetailModal() {
+    reportToDelete =
+      report;
 
-      selectedReport = null;
 
-      document
-        .getElementById("detailModal")
-        .classList.remove("show");
-
-    }
+    const person =
+      `${report.firstName || ""} ${report.lastName || ""}`
+        .trim();
 
 
     document
-      .getElementById("detailClose")
-      .addEventListener(
-        "click",
-        closeDetailModal
-      );
-
-
-    document
-      .getElementById("detailCloseBottom")
-      .addEventListener(
-        "click",
-        closeDetailModal
-      );
-
-
-    /* =====================================================
-       DELETE MODAL
-    ===================================================== */
-
-    function openDeleteModal(report) {
-
-      if (!isAdminUser()) {
-
-        showToast(
-          "Action réservée à l'administration.",
-          "error"
-        );
-
-        return;
-
-      }
-
-
-      reportToDelete = report;
-
-
-      const person =
-        `${report.firstName || ""} ${report.lastName || ""}`
-          .trim();
-
-
-      document
-        .getElementById("deleteTarget")
-        .textContent =
+      .getElementById("deleteTarget")
+      .textContent =
         person
           ? `Signalement concernant : ${person}`
           : "Signalement sélectionné";
 
 
-      document
-        .getElementById("deleteModal")
-        .classList.add("show");
-
-    }
-
-
-    function closeDeleteModal() {
-
-      reportToDelete = null;
-
-      document
-        .getElementById("deleteModal")
-        .classList.remove("show");
-
-    }
-
-
     document
-      .getElementById("deleteClose")
-      .addEventListener(
-        "click",
-        closeDeleteModal
-      );
+      .getElementById("deleteModal")
+      .classList.add("show");
+
+  }
 
 
-    document
-      .getElementById("deleteCancel")
-      .addEventListener(
-        "click",
-        closeDeleteModal
-      );
+  function closeDeleteModal() {
 
-
-    document
-      .getElementById("deleteConfirm")
-      .addEventListener(
-        "click",
-        () => {
-
-          if (
-            !reportToDelete ||
-            !isAdminUser()
-          ) {
-
-            closeDeleteModal();
-
-            return;
-
-          }
-
-
-          /*
-            PAS DE CALLBACK ACK ici.
-            Ton server.js actuel ne renvoie pas d'ACK.
-            La confirmation arrive avec
-            "signalement_supprime".
-          */
-
-          socket.emit(
-            "supprimer_signalement",
-            String(reportToDelete.id)
-          );
-
-        }
-      );
-
-
-    document
-      .getElementById("detailDelete")
-      .addEventListener(
-        "click",
-        () => {
-
-          if (!selectedReport) {
-            return;
-          }
-
-          const report =
-            selectedReport;
-
-          closeDetailModal();
-
-          openDeleteModal(report);
-
-        }
-      );
-
-
-    /* =====================================================
-       MODALES — CLIC EXTÉRIEUR
-    ===================================================== */
-
-    document
-      .getElementById("detailModal")
-      .addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target.id ===
-            "detailModal"
-          ) {
-
-            closeDetailModal();
-
-          }
-
-        }
-      );
+    reportToDelete =
+      null;
 
 
     document
       .getElementById("deleteModal")
-      .addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target.id ===
-            "deleteModal"
-          ) {
-
-            closeDeleteModal();
-
-          }
-
-        }
+      .classList.remove(
+        "show"
       );
 
+  }
 
-    document.addEventListener(
-      "keydown",
-      event => {
 
-        if (event.key !== "Escape") {
+  document
+    .getElementById("deleteClose")
+    .addEventListener(
+      "click",
+      closeDeleteModal
+    );
+
+
+  document
+    .getElementById("deleteCancel")
+    .addEventListener(
+      "click",
+      closeDeleteModal
+    );
+
+
+  document
+    .getElementById("deleteConfirm")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (
+          !reportToDelete ||
+          !isAdminUser()
+        ) {
+
+          closeDeleteModal();
+
           return;
+
         }
 
-        closeDetailModal();
-        closeDeleteModal();
+
+        if (
+          !socket ||
+          !socket.connected
+        ) {
+
+          showToast(
+            "Serveur déconnecté.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        const id =
+          String(
+            reportToDelete.id
+          );
+
+
+        const button =
+          document.getElementById(
+            "deleteConfirm"
+          );
+
+
+        button.disabled =
+          true;
+
+
+        socket.emit(
+          "supprimer_signalement",
+          id,
+          response => {
+
+            button.disabled =
+              false;
+
+
+            if (
+              response &&
+              !response.success
+            ) {
+
+              showToast(
+                response.message ||
+                "Impossible de supprimer le signalement.",
+                "error"
+              );
+
+            }
+
+          }
+        );
 
       }
     );
 
 
-    /* =====================================================
-       CONNEXION SOCKET
-    ===================================================== */
+  document
+    .getElementById("detailDelete")
+    .addEventListener(
+      "click",
+      () => {
 
-    socket.on("connect", () => {
-
-      statusDot.classList.remove("offline");
-
-      connectionStatus.textContent =
-        "Serveur connecté";
-
-      adminServerStatus.textContent =
-        "OK";
+        if (!selectedReport) {
+          return;
+        }
 
 
-      /*
-        Si l'utilisateur était déjà connecté,
-        on renvoie son identité après reconnexion.
-      */
+        const report =
+          selectedReport;
 
-      if (currentUser) {
 
-        socket.emit("role", {
-          role: currentUser.role,
-          firstName: currentUser.firstName,
-          lastName: currentUser.lastName
-        });
+        closeDetailModal();
+
+        openDeleteModal(
+          report
+        );
 
       }
-
-    });
-
-
-    socket.on("disconnect", () => {
-
-      statusDot.classList.add("offline");
-
-      connectionStatus.textContent =
-        "Serveur déconnecté";
-
-      adminServerStatus.textContent =
-        "OFF";
-
-    });
+    );
 
 
-    socket.on("connect_error", () => {
+  /* =====================================================
+     MODALES
+  ===================================================== */
 
-      statusDot.classList.add("offline");
+  document
+    .getElementById("detailModal")
+    .addEventListener(
+      "click",
+      event => {
 
-      connectionStatus.textContent =
-        "Connexion impossible";
+        if (
+          event.target.id ===
+          "detailModal"
+        ) {
 
-      adminServerStatus.textContent =
-        "OFF";
+          closeDetailModal();
 
-    });
+        }
+
+      }
+    );
 
 
-    /* =====================================================
-       INITIALISATION
-    ===================================================== */
+  document
+    .getElementById("deleteModal")
+    .addEventListener(
+      "click",
+      event => {
 
-    updateAdminStats();
+        if (
+          event.target.id ===
+          "deleteModal"
+        ) {
 
-  </script>
+          closeDeleteModal();
+
+        }
+
+      }
+    );
+
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key !== "Escape"
+      ) {
+        return;
+      }
+
+
+      closeDetailModal();
+      closeDeleteModal();
+
+    }
+  );
+
+
+  /* =====================================================
+     INITIALISATION
+  ===================================================== */
+
+  updateAdminStats();
+
+  setAuthMode("login");
+
+  restoreSession();
+
+</script>
 
 </body>
 </html>
