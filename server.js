@@ -17,6 +17,7 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+
 // ===============================
 // BASE DE DONNÉES PHARE
 // ===============================
@@ -28,12 +29,14 @@ const pool = new Pool({
   }
 });
 
+
 // ===============================
 // INITIALISATION BASE DE DONNÉES
 // ===============================
 
 async function initDatabase() {
   try {
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS signalements (
         id TEXT PRIMARY KEY,
@@ -49,78 +52,202 @@ async function initDatabase() {
     `);
 
     console.log("✅ Base de données PHARE prête");
+
   } catch (error) {
-    console.error("❌ Erreur base de données :", error);
+
+    console.error(
+      "❌ Erreur base de données :",
+      error
+    );
+
     throw error;
   }
 }
+
 
 // ===============================
 // PAGE D'ACCUEIL
 // ===============================
 
 app.get("/", (req, res) => {
+
   res.json({
     nom: "PHARE",
     statut: "Serveur opérationnel",
     database: "connectée"
   });
+
 });
+
+
+// ===============================
+// UTILISATEURS CONNECTÉS
+// ===============================
+
+function broadcastConnectedUsers() {
+
+  const users = [];
+
+  io.sockets.sockets.forEach((client) => {
+
+    if (
+      !client.data.firstName ||
+      !client.data.lastName
+    ) {
+      return;
+    }
+
+    users.push({
+      id: client.id,
+      firstName: client.data.firstName,
+      lastName: client.data.lastName,
+      role: client.data.role || "user"
+    });
+
+  });
+
+
+  // Envoyer uniquement aux administrateurs
+
+  io.sockets.sockets.forEach((client) => {
+
+    if (client.data.role === "admin") {
+
+      client.emit(
+        "utilisateurs_connectes",
+        users
+      );
+
+    }
+
+  });
+
+
+  console.log(
+    `👥 ${users.length} personne(s) connectée(s)`
+  );
+
+}
+
 
 // ===============================
 // SOCKET.IO
 // ===============================
 
 io.on("connection", (socket) => {
-  console.log("🟢 PC connecté :", socket.id);
+
+  console.log(
+    "🟢 PC connecté :",
+    socket.id
+  );
+
 
   // ===============================
-  // RÔLE
+  // RÔLE + IDENTITÉ
   // ===============================
 
-  socket.on("role", async (role) => {
-    socket.data.role = role;
+  socket.on("role", async (data) => {
+
+    /*
+      Compatible avec l'ancien format :
+
+      socket.emit("role", "admin")
+
+      et avec le nouveau :
+
+      socket.emit("role", {
+        role: "admin",
+        firstName: "Ziyad",
+        lastName: "HAMIED"
+      })
+    */
+
+    const role =
+      typeof data === "string"
+        ? data
+        : data?.role;
+
+
+    const firstName =
+      typeof data === "object"
+        ? data.firstName
+        : "";
+
+
+    const lastName =
+      typeof data === "object"
+        ? data.lastName
+        : "";
+
+
+    socket.data.role =
+      role || "user";
+
+    socket.data.firstName =
+      firstName || "";
+
+    socket.data.lastName =
+      lastName || "";
+
 
     console.log(
-      `👤 ${socket.id} → rôle reçu : ${role}`
+      `👤 ${socket.id} → ${socket.data.firstName} ${socket.data.lastName} → rôle : ${socket.data.role}`
     );
 
-    if (role !== "admin") {
-      return;
+
+    // ===============================
+    // HISTORIQUE ADMIN
+    // ===============================
+
+    if (socket.data.role === "admin") {
+
+      try {
+
+        const result = await pool.query(`
+          SELECT
+            id,
+            first_name AS "firstName",
+            last_name AS "lastName",
+            type,
+            duration,
+            description,
+            author_first_name AS "authorFirstName",
+            author_last_name AS "authorLastName",
+            created_at AS "createdAt"
+          FROM signalements
+          ORDER BY created_at DESC
+        `);
+
+
+        socket.emit(
+          "historique_signalements",
+          result.rows
+        );
+
+
+        console.log(
+          `📋 ${result.rows.length} signalement(s) envoyé(s) à l'admin`
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "❌ Erreur historique :",
+          error
+        );
+
+      }
+
     }
 
-    try {
-      const result = await pool.query(`
-        SELECT
-          id,
-          first_name AS "firstName",
-          last_name AS "lastName",
-          type,
-          duration,
-          description,
-          author_first_name AS "authorFirstName",
-          author_last_name AS "authorLastName",
-          created_at AS "createdAt"
-        FROM signalements
-        ORDER BY created_at DESC
-      `);
 
-      socket.emit(
-        "historique_signalements",
-        result.rows
-      );
+    // Actualiser les personnes connectées
 
-      console.log(
-        `📋 ${result.rows.length} signalement(s) envoyé(s) à l'admin`
-      );
+    broadcastConnectedUsers();
 
-    } catch (error) {
-      console.error(
-        "❌ Erreur historique :",
-        error
-      );
-    }
   });
+
 
   // ===============================
   // NOUVEAU SIGNALEMENT
@@ -139,13 +266,20 @@ io.on("connection", (socket) => {
         signalement?.id
       );
 
+
       try {
 
-        if (!signalement || !signalement.id) {
+        if (
+          !signalement ||
+          !signalement.id
+        ) {
+
           throw new Error(
             "Signalement ou ID manquant."
           );
+
         }
+
 
         await pool.query(
           `
@@ -173,33 +307,51 @@ io.on("connection", (socket) => {
           ]
         );
 
+
         console.log(
           "💾 Signalement sauvegardé dans PostgreSQL"
         );
 
-        // Envoyer aux admins
+
+        // Envoyer aux administrateurs
+
         io.sockets.sockets.forEach(
           (client) => {
-            if (client.data.role === "admin") {
+
+            if (
+              client.data.role === "admin"
+            ) {
+
               client.emit(
                 "signalement_recu",
                 signalement
               );
+
             }
+
           }
         );
+
 
         console.log(
           "⚡ Signalement envoyé aux admins"
         );
 
-        // Réponse au navigateur
-        if (typeof callback === "function") {
+
+        // ACK pour le navigateur
+
+        if (
+          typeof callback === "function"
+        ) {
+
           callback({
             success: true,
-            message: "Signalement enregistré."
+            message:
+              "Signalement enregistré."
           });
+
         }
+
 
       } catch (error) {
 
@@ -207,6 +359,7 @@ io.on("connection", (socket) => {
           "❌ Erreur sauvegarde :",
           error
         );
+
 
         socket.emit(
           "erreur_signalement",
@@ -216,16 +369,24 @@ io.on("connection", (socket) => {
           }
         );
 
-        if (typeof callback === "function") {
+
+        if (
+          typeof callback === "function"
+        ) {
+
           callback({
             success: false,
             message:
               "Impossible d'enregistrer le signalement."
           });
+
         }
+
       }
+
     }
   );
+
 
   // ===============================
   // SUPPRESSION
@@ -267,12 +428,19 @@ io.on("connection", (socket) => {
         "================================="
       );
 
-      // Vérification admin
-      if (socket.data.role !== "admin") {
+
+      // ===============================
+      // VÉRIFICATION ADMIN
+      // ===============================
+
+      if (
+        socket.data.role !== "admin"
+      ) {
 
         console.log(
           "🚫 SUPPRESSION REFUSÉE : utilisateur non admin"
         );
+
 
         socket.emit(
           "erreur_signalement",
@@ -282,23 +450,33 @@ io.on("connection", (socket) => {
           }
         );
 
-        if (typeof callback === "function") {
+
+        if (
+          typeof callback === "function"
+        ) {
+
           callback({
             success: false,
             message:
               "Action non autorisée."
           });
+
         }
 
         return;
       }
 
-      // Vérification ID
+
+      // ===============================
+      // VÉRIFICATION ID
+      // ===============================
+
       if (!id) {
 
         console.log(
           "❌ SUPPRESSION REFUSÉE : ID manquant"
         );
+
 
         socket.emit(
           "erreur_signalement",
@@ -308,35 +486,49 @@ io.on("connection", (socket) => {
           }
         );
 
-        if (typeof callback === "function") {
+
+        if (
+          typeof callback === "function"
+        ) {
+
           callback({
             success: false,
             message:
               "Identifiant manquant."
           });
+
         }
 
         return;
       }
 
+
       try {
 
-        const result = await pool.query(
-          `
-          DELETE FROM signalements
-          WHERE id = $1
-          RETURNING id
-          `,
-          [String(id)]
-        );
+        const result =
+          await pool.query(
+            `
+            DELETE FROM signalements
+            WHERE id = $1
+            RETURNING id
+            `,
+            [String(id)]
+          );
 
-        // Aucun signalement trouvé
-        if (result.rowCount === 0) {
+
+        // ===============================
+        // INTROUVABLE
+        // ===============================
+
+        if (
+          result.rowCount === 0
+        ) {
 
           console.log(
-            "⚠️ SIGNALement introuvable dans PostgreSQL :",
+            "⚠️ Signalement introuvable dans PostgreSQL :",
             id
           );
+
 
           socket.emit(
             "erreur_signalement",
@@ -346,31 +538,45 @@ io.on("connection", (socket) => {
             }
           );
 
-          if (typeof callback === "function") {
+
+          if (
+            typeof callback === "function"
+          ) {
+
             callback({
               success: false,
               message:
                 "Signalement introuvable."
             });
+
           }
 
           return;
         }
 
-        // Suppression réussie
+
+        // ===============================
+        // SUPPRESSION RÉUSSIE
+        // ===============================
+
         const deletedId =
           result.rows[0].id;
 
+
         console.log(
-          "✅ SIGNALement supprimé de PostgreSQL :",
+          "✅ Signalement supprimé de PostgreSQL :",
           deletedId
         );
 
-        // Prévenir tous les admins
+
+        // Informer tous les admins
+
         io.sockets.sockets.forEach(
           (client) => {
 
-            if (client.data.role === "admin") {
+            if (
+              client.data.role === "admin"
+            ) {
 
               client.emit(
                 "signalement_supprime",
@@ -378,15 +584,21 @@ io.on("connection", (socket) => {
               );
 
             }
+
           }
         );
+
 
         console.log(
           "⚡ Confirmation de suppression envoyée aux admins"
         );
 
-        // Accusé de réception
-        if (typeof callback === "function") {
+
+        // ACK
+
+        if (
+          typeof callback === "function"
+        ) {
 
           callback({
             success: true,
@@ -397,12 +609,14 @@ io.on("connection", (socket) => {
 
         }
 
+
       } catch (error) {
 
         console.error(
           "❌ ERREUR PostgreSQL SUPPRESSION :",
           error
         );
+
 
         socket.emit(
           "erreur_signalement",
@@ -412,7 +626,10 @@ io.on("connection", (socket) => {
           }
         );
 
-        if (typeof callback === "function") {
+
+        if (
+          typeof callback === "function"
+        ) {
 
           callback({
             success: false,
@@ -421,9 +638,12 @@ io.on("connection", (socket) => {
           });
 
         }
+
       }
+
     }
   );
+
 
   // ===============================
   // DÉCONNEXION
@@ -436,8 +656,15 @@ io.on("connection", (socket) => {
       socket.id
     );
 
+
+    // Actualiser la liste des connectés
+
+    broadcastConnectedUsers();
+
   });
+
 });
+
 
 // ===============================
 // DÉMARRAGE DU SERVEUR
@@ -446,11 +673,13 @@ io.on("connection", (socket) => {
 const PORT =
   process.env.PORT || 3000;
 
+
 async function startServer() {
 
   try {
 
     await initDatabase();
+
 
     server.listen(
       PORT,
@@ -464,6 +693,7 @@ async function startServer() {
       }
     );
 
+
   } catch (error) {
 
     console.error(
@@ -471,8 +701,12 @@ async function startServer() {
       error
     );
 
+
     process.exit(1);
+
   }
+
 }
+
 
 startServer();
