@@ -3,6 +3,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const { Pool } = require("pg");
+const crypto = require("crypto");
 
 const app = express();
 const server = http.createServer(app);
@@ -18,9 +19,9 @@ app.use(cors());
 app.use(express.json());
 
 
-// ===============================
-// BASE DE DONNÉES PHARE
-// ===============================
+// ======================================================
+// BASE DE DONNÉES
+// ======================================================
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -30,12 +31,240 @@ const pool = new Pool({
 });
 
 
-// ===============================
+// ======================================================
+// SÉCURITÉ
+// ======================================================
+
+// IMPORTANT : sur Render, ajoute une variable d'environnement
+// SESSION_SECRET avec une longue valeur aléatoire.
+//
+// Si elle n'existe pas, le serveur utilise une valeur temporaire.
+// Pour la production, il faut absolument définir SESSION_SECRET.
+
+const SESSION_SECRET =
+  process.env.SESSION_SECRET ||
+  crypto.randomBytes(32).toString("hex");
+
+
+// ======================================================
+// OUTILS MOT DE PASSE
+// ======================================================
+
+function hashPassword(password) {
+  return new Promise((resolve, reject) => {
+
+    const salt = crypto.randomBytes(16).toString("hex");
+
+    crypto.scrypt(
+      password,
+      salt,
+      64,
+      (error, derivedKey) => {
+
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(
+          `${salt}:${derivedKey.toString("hex")}`
+        );
+
+      }
+    );
+
+  });
+}
+
+
+function verifyPassword(password, storedHash) {
+  return new Promise((resolve, reject) => {
+
+    try {
+
+      const parts = storedHash.split(":");
+
+      if (parts.length !== 2) {
+        resolve(false);
+        return;
+      }
+
+      const salt = parts[0];
+      const storedKey = Buffer.from(parts[1], "hex");
+
+      crypto.scrypt(
+        password,
+        salt,
+        64,
+        (error, derivedKey) => {
+
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          if (derivedKey.length !== storedKey.length) {
+            resolve(false);
+            return;
+          }
+
+          resolve(
+            crypto.timingSafeEqual(
+              derivedKey,
+              storedKey
+            )
+          );
+
+        }
+      );
+
+    } catch (error) {
+
+      reject(error);
+
+    }
+
+  });
+}
+
+
+// ======================================================
+// SESSION
+// ======================================================
+
+function createToken(user) {
+
+  const payload = {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    role: user.role,
+    exp: Date.now() + (7 * 24 * 60 * 60 * 1000)
+  };
+
+  const encodedPayload =
+    Buffer
+      .from(JSON.stringify(payload))
+      .toString("base64url");
+
+  const signature =
+    crypto
+      .createHmac("sha256", SESSION_SECRET)
+      .update(encodedPayload)
+      .digest("base64url");
+
+  return `${encodedPayload}.${signature}`;
+}
+
+
+function verifyToken(token) {
+
+  try {
+
+    if (!token || typeof token !== "string") {
+      return null;
+    }
+
+    const parts = token.split(".");
+
+    if (parts.length !== 2) {
+      return null;
+    }
+
+    const payloadPart = parts[0];
+    const signature = parts[1];
+
+    const expectedSignature =
+      crypto
+        .createHmac("sha256", SESSION_SECRET)
+        .update(payloadPart)
+        .digest("base64url");
+
+    const a = Buffer.from(signature);
+    const b = Buffer.from(expectedSignature);
+
+    if (
+      a.length !== b.length ||
+      !crypto.timingSafeEqual(a, b)
+    ) {
+      return null;
+    }
+
+    const payload =
+      JSON.parse(
+        Buffer
+          .from(payloadPart, "base64url")
+          .toString("utf8")
+      );
+
+    if (
+      !payload.exp ||
+      Date.now() > payload.exp
+    ) {
+      return null;
+    }
+
+    return payload;
+
+  } catch (error) {
+
+    return null;
+
+  }
+
+}
+
+
+// ======================================================
+// AUTHENTIFICATION HTTP
+// ======================================================
+
+function normalizeEmail(email) {
+
+  return String(email || "")
+    .trim()
+    .toLowerCase();
+
+}
+
+
+function normalizeName(name) {
+
+  return String(name || "")
+    .trim();
+
+}
+
+
+// ======================================================
 // INITIALISATION BASE DE DONNÉES
-// ===============================
+// ======================================================
 
 async function initDatabase() {
+
   try {
+
+    // -------------------------------
+    // TABLE UTILISATEURS
+    // -------------------------------
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'user',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+
+    // -------------------------------
+    // TABLE SIGNALEMENTS
+    // -------------------------------
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS signalements (
@@ -51,7 +280,111 @@ async function initDatabase() {
       )
     `);
 
-    console.log("✅ Base de données PHARE prête");
+
+    // ==================================================
+    // CRÉATION AUTOMATIQUE DU COMPTE ADMIN
+    // ==================================================
+
+    /*
+      Dans Render, ajoute :
+
+      ADMIN_FIRST_NAME
+      ADMIN_LAST_NAME
+      ADMIN_EMAIL
+      ADMIN_PASSWORD
+
+      Exemple :
+
+      ADMIN_FIRST_NAME = Ziyad
+      ADMIN_LAST_NAME = HAMIED
+      ADMIN_EMAIL = ton-email@example.com
+      ADMIN_PASSWORD = ton-mot-de-passe
+
+      Le mot de passe sera automatiquement hashé.
+    */
+
+    const adminEmail =
+      normalizeEmail(process.env.ADMIN_EMAIL);
+
+    const adminPassword =
+      process.env.ADMIN_PASSWORD;
+
+    const adminFirstName =
+      normalizeName(
+        process.env.ADMIN_FIRST_NAME || "Ziyad"
+      );
+
+    const adminLastName =
+      normalizeName(
+        process.env.ADMIN_LAST_NAME || "HAMIED"
+      );
+
+
+    if (adminEmail && adminPassword) {
+
+      const existingAdmin =
+        await pool.query(
+          `
+          SELECT id
+          FROM users
+          WHERE email = $1
+          LIMIT 1
+          `,
+          [adminEmail]
+        );
+
+
+      if (existingAdmin.rowCount === 0) {
+
+        const passwordHash =
+          await hashPassword(adminPassword);
+
+        await pool.query(
+          `
+          INSERT INTO users (
+            id,
+            first_name,
+            last_name,
+            email,
+            password_hash,
+            role
+          )
+          VALUES ($1,$2,$3,$4,$5,$6)
+          `,
+          [
+            crypto.randomUUID(),
+            adminFirstName,
+            adminLastName,
+            adminEmail,
+            passwordHash,
+            "admin"
+          ]
+        );
+
+        console.log(
+          "👑 Compte administrateur créé."
+        );
+
+      } else {
+
+        console.log(
+          "👑 Compte administrateur déjà présent."
+        );
+
+      }
+
+    } else {
+
+      console.log(
+        "⚠️ ADMIN_EMAIL / ADMIN_PASSWORD non configurés."
+      );
+
+    }
+
+
+    console.log(
+      "✅ Base de données PHARE prête"
+    );
 
   } catch (error) {
 
@@ -61,13 +394,15 @@ async function initDatabase() {
     );
 
     throw error;
+
   }
+
 }
 
 
-// ===============================
+// ======================================================
 // PAGE D'ACCUEIL
-// ===============================
+// ======================================================
 
 app.get("/", (req, res) => {
 
@@ -80,13 +415,331 @@ app.get("/", (req, res) => {
 });
 
 
-// ===============================
+// ======================================================
+// INSCRIPTION
+// ======================================================
+
+app.post("/api/auth/register", async (req, res) => {
+
+  try {
+
+    const firstName =
+      normalizeName(req.body.firstName);
+
+    const lastName =
+      normalizeName(req.body.lastName);
+
+    const email =
+      normalizeEmail(req.body.email);
+
+    const password =
+      String(req.body.password || "");
+
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password
+    ) {
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Tous les champs sont obligatoires."
+      });
+
+    }
+
+
+    if (password.length < 8) {
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Le mot de passe doit contenir au moins 8 caractères."
+      });
+
+    }
+
+
+    const existing =
+      await pool.query(
+        `
+        SELECT id
+        FROM users
+        WHERE email = $1
+        LIMIT 1
+        `,
+        [email]
+      );
+
+
+    if (existing.rowCount > 0) {
+
+      return res.status(409).json({
+        success: false,
+        message:
+          "Cette adresse e-mail est déjà utilisée."
+      });
+
+    }
+
+
+    const passwordHash =
+      await hashPassword(password);
+
+
+    const id =
+      crypto.randomUUID();
+
+
+    await pool.query(
+      `
+      INSERT INTO users (
+        id,
+        first_name,
+        last_name,
+        email,
+        password_hash,
+        role
+      )
+      VALUES ($1,$2,$3,$4,$5,$6)
+      `,
+      [
+        id,
+        firstName,
+        lastName,
+        email,
+        passwordHash,
+        "user"
+      ]
+    );
+
+
+    return res.json({
+      success: true,
+      message:
+        "Compte créé avec succès."
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "❌ Erreur inscription :",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Impossible de créer le compte."
+    });
+
+  }
+
+});
+
+
+// ======================================================
+// CONNEXION
+// ======================================================
+
+app.post("/api/auth/login", async (req, res) => {
+
+  try {
+
+    const firstName =
+      normalizeName(req.body.firstName);
+
+    const lastName =
+      normalizeName(req.body.lastName);
+
+    const email =
+      normalizeEmail(req.body.email);
+
+    const password =
+      String(req.body.password || "");
+
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password
+    ) {
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Prénom, nom, e-mail et mot de passe sont obligatoires."
+      });
+
+    }
+
+
+    const result =
+      await pool.query(
+        `
+        SELECT
+          id,
+          first_name AS "firstName",
+          last_name AS "lastName",
+          email,
+          password_hash AS "passwordHash",
+          role
+        FROM users
+        WHERE email = $1
+        LIMIT 1
+        `,
+        [email]
+      );
+
+
+    if (result.rowCount === 0) {
+
+      return res.status(401).json({
+        success: false,
+        message:
+          "E-mail ou mot de passe incorrect."
+      });
+
+    }
+
+
+    const user =
+      result.rows[0];
+
+
+    // Vérification prénom / nom
+
+    if (
+      user.firstName.toLowerCase() !==
+        firstName.toLowerCase() ||
+      user.lastName.toLowerCase() !==
+        lastName.toLowerCase()
+    ) {
+
+      return res.status(401).json({
+        success: false,
+        message:
+          "Les informations personnelles ne correspondent pas à ce compte."
+      });
+
+    }
+
+
+    const validPassword =
+      await verifyPassword(
+        password,
+        user.passwordHash
+      );
+
+
+    if (!validPassword) {
+
+      return res.status(401).json({
+        success: false,
+        message:
+          "E-mail ou mot de passe incorrect."
+      });
+
+    }
+
+
+    const token =
+      createToken({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
+      });
+
+
+    console.log(
+      `🔐 Connexion : ${user.firstName} ${user.lastName} (${user.email}) → ${user.role}`
+    );
+
+
+    return res.json({
+      success: true,
+
+      token,
+
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "❌ Erreur connexion :",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Erreur lors de la connexion."
+    });
+
+  }
+
+});
+
+
+// ======================================================
+// VÉRIFICATION SESSION
+// ======================================================
+
+app.get("/api/auth/me", (req, res) => {
+
+  const header =
+    req.headers.authorization || "";
+
+  const token =
+    header.startsWith("Bearer ")
+      ? header.substring(7)
+      : null;
+
+  const user =
+    verifyToken(token);
+
+
+  if (!user) {
+
+    return res.status(401).json({
+      success: false,
+      message: "Session invalide ou expirée."
+    });
+
+  }
+
+
+  return res.json({
+    success: true,
+    user
+  });
+
+});
+
+
+// ======================================================
 // UTILISATEURS CONNECTÉS
-// ===============================
+// ======================================================
 
 function broadcastConnectedUsers() {
 
   const users = [];
+
 
   io.sockets.sockets.forEach((client) => {
 
@@ -96,6 +749,7 @@ function broadcastConnectedUsers() {
     ) {
       return;
     }
+
 
     users.push({
       id: client.id,
@@ -130,142 +784,125 @@ function broadcastConnectedUsers() {
 }
 
 
-// ===============================
+// ======================================================
 // SOCKET.IO
-// ===============================
+// ======================================================
 
 io.on("connection", (socket) => {
 
   console.log(
-    "🟢 PC connecté :",
+    "🟢 Connexion Socket.IO :",
     socket.id
   );
 
 
-  // ===============================
-  // RÔLE + IDENTITÉ
-  // ===============================
+  // ====================================================
+  // AUTHENTIFICATION SOCKET
+  // ====================================================
 
-  socket.on("role", async (data) => {
+  const token =
+    socket.handshake.auth?.token;
 
-    /*
-      Compatible avec l'ancien format :
-
-      socket.emit("role", "admin")
-
-      et avec le nouveau :
-
-      socket.emit("role", {
-        role: "admin",
-        firstName: "Ziyad",
-        lastName: "HAMIED"
-      })
-    */
-
-    const role =
-      typeof data === "string"
-        ? data
-        : data?.role;
+  const user =
+    verifyToken(token);
 
 
-    const firstName =
-      typeof data === "object"
-        ? data.firstName
-        : "";
-
-
-    const lastName =
-      typeof data === "object"
-        ? data.lastName
-        : "";
-
-
-    socket.data.role =
-      role || "user";
-
-    socket.data.firstName =
-      firstName || "";
-
-    socket.data.lastName =
-      lastName || "";
-
+  if (!user) {
 
     console.log(
-      `👤 ${socket.id} → ${socket.data.firstName} ${socket.data.lastName} → rôle : ${socket.data.role}`
+      "🚫 Socket refusé : session invalide"
     );
 
-
-    // ===============================
-    // HISTORIQUE ADMIN
-    // ===============================
-
-    if (socket.data.role === "admin") {
-
-      try {
-
-        const result = await pool.query(`
-          SELECT
-            id,
-            first_name AS "firstName",
-            last_name AS "lastName",
-            type,
-            duration,
-            description,
-            author_first_name AS "authorFirstName",
-            author_last_name AS "authorLastName",
-            created_at AS "createdAt"
-          FROM signalements
-          ORDER BY created_at DESC
-        `);
-
-
-        socket.emit(
-          "historique_signalements",
-          result.rows
-        );
-
-
-        console.log(
-          `📋 ${result.rows.length} signalement(s) envoyé(s) à l'admin`
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "❌ Erreur historique :",
-          error
-        );
-
+    socket.emit(
+      "auth_error",
+      {
+        message:
+          "Session invalide ou expirée."
       }
+    );
 
-    }
+    socket.disconnect(true);
 
+    return;
 
-    // Actualiser les personnes connectées
-
-    broadcastConnectedUsers();
-
-  });
+  }
 
 
-  // ===============================
+  socket.data.userId =
+    user.id;
+
+  socket.data.firstName =
+    user.firstName;
+
+  socket.data.lastName =
+    user.lastName;
+
+  socket.data.email =
+    user.email;
+
+  socket.data.role =
+    user.role;
+
+
+  console.log(
+    `👤 ${socket.id} → ${user.firstName} ${user.lastName} → ${user.role}`
+  );
+
+
+  // ====================================================
+  // HISTORIQUE ADMIN
+  // ====================================================
+
+  if (socket.data.role === "admin") {
+
+    pool.query(`
+      SELECT
+        id,
+        first_name AS "firstName",
+        last_name AS "lastName",
+        type,
+        duration,
+        description,
+        author_first_name AS "authorFirstName",
+        author_last_name AS "authorLastName",
+        created_at AS "createdAt"
+      FROM signalements
+      ORDER BY created_at DESC
+    `)
+    .then((result) => {
+
+      socket.emit(
+        "historique_signalements",
+        result.rows
+      );
+
+      console.log(
+        `📋 ${result.rows.length} signalement(s) envoyé(s) à l'admin`
+      );
+
+    })
+    .catch((error) => {
+
+      console.error(
+        "❌ Erreur historique :",
+        error
+      );
+
+    });
+
+  }
+
+
+  broadcastConnectedUsers();
+
+
+  // ====================================================
   // NOUVEAU SIGNALEMENT
-  // ===============================
+  // ====================================================
 
   socket.on(
     "nouveau_signalement",
     async (signalement, callback) => {
-
-      console.log(
-        "🚨 NOUVEAU SIGNALEMENT REÇU"
-      );
-
-      console.log(
-        "ID :",
-        signalement?.id
-      );
-
 
       try {
 
@@ -276,6 +913,55 @@ io.on("connection", (socket) => {
 
           throw new Error(
             "Signalement ou ID manquant."
+          );
+
+        }
+
+
+        // L'auteur vient maintenant
+        // de la session authentifiée.
+
+        const safeSignalement = {
+
+          id: String(signalement.id),
+
+          firstName:
+            String(signalement.firstName || "").trim(),
+
+          lastName:
+            String(signalement.lastName || "").trim(),
+
+          type:
+            String(signalement.type || "").trim(),
+
+          duration:
+            String(signalement.duration || "").trim(),
+
+          description:
+            String(signalement.description || "").trim(),
+
+          authorFirstName:
+            socket.data.firstName,
+
+          authorLastName:
+            socket.data.lastName,
+
+          date:
+            signalement.date ||
+            new Date().toLocaleString("fr-FR")
+
+        };
+
+
+        if (
+          !safeSignalement.firstName ||
+          !safeSignalement.lastName ||
+          !safeSignalement.type ||
+          !safeSignalement.description
+        ) {
+
+          throw new Error(
+            "Informations du signalement incomplètes."
           );
 
         }
@@ -296,14 +982,14 @@ io.on("connection", (socket) => {
           VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
           `,
           [
-            signalement.id,
-            signalement.firstName,
-            signalement.lastName,
-            signalement.type,
-            signalement.duration,
-            signalement.description,
-            signalement.authorFirstName,
-            signalement.authorLastName
+            safeSignalement.id,
+            safeSignalement.firstName,
+            safeSignalement.lastName,
+            safeSignalement.type,
+            safeSignalement.duration,
+            safeSignalement.description,
+            safeSignalement.authorFirstName,
+            safeSignalement.authorLastName
           ]
         );
 
@@ -313,7 +999,7 @@ io.on("connection", (socket) => {
         );
 
 
-        // Envoyer aux administrateurs
+        // Envoyer uniquement aux admins
 
         io.sockets.sockets.forEach(
           (client) => {
@@ -324,7 +1010,7 @@ io.on("connection", (socket) => {
 
               client.emit(
                 "signalement_recu",
-                signalement
+                safeSignalement
               );
 
             }
@@ -333,13 +1019,6 @@ io.on("connection", (socket) => {
         );
 
 
-        console.log(
-          "⚡ Signalement envoyé aux admins"
-        );
-
-
-        // ACK pour le navigateur
-
         if (
           typeof callback === "function"
         ) {
@@ -347,7 +1026,9 @@ io.on("connection", (socket) => {
           callback({
             success: true,
             message:
-              "Signalement enregistré."
+              "Signalement enregistré.",
+            signalement:
+              safeSignalement
           });
 
         }
@@ -388,57 +1069,28 @@ io.on("connection", (socket) => {
   );
 
 
-  // ===============================
+  // ====================================================
   // SUPPRESSION
-  // ===============================
+  // ====================================================
 
   socket.on(
     "supprimer_signalement",
     async (id, callback) => {
 
       console.log(
-        "================================="
-      );
-
-      console.log(
-        "🗑️ DEMANDE DE SUPPRESSION REÇUE"
-      );
-
-      console.log(
-        "Socket :",
-        socket.id
-      );
-
-      console.log(
-        "Rôle :",
-        socket.data.role
-      );
-
-      console.log(
-        "ID reçu :",
+        "🗑️ DEMANDE DE SUPPRESSION :",
         id
       );
 
-      console.log(
-        "Type ID :",
-        typeof id
-      );
 
-      console.log(
-        "================================="
-      );
-
-
-      // ===============================
-      // VÉRIFICATION ADMIN
-      // ===============================
+      // Vérification serveur
 
       if (
         socket.data.role !== "admin"
       ) {
 
         console.log(
-          "🚫 SUPPRESSION REFUSÉE : utilisateur non admin"
+          "🚫 Suppression refusée : non-admin"
         );
 
 
@@ -464,28 +1116,11 @@ io.on("connection", (socket) => {
         }
 
         return;
+
       }
 
 
-      // ===============================
-      // VÉRIFICATION ID
-      // ===============================
-
       if (!id) {
-
-        console.log(
-          "❌ SUPPRESSION REFUSÉE : ID manquant"
-        );
-
-
-        socket.emit(
-          "erreur_signalement",
-          {
-            message:
-              "Identifiant du signalement manquant."
-          }
-        );
-
 
         if (
           typeof callback === "function"
@@ -500,6 +1135,7 @@ io.on("connection", (socket) => {
         }
 
         return;
+
       }
 
 
@@ -516,19 +1152,9 @@ io.on("connection", (socket) => {
           );
 
 
-        // ===============================
-        // INTROUVABLE
-        // ===============================
-
         if (
           result.rowCount === 0
         ) {
-
-          console.log(
-            "⚠️ Signalement introuvable dans PostgreSQL :",
-            id
-          );
-
 
           socket.emit(
             "erreur_signalement",
@@ -552,24 +1178,21 @@ io.on("connection", (socket) => {
           }
 
           return;
+
         }
 
-
-        // ===============================
-        // SUPPRESSION RÉUSSIE
-        // ===============================
 
         const deletedId =
           result.rows[0].id;
 
 
         console.log(
-          "✅ Signalement supprimé de PostgreSQL :",
+          "✅ Signalement supprimé :",
           deletedId
         );
 
 
-        // Informer tous les admins
+        // Informer les admins
 
         io.sockets.sockets.forEach(
           (client) => {
@@ -589,13 +1212,6 @@ io.on("connection", (socket) => {
         );
 
 
-        console.log(
-          "⚡ Confirmation de suppression envoyée aux admins"
-        );
-
-
-        // ACK
-
         if (
           typeof callback === "function"
         ) {
@@ -613,7 +1229,7 @@ io.on("connection", (socket) => {
       } catch (error) {
 
         console.error(
-          "❌ ERREUR PostgreSQL SUPPRESSION :",
+          "❌ Erreur suppression :",
           error
         );
 
@@ -645,19 +1261,16 @@ io.on("connection", (socket) => {
   );
 
 
-  // ===============================
+  // ====================================================
   // DÉCONNEXION
-  // ===============================
+  // ====================================================
 
   socket.on("disconnect", () => {
 
     console.log(
-      "🔴 PC déconnecté :",
+      "🔴 Socket déconnecté :",
       socket.id
     );
-
-
-    // Actualiser la liste des connectés
 
     broadcastConnectedUsers();
 
@@ -666,9 +1279,9 @@ io.on("connection", (socket) => {
 });
 
 
-// ===============================
-// DÉMARRAGE DU SERVEUR
-// ===============================
+// ======================================================
+// DÉMARRAGE
+// ======================================================
 
 const PORT =
   process.env.PORT || 3000;
@@ -700,7 +1313,6 @@ async function startServer() {
       "❌ Impossible de démarrer PHARE :",
       error
     );
-
 
     process.exit(1);
 
